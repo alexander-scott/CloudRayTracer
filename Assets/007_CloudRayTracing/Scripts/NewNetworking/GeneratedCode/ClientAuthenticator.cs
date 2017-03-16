@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using NetworkScopes;
 using UnityEngine.Networking;
 using System;
+using UnityEngine;
 
 public partial class ClientAuthenticator
 {
@@ -15,9 +16,13 @@ public partial class ClientAuthenticator
 			return _Remote;
 		}
 	}
-	public void Receive_SendMessageToServer(NetworkReader reader)
+	public void Receive_UpdateObjectPosition(NetworkReader reader)
 	{
-		SendMessageToServer();
+		Vector3 oldKey = reader.ReadVector3();
+		Vector3 position = reader.ReadVector3();
+		Vector3 rotation = reader.ReadVector3();
+		Vector3 localScale = reader.ReadVector3();
+		UpdateObjectPosition(oldKey, position, rotation, localScale);
 	}
 	
 	public class RemoteServerAuthenticator
@@ -36,10 +41,13 @@ public partial class ClientAuthenticator
 			_netSender.PrepareAndSendWriter(writer);
 		}
 		
-		public void DebugString(String debugString)
+		public void UpdateObjectPosition(Vector3 oldKey, Vector3 position, Vector3 rotation, Vector3 localScale)
 		{
-			NetworkWriter writer = _netSender.CreateWriter(112279588);
-			writer.Write(debugString);
+			NetworkWriter writer = _netSender.CreateWriter(-1383950639);
+			writer.Write(oldKey);
+			writer.Write(position);
+			writer.Write(rotation);
+			writer.Write(localScale);
 			_netSender.PrepareAndSendWriter(writer);
 		}
 		

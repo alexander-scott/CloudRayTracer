@@ -1,6 +1,7 @@
 ﻿
 using System;
 using NetworkScopes;
+using UnityEngine;
 
 [Scope(typeof(ClientAuthenticator))]
 public partial class ServerAuthenticator : ServerScope<Peer>
@@ -26,8 +27,8 @@ public partial class ServerAuthenticator : ServerScope<Peer>
 	}
 
     [Signal]
-    public void DebugString(string debugString)
+    public void UpdateObjectPosition(Vector3 oldKey, Vector3 position, Vector3 rotation, Vector3 localScale)
     {
-        UnityEngine.Debug.Log(debugString);
+        ServerController.Instance.UpdateObjectPosition(oldKey, position, rotation, localScale);
     }
 }

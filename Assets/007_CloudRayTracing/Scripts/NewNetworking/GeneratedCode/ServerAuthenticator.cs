@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using NetworkScopes;
 using UnityEngine.Networking;
+using UnityEngine;
 using System;
 
 public partial class ServerAuthenticator
@@ -13,10 +14,13 @@ public partial class ServerAuthenticator
 		Authenticate(userName, passwordHash);
 	}
 	
-	public void Receive_DebugString(NetworkReader reader)
+	public void Receive_UpdateObjectPosition(NetworkReader reader)
 	{
-		String debugString = reader.ReadString();
-		DebugString(debugString);
+		Vector3 oldKey = reader.ReadVector3();
+		Vector3 position = reader.ReadVector3();
+		Vector3 rotation = reader.ReadVector3();
+		Vector3 localScale = reader.ReadVector3();
+		UpdateObjectPosition(oldKey, position, rotation, localScale);
 	}
 	
 	public RemoteClientAuthenticator SendToPeer(Peer targetPeer)
@@ -51,9 +55,13 @@ public partial class ServerAuthenticator
 			_netSender = netSender;
 		}
 		
-		public void SendMessageToServer()
+		public void UpdateObjectPosition(Vector3 oldKey, Vector3 position, Vector3 rotation, Vector3 localScale)
 		{
-			NetworkWriter writer = _netSender.CreateWriter(-1958855171);
+			NetworkWriter writer = _netSender.CreateWriter(-1383950639);
+			writer.Write(oldKey);
+			writer.Write(position);
+			writer.Write(rotation);
+			writer.Write(localScale);
 			_netSender.PrepareAndSendWriter(writer);
 		}
 		
