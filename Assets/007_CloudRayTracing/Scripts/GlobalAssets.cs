@@ -10,5 +10,7 @@ namespace BMW.Verification.CloudRayTracing
         public GameObject pointCloudMesh;
 
         public GameObject gameController;
+
+        public GameObject detectableObject;
     }
 }

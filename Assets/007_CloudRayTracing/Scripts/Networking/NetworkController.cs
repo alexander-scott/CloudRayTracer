@@ -24,7 +24,9 @@ namespace BMW.Verification.CloudRayTracing
         public override void OnStartClient()
         {
             base.OnStartClient();
-        }
+
+            CmdSpawn();
+        } 
 
         public override void OnStartLocalPlayer()
         {
@@ -39,10 +41,6 @@ namespace BMW.Verification.CloudRayTracing
         public void OnPlayerConnected(NetworkPlayer player)
         {
 
-        }
-
-        public void OnConnectedToServer()
-        {
         }
 
         public void OnPlayerDisconnected(NetworkPlayer player)
@@ -81,6 +79,13 @@ namespace BMW.Verification.CloudRayTracing
             sensorManager.StartRayTracer();
 
             StartCoroutine(SendDataBack());
+        }
+
+        [Command]
+        public void CmdSpawn()
+        {
+            GameObject go = (GameObject)Instantiate(FindObjectOfType<GlobalAssets>().detectableObject, transform.position + new Vector3(0, 1, 0), Quaternion.identity);
+            NetworkServer.SpawnWithClientAuthority(go, connectionToClient);
         }
 
         /// <summary>
