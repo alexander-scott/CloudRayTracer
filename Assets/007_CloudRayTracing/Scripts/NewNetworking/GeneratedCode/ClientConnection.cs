@@ -4,15 +4,15 @@ using UnityEngine.Networking;
 using System;
 using UnityEngine;
 
-public partial class ClientAuthenticator
+public partial class ClientConnection
 {
-	private RemoteServerAuthenticator _Remote;
-	public RemoteServerAuthenticator SendToServer
+	private RemoteServerConnection _Remote;
+	public RemoteServerConnection SendToServer
 	{
 		get
 		{
 			if (_Remote == null)
-				_Remote = new RemoteServerAuthenticator(this);
+				_Remote = new RemoteServerConnection(this);
 			return _Remote;
 		}
 	}
@@ -25,10 +25,10 @@ public partial class ClientAuthenticator
 		UpdateObjectPosition(oldKey, position, rotation, localScale);
 	}
 	
-	public class RemoteServerAuthenticator
+	public class RemoteServerConnection
 	{
 		private INetworkSender _netSender;
-		public RemoteServerAuthenticator(INetworkSender netSender)
+		public RemoteServerConnection(INetworkSender netSender)
 		{
 			_netSender = netSender;
 		}

@@ -2,8 +2,8 @@
 using NetworkScopes;
 using UnityEngine;
 
-[Scope(typeof(ServerAuthenticator))]
-public partial class ClientAuthenticator : ClientScope
+[Scope(typeof(ServerConnection))]
+public partial class ClientConnection : ClientScope
 {
 	protected override void OnEnterScope ()
 	{

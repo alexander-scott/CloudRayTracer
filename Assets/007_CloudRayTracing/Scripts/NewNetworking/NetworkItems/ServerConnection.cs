@@ -3,8 +3,8 @@ using System;
 using NetworkScopes;
 using UnityEngine;
 
-[Scope(typeof(ClientAuthenticator))]
-public partial class ServerAuthenticator : ServerScope<Peer>
+[Scope(typeof(ClientConnection))]
+public partial class ServerConnection : ServerScope<Peer>
 {
 	[Signal]
 	public void Authenticate(string userName, string passwordHash)

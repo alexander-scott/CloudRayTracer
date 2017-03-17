@@ -18,18 +18,12 @@ public class DetectableObject : MonoBehaviour
         {
             if (transform.hasChanged)
             {
-                Debug.Log("Transform has chaneged");
                 transform.hasChanged = false;
 
-                ClientController.Instance.UpdateObjectPosition(oldKey, transform.position, transform.eulerAngles, transform.localScale);
+                ClientController.Instance.UpdateObjectPositionOnServer(oldKey, transform.position, transform.eulerAngles, transform.localScale);
 
                 oldKey = transform.position;
             }
         }
-    }
-
-    void OnGUI()
-    {
-        GUI.Label(new Rect(10, 10, 100, 20), gameObject.GetInstanceID().ToString());
     }
 }

@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class ClientController : MonoBehaviour
 {
+    #region Singleton
+
     private static ClientController _instance;
 
     public static ClientController Instance { get { return _instance; } }
@@ -22,48 +24,46 @@ public class ClientController : MonoBehaviour
         }
     }
 
-    public Button connectToServer;
-    public Button moveButton;
-    public Transform cube;
+    #endregion
+
     private Client client;
 
     // Use this for initialization
     void Start ()
     {
-        connectToServer.onClick.AddListener(ConnectToServer);
-        moveButton.onClick.AddListener(MoveButton);
-
         client = new Client();
         client.PersistConnection = true;
 
         client.OnConnected += Client_OnConnected;
         client.OnDisconnected += Client_OnDisconnected;
+        client.OnConnectFailed += Client_OnConnectFailed;
     }
 
-    private void MoveButton()
+    public void UpdateObjectPositionOnServer(Vector3 oldkey, Vector3 position, Vector3 rotation, Vector3 localScale)
     {
-        cube.position = new Vector3(5f, 5f, 5f);
+        client.Connection.UpdateObjectPosition(oldkey, position, rotation, localScale);
     }
 
-    public void UpdateObjectPosition(Vector3 oldkey, Vector3 position, Vector3 rotation, Vector3 localScale)
+    public void ConnectToServer()
     {
-        client.Authenticator.UpdateObjectPosition(oldkey, position, rotation, localScale);
+        GlobalVariables.isClient = true;
+        GlobalVariables.activated = true;
+        client.Connect(GlobalVariables.ipAddress, 7777);
+    }
+
+    private void Client_OnConnectFailed()
+    {
+        UIManager.Instance.UpdateSubTitleText("Failed to connect to the server");
     }
 
     private void Client_OnDisconnected(byte disconnectMsg)
     {
-        Debug.Log("Disconneted");
+        UIManager.Instance.UpdateSubTitleText("Disconnected from the server");
     }
 
     private void Client_OnConnected()
     {
         Debug.Log("Connected");
-    }
-
-    private void ConnectToServer()
-    {
-        GlobalVariables.isClient = true;
-        GlobalVariables.activated = true;
-        client.Connect("127.0.0.1", 7777);
+        UIManager.Instance.UpdateSubTitleText("You are the CLIENT");
     }
 }

@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class ServerController : MonoBehaviour
 {
+    #region Singleton
+
     private static ServerController _instance;
 
     public static ServerController Instance { get { return _instance; } }
@@ -22,13 +24,13 @@ public class ServerController : MonoBehaviour
         }
     }
 
-    public Button startServer;
+    #endregion
+
     private Server server;
 
 	// Use this for initialization
 	void Start ()
     {
-        startServer.onClick.AddListener(StartServerClicked);
         server = new Server();
 
         server.OnPeerConnected += Server_OnPeerConnected;
@@ -49,10 +51,12 @@ public class ServerController : MonoBehaviour
         Debug.Log("Peer connected!");
     }
 
-    private void StartServerClicked()
+    public void StartServer()
     {
         GlobalVariables.isClient = false;
         GlobalVariables.activated = true;
         server.StartServer(7777);
+
+        UIManager.Instance.UpdateSubTitleText("You are the SERVER");
     }
 }

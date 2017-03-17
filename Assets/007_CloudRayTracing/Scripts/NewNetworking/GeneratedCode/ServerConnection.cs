@@ -4,9 +4,9 @@ using UnityEngine.Networking;
 using UnityEngine;
 using System;
 
-public partial class ServerAuthenticator
+public partial class ServerConnection
 {
-	private RemoteClientAuthenticator _Remote;
+	private RemoteClientConnection _Remote;
 	public void Receive_Authenticate(NetworkReader reader)
 	{
 		String userName = reader.ReadString();
@@ -23,34 +23,34 @@ public partial class ServerAuthenticator
 		UpdateObjectPosition(oldKey, position, rotation, localScale);
 	}
 	
-	public RemoteClientAuthenticator SendToPeer(Peer targetPeer)
+	public RemoteClientConnection SendToPeer(Peer targetPeer)
 	{
 		if (_Remote == null)
-			_Remote = new RemoteClientAuthenticator(this);
+			_Remote = new RemoteClientConnection(this);
 		TargetPeer = targetPeer;
 		return _Remote;
 	}
 	
-	public RemoteClientAuthenticator ReplyToPeer()
+	public RemoteClientConnection ReplyToPeer()
 	{
 		if (_Remote == null)
-			_Remote = new RemoteClientAuthenticator(this);
+			_Remote = new RemoteClientConnection(this);
 		TargetPeer = SenderPeer;
 		return _Remote;
 	}
 	
-	public RemoteClientAuthenticator SendToPeers(IEnumerable<Peer> targetPeerGroup)
+	public RemoteClientConnection SendToPeers(IEnumerable<Peer> targetPeerGroup)
 	{
 		if (_Remote == null)
-			_Remote = new RemoteClientAuthenticator(this);
+			_Remote = new RemoteClientConnection(this);
 		TargetPeerGroup = targetPeerGroup;
 		return _Remote;
 	}
 	
-	public class RemoteClientAuthenticator
+	public class RemoteClientConnection
 	{
 		private INetworkSender _netSender;
-		public RemoteClientAuthenticator(INetworkSender netSender)
+		public RemoteClientConnection(INetworkSender netSender)
 		{
 			_netSender = netSender;
 		}

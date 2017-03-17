@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class ObjectManager : MonoBehaviour
 {
+    #region Singleton
+
     private static ObjectManager _instance;
 
     public static ObjectManager Instance { get { return _instance; } }
@@ -20,34 +22,36 @@ public class ObjectManager : MonoBehaviour
         }
     }
 
-    public Dictionary<Vector3, GameObject> m_instanceMap = new Dictionary<Vector3, GameObject>();
+    #endregion
+
+    public Dictionary<Vector3, GameObject> objectDictionary = new Dictionary<Vector3, GameObject>();
 
     // Use this for initialization
     void Start ()
     {
         List<GameObject> gos = new List<GameObject>();
 
-        foreach (DetectableObject go in FindObjectsOfType<DetectableObject>())
+        foreach (DetectableObject detectObject in FindObjectsOfType<DetectableObject>())
         {
-            if (gos.Contains(go.gameObject))
+            if (gos.Contains(detectObject.gameObject))
             {
                 continue;
             }
 
-            gos.Add(go.gameObject);
-            m_instanceMap[go.transform.position] = go.gameObject;
+            gos.Add(detectObject.gameObject);
+            objectDictionary[detectObject.transform.position] = detectObject.gameObject;
         }
     }
 
     public GameObject GetGameObject(Vector3 objectID)
     {
-        return m_instanceMap[objectID];
+        return objectDictionary[objectID];
     }
 
     public void UpdateKey(Vector3 oldKey)
     {
-        GameObject val = m_instanceMap[oldKey];
-        m_instanceMap.Remove(oldKey);
-        m_instanceMap[val.transform.position] = val;
+        GameObject val = objectDictionary[oldKey];
+        objectDictionary.Remove(oldKey);
+        objectDictionary[val.transform.position] = val;
     }
 }
