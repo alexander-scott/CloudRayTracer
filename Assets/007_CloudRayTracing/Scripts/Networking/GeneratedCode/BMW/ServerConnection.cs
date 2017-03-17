@@ -16,22 +16,6 @@ namespace BMW.Verification.CloudRayTracing
 			Authenticate(userName, passwordHash);
 		}
 		
-		public void Receive_SendPacket(NetworkReader reader)
-		{
-			Int32 packetNum = reader.ReadInt32();
-			String contents = reader.ReadString();
-			SendPacket(packetNum, contents);
-		}
-		
-		public void Receive_SendSeriliasedMesh(NetworkReader reader)
-		{
-			Int32 mesh_count = reader.ReadInt32();
-			System.Byte[] mesh = new System.Byte[mesh_count];
-			for (int mesh_index = 0; mesh_index < mesh_count; mesh_index++)
-			mesh[mesh_index] = reader.ReadByte();
-			SendSeriliasedMesh(mesh);
-		}
-		
 		public void Receive_RecieveObjectPosition(NetworkReader reader)
 		{
 			Vector3 oldKey = reader.ReadVector3();
@@ -80,24 +64,6 @@ namespace BMW.Verification.CloudRayTracing
 				_netSender = netSender;
 			}
 			
-			public void SendPacket(Int32 packetNum, String contents)
-			{
-				NetworkWriter writer = _netSender.CreateWriter(-1920393648);
-				writer.Write(packetNum);
-				writer.Write(contents);
-				_netSender.PrepareAndSendWriter(writer);
-			}
-			
-			public void UpdateObjectPosition(Vector3 oldKey, Vector3 position, Vector3 rotation, Vector3 localScale)
-			{
-				NetworkWriter writer = _netSender.CreateWriter(-1383950639);
-				writer.Write(oldKey);
-				writer.Write(position);
-				writer.Write(rotation);
-				writer.Write(localScale);
-				_netSender.PrepareAndSendWriter(writer);
-			}
-			
 			public void RecievePacket(Int32 packetNum, String contents)
 			{
 				NetworkWriter writer = _netSender.CreateWriter(55045539);
@@ -106,12 +72,21 @@ namespace BMW.Verification.CloudRayTracing
 				_netSender.PrepareAndSendWriter(writer);
 			}
 			
-			public void RecieveSeriliasedMesh(Byte[] mesh)
+			public void ClientPrepareToRecieveTransmission(Int32 transmissionId, Int32 expectedSize)
 			{
-				NetworkWriter writer = _netSender.CreateWriter(1488026943);
-				writer.Write(mesh.Length);
-				for (int _arrCounter = 0; _arrCounter < mesh.Length; _arrCounter++)
-				writer.Write(mesh[_arrCounter]);
+				NetworkWriter writer = _netSender.CreateWriter(-2015836376);
+				writer.Write(transmissionId);
+				writer.Write(expectedSize);
+				_netSender.PrepareAndSendWriter(writer);
+			}
+			
+			public void ClientRecieveTransmission(Int32 transmissionId, Byte[] recBuffer)
+			{
+				NetworkWriter writer = _netSender.CreateWriter(-1696830220);
+				writer.Write(transmissionId);
+				writer.Write(recBuffer.Length);
+				for (int _arrCounter = 0; _arrCounter < recBuffer.Length; _arrCounter++)
+				writer.Write(recBuffer[_arrCounter]);
 				_netSender.PrepareAndSendWriter(writer);
 			}
 			

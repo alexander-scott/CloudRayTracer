@@ -44,6 +44,8 @@ namespace BMW.Verification.CloudRayTracing
             client.OnDisconnected += Client_OnDisconnected;
             client.OnConnectFailed += Client_OnConnectFailed;
 
+            client.Connection.OnDataCompletelyReceived += Connection_OnDataCompletelyReceived;
+
             startRaytracer.onClick.AddListener(StartRayTracer);
         }
 
@@ -60,7 +62,8 @@ namespace BMW.Verification.CloudRayTracing
                 client.Connection.UpdateObjectPosition(oldkey, position, rotation, localScale);
         }
 
-        public void RenderMesh(byte[] mesh)
+
+        private void Connection_OnDataCompletelyReceived(int arg0, byte[] mesh)
         {
             // Deserialize data back to a mesh
             Mesh newMesh = MeshSerializer.ReadMesh(mesh, true);

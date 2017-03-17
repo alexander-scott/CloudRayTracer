@@ -75,7 +75,7 @@ namespace BMW.Verification.CloudRayTracing
 
         public void SendSeralisedMeshToClient(byte[] mesh)
         {
-            server.Connection.SendSeriliasedMesh(mesh);
+            StartCoroutine(server.Connection.SendBytesToClientsRoutine(0, mesh));
         }
 
         private void Server_OnPeerConnected(Peer obj)

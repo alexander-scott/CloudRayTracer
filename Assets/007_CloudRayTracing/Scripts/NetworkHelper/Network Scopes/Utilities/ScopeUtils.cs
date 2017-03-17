@@ -9,19 +9,19 @@ namespace NetworkScopes
 
 	public static class ScopeUtils
 	{
-		public static void SendNetworkWriter(NetworkWriter writer, NetworkConnection connection)
+        public const int UNRELIABLE_SEQUENCED_CHANNEL = (int)QosType.Unreliable;
+
+        public static void SendNetworkWriter(NetworkWriter writer, NetworkConnection connection)
 		{
 			if (!connection.isConnected)
 				return;
 			
 			byte error;
-			NetworkTransport.Send(connection.hostId, connection.connectionId, 0, writer.ToArray(), writer.Position, out error);
+			NetworkTransport.Send(connection.hostId, connection.connectionId, UNRELIABLE_SEQUENCED_CHANNEL, writer.ToArray(), writer.Position, out error);
 
-			#if SHOW_SEND_ERRORS
 			NetworkError nerror = (NetworkError)error;
 			if (nerror != NetworkError.Ok)
 				Debug.LogError("Network error: " + nerror);
-			#endif
 		}
 
 		public static void SendNetworkWriter<TPeer>(NetworkWriter writer, IEnumerable<TPeer> peers) where TPeer : NetworkPeer
@@ -36,13 +36,11 @@ namespace NetworkScopes
 				if (!peer.isConnected)
 					return;
 				
-				NetworkTransport.Send(peer.hostId, peer.connectionId, 0, bufferData, bufferSize, out error);
+				NetworkTransport.Send(peer.hostId, peer.connectionId, UNRELIABLE_SEQUENCED_CHANNEL, bufferData, bufferSize, out error);
 
-				#if SHOW_SEND_ERRORS
 				NetworkError nerror = (NetworkError)error;
 				if (nerror != NetworkError.Ok)
 					Debug.LogError("Network error: " + nerror);
-				#endif
 			}
 		}
 

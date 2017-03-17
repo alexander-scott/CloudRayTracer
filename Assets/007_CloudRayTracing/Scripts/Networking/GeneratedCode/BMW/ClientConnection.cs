@@ -18,22 +18,6 @@ namespace BMW.Verification.CloudRayTracing
 				return _Remote;
 			}
 		}
-		public void Receive_SendPacket(NetworkReader reader)
-		{
-			Int32 packetNum = reader.ReadInt32();
-			String contents = reader.ReadString();
-			SendPacket(packetNum, contents);
-		}
-		
-		public void Receive_UpdateObjectPosition(NetworkReader reader)
-		{
-			Vector3 oldKey = reader.ReadVector3();
-			Vector3 position = reader.ReadVector3();
-			Vector3 rotation = reader.ReadVector3();
-			Vector3 localScale = reader.ReadVector3();
-			UpdateObjectPosition(oldKey, position, rotation, localScale);
-		}
-		
 		public void Receive_RecievePacket(NetworkReader reader)
 		{
 			Int32 packetNum = reader.ReadInt32();
@@ -41,13 +25,21 @@ namespace BMW.Verification.CloudRayTracing
 			RecievePacket(packetNum, contents);
 		}
 		
-		public void Receive_RecieveSeriliasedMesh(NetworkReader reader)
+		public void Receive_ClientPrepareToRecieveTransmission(NetworkReader reader)
 		{
-			Int32 mesh_count = reader.ReadInt32();
-			System.Byte[] mesh = new System.Byte[mesh_count];
-			for (int mesh_index = 0; mesh_index < mesh_count; mesh_index++)
-			mesh[mesh_index] = reader.ReadByte();
-			RecieveSeriliasedMesh(mesh);
+			Int32 transmissionId = reader.ReadInt32();
+			Int32 expectedSize = reader.ReadInt32();
+			ClientPrepareToRecieveTransmission(transmissionId, expectedSize);
+		}
+		
+		public void Receive_ClientRecieveTransmission(NetworkReader reader)
+		{
+			Int32 transmissionId = reader.ReadInt32();
+			Int32 recBuffer_count = reader.ReadInt32();
+			System.Byte[] recBuffer = new System.Byte[recBuffer_count];
+			for (int recBuffer_index = 0; recBuffer_index < recBuffer_count; recBuffer_index++)
+			recBuffer[recBuffer_index] = reader.ReadByte();
+			ClientRecieveTransmission(transmissionId, recBuffer);
 		}
 		
 		public class RemoteServerConnection
@@ -63,23 +55,6 @@ namespace BMW.Verification.CloudRayTracing
 				NetworkWriter writer = _netSender.CreateWriter(1885436661);
 				writer.Write(userName);
 				writer.Write(passwordHash);
-				_netSender.PrepareAndSendWriter(writer);
-			}
-			
-			public void SendPacket(Int32 packetNum, String contents)
-			{
-				NetworkWriter writer = _netSender.CreateWriter(-1920393648);
-				writer.Write(packetNum);
-				writer.Write(contents);
-				_netSender.PrepareAndSendWriter(writer);
-			}
-			
-			public void SendSeriliasedMesh(Byte[] mesh)
-			{
-				NetworkWriter writer = _netSender.CreateWriter(419541228);
-				writer.Write(mesh.Length);
-				for (int _arrCounter = 0; _arrCounter < mesh.Length; _arrCounter++)
-				writer.Write(mesh[_arrCounter]);
 				_netSender.PrepareAndSendWriter(writer);
 			}
 			
