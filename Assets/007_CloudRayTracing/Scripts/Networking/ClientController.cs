@@ -4,66 +4,69 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ClientController : MonoBehaviour
+namespace BMW.Verification.CloudRayTracing
 {
-    #region Singleton
-
-    private static ClientController _instance;
-
-    public static ClientController Instance { get { return _instance; } }
-
-    private void Awake()
+    public class ClientController : MonoBehaviour
     {
-        if (_instance != null && _instance != this)
+        #region Singleton
+
+        private static ClientController _instance;
+
+        public static ClientController Instance { get { return _instance; } }
+
+        private void Awake()
         {
-            Destroy(this.gameObject);
+            if (_instance != null && _instance != this)
+            {
+                Destroy(this.gameObject);
+            }
+            else
+            {
+                _instance = this;
+            }
         }
-        else
+
+        #endregion
+
+        private Client client;
+
+        // Use this for initialization
+        void Start()
         {
-            _instance = this;
+            client = new Client();
+            client.PersistConnection = true;
+
+            client.OnConnected += Client_OnConnected;
+            client.OnDisconnected += Client_OnDisconnected;
+            client.OnConnectFailed += Client_OnConnectFailed;
         }
-    }
 
-    #endregion
+        public void UpdateObjectPositionOnServer(Vector3 oldkey, Vector3 position, Vector3 rotation, Vector3 localScale)
+        {
+            client.Connection.UpdateObjectPosition(oldkey, position, rotation, localScale);
+        }
 
-    private Client client;
+        public void ConnectToServer()
+        {
+            GlobalVariables.isClient = true;
+            GlobalVariables.activated = true;
+            client.Connect(GlobalVariables.ipAddress, 7777);
+        }
 
-    // Use this for initialization
-    void Start ()
-    {
-        client = new Client();
-        client.PersistConnection = true;
+        private void Client_OnConnectFailed()
+        {
+            UIManager.Instance.UpdateSubTitleText("Failed to connect to the server");
+        }
 
-        client.OnConnected += Client_OnConnected;
-        client.OnDisconnected += Client_OnDisconnected;
-        client.OnConnectFailed += Client_OnConnectFailed;
-    }
+        private void Client_OnDisconnected(byte disconnectMsg)
+        {
+            UIManager.Instance.UpdateSubTitleText("Disconnected from the server");
+        }
 
-    public void UpdateObjectPositionOnServer(Vector3 oldkey, Vector3 position, Vector3 rotation, Vector3 localScale)
-    {
-        client.Connection.UpdateObjectPosition(oldkey, position, rotation, localScale);
-    }
-
-    public void ConnectToServer()
-    {
-        GlobalVariables.isClient = true;
-        GlobalVariables.activated = true;
-        client.Connect(GlobalVariables.ipAddress, 7777);
-    }
-
-    private void Client_OnConnectFailed()
-    {
-        UIManager.Instance.UpdateSubTitleText("Failed to connect to the server");
-    }
-
-    private void Client_OnDisconnected(byte disconnectMsg)
-    {
-        UIManager.Instance.UpdateSubTitleText("Disconnected from the server");
-    }
-
-    private void Client_OnConnected()
-    {
-        Debug.Log("Connected");
-        UIManager.Instance.UpdateSubTitleText("You are the CLIENT");
+        private void Client_OnConnected()
+        {
+            Debug.Log("Connected");
+            UIManager.Instance.UpdateSubTitleText("You are the CLIENT");
+        }
     }
 }

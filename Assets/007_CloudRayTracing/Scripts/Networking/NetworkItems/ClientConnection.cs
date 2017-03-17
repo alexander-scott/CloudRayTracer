@@ -2,17 +2,20 @@
 using NetworkScopes;
 using UnityEngine;
 
-[Scope(typeof(ServerConnection))]
-public partial class ClientConnection : ClientScope
+namespace BMW.Verification.CloudRayTracing
 {
-	protected override void OnEnterScope ()
-	{
-		//SendToServer.Authenticate("sour", "testpw");
-	}
-
-    [Signal]
-    public void UpdateObjectPosition(Vector3 oldKey, Vector3 position, Vector3 rotation, Vector3 localScale)
+    [Scope(typeof(ServerConnection))]
+    public partial class ClientConnection : ClientScope
     {
-        SendToServer.UpdateObjectPosition(oldKey, position, rotation, localScale); 
+        protected override void OnEnterScope()
+        {
+            //SendToServer.Authenticate("sour", "testpw");
+        }
+
+        [Signal]
+        public void UpdateObjectPosition(Vector3 oldKey, Vector3 position, Vector3 rotation, Vector3 localScale)
+        {
+            SendToServer.UpdateObjectPosition(oldKey, position, rotation, localScale);
+        }
     }
 }

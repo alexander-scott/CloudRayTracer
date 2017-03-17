@@ -2,27 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DetectableObject : MonoBehaviour
+namespace BMW.Verification.CloudRayTracing
 {
-    private Vector3 oldKey;
-
-    void Start()
+    public class DetectableObject : MonoBehaviour
     {
-        oldKey = transform.position;
-    }
+        private Vector3 oldKey;
 
-	// Update is called once per frame
-	void Update ()
-    {
-        if (GlobalVariables.isClient && GlobalVariables.activated)
+        void Start()
         {
-            if (transform.hasChanged)
+            oldKey = transform.position;
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+            if (GlobalVariables.isClient && GlobalVariables.activated)
             {
-                transform.hasChanged = false;
+                if (transform.hasChanged)
+                {
+                    transform.hasChanged = false;
 
-                ClientController.Instance.UpdateObjectPositionOnServer(oldKey, transform.position, transform.eulerAngles, transform.localScale);
+                    ClientController.Instance.UpdateObjectPositionOnServer(oldKey, transform.position, transform.eulerAngles, transform.localScale);
 
-                oldKey = transform.position;
+                    oldKey = transform.position;
+                }
             }
         }
     }
