@@ -28,22 +28,23 @@ namespace BMW.Verification.CloudRayTracing
 
         #endregion
 
+        public GameObject pointCloud;
+        public GameObject clientCanvas;
+        public Button startRaytracer;
+
         private Client client;
 
         // Use this for initialization
         void Start()
         {
             client = new Client();
-            client.PersistConnection = true;
+            //client.PersistConnection = true;
 
             client.OnConnected += Client_OnConnected;
             client.OnDisconnected += Client_OnDisconnected;
             client.OnConnectFailed += Client_OnConnectFailed;
-        }
 
-        public void UpdateObjectPositionOnServer(Vector3 oldkey, Vector3 position, Vector3 rotation, Vector3 localScale)
-        {
-            client.Connection.UpdateObjectPosition(oldkey, position, rotation, localScale);
+            startRaytracer.onClick.AddListener(StartRayTracer);
         }
 
         public void ConnectToServer()
@@ -51,6 +52,40 @@ namespace BMW.Verification.CloudRayTracing
             GlobalVariables.isClient = true;
             GlobalVariables.activated = true;
             client.Connect(GlobalVariables.ipAddress, 7777);
+        }
+
+        public void UpdateObjectPositionOnServer(Vector3 oldkey, Vector3 position, Vector3 rotation, Vector3 localScale)
+        {
+            if (client.IsConnected)
+                client.Connection.UpdateObjectPosition(oldkey, position, rotation, localScale);
+        }
+
+        public void RenderMesh(byte[] mesh)
+        {
+            // Deserialize data back to a mesh
+            Mesh newMesh = MeshSerializer.ReadMesh(mesh, true);
+
+            pointCloud.GetComponent<MeshFilter>().mesh = newMesh;
+        }
+
+        public void SendPacket(GlobalVariables.PacketType packetType, string contents)
+        {
+            client.Connection.SendPacket((int)packetType, contents); 
+        }
+
+        public void PacketRecieved(GlobalVariables.PacketType packetType, string contents)
+        {
+            switch (packetType)
+            {
+                case GlobalVariables.PacketType.ToggleRaytracer:
+                    // DO SOMETHING
+                    break;
+            }
+        }
+
+        private void StartRayTracer()
+        {
+            SendPacket(GlobalVariables.PacketType.ToggleRaytracer, true.ToString());
         }
 
         private void Client_OnConnectFailed()
@@ -67,6 +102,7 @@ namespace BMW.Verification.CloudRayTracing
         {
             Debug.Log("Connected");
             UIManager.Instance.UpdateSubTitleText("You are the CLIENT");
+            clientCanvas.SetActive(true);
         }
     }
 }

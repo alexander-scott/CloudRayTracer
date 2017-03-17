@@ -10,5 +10,7 @@ namespace BMW.Verification.CloudRayTracing
         public static bool activated = false;
 
         public static string ipAddress = PlayerPrefs.GetString("IPAddress", "127.0.0.1");
+
+        public enum PacketType { ToggleRaytracer, }
     }
 }

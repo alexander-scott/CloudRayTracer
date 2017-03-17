@@ -28,10 +28,37 @@ namespace BMW.Verification.CloudRayTracing
             }
         }
 
+        #region Send to client
+
         [Signal]
-        public void UpdateObjectPosition(Vector3 oldKey, Vector3 position, Vector3 rotation, Vector3 localScale)
+        public void SendPacket(int packetNum, string contents)
+        {
+            SendToPeer(SenderPeer).RecievePacket(packetNum, contents);
+        }
+
+        [Signal]
+        public void SendSeriliasedMesh(byte[] mesh)
+        {
+            SendToPeer(SenderPeer).RecieveSeriliasedMesh(mesh);
+            
+        }
+
+        #endregion
+
+        #region Recieve from clients
+
+        [Signal]
+        public void RecieveObjectPosition(Vector3 oldKey, Vector3 position, Vector3 rotation, Vector3 localScale)
         {
             ServerController.Instance.UpdateObjectPosition(oldKey, position, rotation, localScale);
         }
+
+        [Signal]
+        public void RecievePacket(int packetNum, string contents)
+        {
+            ServerController.Instance.PacketRecieved((GlobalVariables.PacketType)packetNum, contents);
+        }
+
+        #endregion
     }
 }

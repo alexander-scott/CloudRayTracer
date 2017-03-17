@@ -31,6 +31,10 @@ namespace BMW.Verification.CloudRayTracing
         public Button connectToServer;
         public Button startServer;
         public InputField ipAddress;
+
+        [Space(10)]
+
+        public GameObject menuCanvas;
         public Text subTitle;
 
         // Use this for initialization
@@ -58,12 +62,14 @@ namespace BMW.Verification.CloudRayTracing
         private void StartServerClicked()
         {
             subTitle.text = "Starting server...";
+            menuCanvas.SetActive(false);
             ServerController.Instance.StartServer();
         }
 
         private void ConnectToServer()
         {
             subTitle.text = "Connecting to server...";
+            menuCanvas.SetActive(false);
             ClientController.Instance.ConnectToServer();
         }
     }

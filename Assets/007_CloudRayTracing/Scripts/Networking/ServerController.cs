@@ -38,6 +38,15 @@ namespace BMW.Verification.CloudRayTracing
             server.OnPeerConnected += Server_OnPeerConnected;
         }
 
+        public void StartServer()
+        {
+            GlobalVariables.isClient = false;
+            GlobalVariables.activated = true;
+            server.StartServer(7777);
+
+            UIManager.Instance.UpdateSubTitleText("You are the SERVER");
+        }
+
         public void UpdateObjectPosition(Vector3 oldKey, Vector3 position, Vector3 rotation, Vector3 localScale)
         {
             GameObject go = ObjectManager.Instance.GetGameObject(oldKey);
@@ -48,13 +57,25 @@ namespace BMW.Verification.CloudRayTracing
             ObjectManager.Instance.UpdateKey(oldKey);
         }
 
-        public void StartServer()
+        public void SendPacket(GlobalVariables.PacketType packetType, string contents)
         {
-            GlobalVariables.isClient = false;
-            GlobalVariables.activated = true;
-            server.StartServer(7777);
+            server.Connection.SendPacket((int)packetType, contents);
+        }
 
-            UIManager.Instance.UpdateSubTitleText("You are the SERVER");
+        public void PacketRecieved(GlobalVariables.PacketType packetType, string contents)
+        {
+            switch (packetType)
+            {
+                case GlobalVariables.PacketType.ToggleRaytracer:
+                    Debug.Log("Raytrace start");
+                    CarController.Instance.StartRayTracing();
+                    break;
+            }
+        }
+
+        public void SendSeralisedMeshToClient(byte[] mesh)
+        {
+            server.Connection.SendSeriliasedMesh(mesh);
         }
 
         private void Server_OnPeerConnected(Peer obj)
