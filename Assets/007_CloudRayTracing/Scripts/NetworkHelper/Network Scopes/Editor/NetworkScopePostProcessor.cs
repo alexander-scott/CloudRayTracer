@@ -23,7 +23,7 @@ public class NetworkScopePostProcessor
 
 		if (NetworkScopeUtility.SerializerClass.classes.Count > 0)
 		{
-			string path = Path.Combine(Application.dataPath, "007_CloudRayTracing/Scripts/NewNetworking/GeneratedCode");
+			string path = Path.Combine(Application.dataPath, "007_CloudRayTracing/Scripts/Networking/GeneratedCode");
 			path = Path.Combine(path, "Serializers.cs");
 
 			File.WriteAllText(path, NetworkScopeUtility.SerializerClass.ToString());
@@ -54,7 +54,7 @@ public class NetworkScopePostProcessor
 
 		if (classDef != null)
 		{
-			string path = Path.Combine(Application.dataPath, "007_CloudRayTracing/Scripts/NewNetworking/GeneratedCode");
+			string path = Path.Combine(Application.dataPath, "007_CloudRayTracing/Scripts/Networking/GeneratedCode");
 
 			Directory.CreateDirectory(path);
 

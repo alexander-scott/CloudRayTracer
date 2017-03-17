@@ -46,11 +46,6 @@ public class ServerController : MonoBehaviour
         ObjectManager.Instance.UpdateKey(oldKey);
     }
 
-    private void Server_OnPeerConnected(Peer obj)
-    {
-        Debug.Log("Peer connected!");
-    }
-
     public void StartServer()
     {
         GlobalVariables.isClient = false;
@@ -58,5 +53,10 @@ public class ServerController : MonoBehaviour
         server.StartServer(7777);
 
         UIManager.Instance.UpdateSubTitleText("You are the SERVER");
+    }
+
+    private void Server_OnPeerConnected(Peer obj)
+    {
+        Debug.Log("Peer connected!");
     }
 }
