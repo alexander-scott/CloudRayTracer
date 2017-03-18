@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace BMW.Verification.CloudRayTracing
 {
-    public class DetectableObject : MonoBehaviour
+    public class NetworkedObject : MonoBehaviour
     {
         private Vector3 oldKey;
 

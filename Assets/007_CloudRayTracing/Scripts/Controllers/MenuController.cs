@@ -6,13 +6,13 @@ using UnityEngine.UI;
 
 namespace BMW.Verification.CloudRayTracing
 {
-    public class UIManager : MonoBehaviour
+    public class MenuController : MonoBehaviour
     {
         #region Singleton
 
-        private static UIManager _instance;
+        private static MenuController _instance;
 
-        public static UIManager Instance { get { return _instance; } }
+        public static MenuController Instance { get { return _instance; } }
 
         private void Awake()
         {
@@ -30,7 +30,9 @@ namespace BMW.Verification.CloudRayTracing
 
         public Button connectToServer;
         public Button startServer;
+        public Button host;
         public InputField ipAddress;
+        public Text ourIpAddress;
 
         [Space(10)]
 
@@ -42,8 +44,10 @@ namespace BMW.Verification.CloudRayTracing
         {
             connectToServer.onClick.AddListener(ConnectToServer);
             startServer.onClick.AddListener(StartServerClicked);
+            host.onClick.AddListener(HostClicked);
 
             ipAddress.text = GlobalVariables.ipAddress;
+            ourIpAddress.text = GlobalVariables.LocalIPAddress();
         }
 
         public void IPAddressChanged(string ipaddress)
@@ -63,14 +67,32 @@ namespace BMW.Verification.CloudRayTracing
         {
             subTitle.text = "Starting server...";
             menuCanvas.SetActive(false);
+            Destroy(ClientController.Instance); Destroy(HostController.Instance);
+
             ServerController.Instance.StartServer();
+
+            GlobalVariables.applicationType = GlobalVariables.ApplicationType.Server;
         }
 
         private void ConnectToServer()
         {
             subTitle.text = "Connecting to server...";
             menuCanvas.SetActive(false);
+            Destroy(ServerController.Instance); Destroy(HostController.Instance);
+
             ClientController.Instance.ConnectToServer();
+
+            GlobalVariables.applicationType = GlobalVariables.ApplicationType.Client;
+        }
+
+        private void HostClicked()
+        {
+            menuCanvas.SetActive(false);
+            Destroy(ServerController.Instance); Destroy(ClientController.Instance);
+
+            HostController.Instance.HostSelected();
+
+            GlobalVariables.applicationType = GlobalVariables.ApplicationType.Host;
         }
     }
 }

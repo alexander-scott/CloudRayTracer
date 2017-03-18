@@ -44,7 +44,7 @@ namespace BMW.Verification.CloudRayTracing
             GlobalVariables.activated = true;
             server.StartServer(7777);
 
-            UIManager.Instance.UpdateSubTitleText("You are the SERVER");
+            MenuController.Instance.UpdateSubTitleText("You are the SERVER");
         }
 
         public void UpdateObjectPosition(Vector3 oldKey, Vector3 position, Vector3 rotation, Vector3 localScale)
@@ -73,9 +73,9 @@ namespace BMW.Verification.CloudRayTracing
             }
         }
 
-        public void SendSeralisedMeshToClient(byte[] mesh)
+        public void SendSeralisedMeshToClient(int transmissionID, byte[] mesh)
         {
-            StartCoroutine(server.Connection.SendBytesToClientsRoutine(0, mesh));
+            StartCoroutine(server.Connection.SendBytesToClientsRoutine(transmissionID, mesh));
         }
 
         private void Server_OnPeerConnected(Peer obj)

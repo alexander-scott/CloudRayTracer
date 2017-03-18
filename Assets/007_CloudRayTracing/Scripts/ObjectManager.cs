@@ -33,15 +33,15 @@ namespace BMW.Verification.CloudRayTracing
         {
             List<GameObject> gos = new List<GameObject>();
 
-            foreach (DetectableObject detectObject in FindObjectsOfType<DetectableObject>())
+            foreach (NetworkedObject networkObject in FindObjectsOfType<NetworkedObject>())
             {
-                if (gos.Contains(detectObject.gameObject))
+                if (gos.Contains(networkObject.gameObject))
                 {
                     continue;
                 }
 
-                gos.Add(detectObject.gameObject);
-                objectDictionary[detectObject.transform.position] = detectObject.gameObject;
+                gos.Add(networkObject.gameObject);
+                objectDictionary[networkObject.transform.position] = networkObject.gameObject;
             }
         }
 

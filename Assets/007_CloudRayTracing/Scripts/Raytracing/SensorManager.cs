@@ -7,14 +7,8 @@ namespace BMW.Verification.CloudRayTracing
 {
     public class SensorManager : MonoBehaviour
     {
-        #region Gameobjects 
-
         private GameObject pointCloud;
         public GameObject pointCloudMesh;
-
-        #endregion
-
-        #region Hidden Publics
 
         [HideInInspector]
         public List<Vector3> hitPositions = new List<Vector3>();
@@ -26,10 +20,6 @@ namespace BMW.Verification.CloudRayTracing
         [HideInInspector]
         public int[] trianglePool;
 
-        #endregion
-
-        #region Consts
-
         private const float pointRadius = 0.01f;
 
         private const int nbLong = 3;
@@ -38,8 +28,6 @@ namespace BMW.Verification.CloudRayTracing
 
         private const float _pi = Mathf.PI;
         private const float _2pi = _pi * 2f;
-
-        #endregion
 
         private Sensor[] sensors;
 

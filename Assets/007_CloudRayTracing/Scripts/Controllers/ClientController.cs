@@ -38,7 +38,7 @@ namespace BMW.Verification.CloudRayTracing
         void Start()
         {
             client = new Client();
-            //client.PersistConnection = true;
+            client.PersistConnection = true;
 
             client.OnConnected += Client_OnConnected;
             client.OnDisconnected += Client_OnDisconnected;
@@ -53,6 +53,7 @@ namespace BMW.Verification.CloudRayTracing
         {
             GlobalVariables.isClient = true;
             GlobalVariables.activated = true;
+
             client.Connect(GlobalVariables.ipAddress, 7777);
         }
 
@@ -60,15 +61,6 @@ namespace BMW.Verification.CloudRayTracing
         {
             if (client.IsConnected)
                 client.Connection.UpdateObjectPosition(oldkey, position, rotation, localScale);
-        }
-
-
-        private void Connection_OnDataCompletelyReceived(int arg0, byte[] mesh)
-        {
-            // Deserialize data back to a mesh
-            Mesh newMesh = MeshSerializer.ReadMesh(mesh, true);
-
-            pointCloud.GetComponent<MeshFilter>().mesh = newMesh;
         }
 
         public void SendPacket(GlobalVariables.PacketType packetType, string contents)
@@ -86,6 +78,14 @@ namespace BMW.Verification.CloudRayTracing
             }
         }
 
+        private void Connection_OnDataCompletelyReceived(int arg0, byte[] mesh)
+        {
+            // Deserialize data back to a mesh
+            Mesh newMesh = MeshSerializer.ReadMesh(mesh, true);
+
+            pointCloud.GetComponent<MeshFilter>().mesh = newMesh;
+        }
+
         private void StartRayTracer()
         {
             SendPacket(GlobalVariables.PacketType.ToggleRaytracer, true.ToString());
@@ -93,18 +93,18 @@ namespace BMW.Verification.CloudRayTracing
 
         private void Client_OnConnectFailed()
         {
-            UIManager.Instance.UpdateSubTitleText("Failed to connect to the server");
+            MenuController.Instance.UpdateSubTitleText("Failed to connect to the server");
         }
 
         private void Client_OnDisconnected(byte disconnectMsg)
         {
-            UIManager.Instance.UpdateSubTitleText("Disconnected from the server");
+            MenuController.Instance.UpdateSubTitleText("Disconnected from the server");
         }
 
         private void Client_OnConnected()
         {
             Debug.Log("Connected");
-            UIManager.Instance.UpdateSubTitleText("You are the CLIENT");
+            MenuController.Instance.UpdateSubTitleText("You are the CLIENT");
             clientCanvas.SetActive(true);
         }
     }
