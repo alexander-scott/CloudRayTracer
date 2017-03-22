@@ -54,7 +54,11 @@ namespace BMW.Verification.CloudRayTracing
             CreateTriangles();
 
             sensors = FindObjectsOfType<Sensor>();
-            pointCloud = FindObjectOfType<GlobalAssets>().pointCloud;
+
+            if (DataController.Instance.applicationType == DataController.ApplicationType.Client)
+                pointCloud = ClientController.Instance.pointCloud;
+            else
+                pointCloud = HostController.Instance.pointCloud;
 
             for (int i = 0; i < sensors.Length; i++)
             {
@@ -132,7 +136,6 @@ namespace BMW.Verification.CloudRayTracing
             mesh.vertices = points;
             mesh.colors = colors;
             mesh.SetIndices(indecies, MeshTopology.Points, 0);
-            ;
 
             listOfMeshes.Add(mesh);
 

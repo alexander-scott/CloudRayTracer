@@ -28,11 +28,19 @@ namespace BMW.Verification.CloudRayTracing
 
         #endregion
 
-        public Button connectToServer;
+        public Button connectToServerButton;
+        public Text ipAddressLabel;
+        public GameObject clientCanvas;
+        public Button startRaytracerButton;
+
+        [Space(10)]
+
         public Button startServer;
-        public Button host;
         public InputField ipAddress;
-        public Text ourIpAddress;
+
+        [Space(10)]
+
+        public Button host;
 
         [Space(10)]
 
@@ -42,17 +50,17 @@ namespace BMW.Verification.CloudRayTracing
         // Use this for initialization
         void Start()
         {
-            connectToServer.onClick.AddListener(ConnectToServer);
+            connectToServerButton.onClick.AddListener(ConnectToServer);
             startServer.onClick.AddListener(StartServerClicked);
             host.onClick.AddListener(HostClicked);
 
-            ipAddress.text = GlobalVariables.ipAddress;
-            ourIpAddress.text = GlobalVariables.LocalIPAddress();
+            ipAddress.text = DataController.Instance.ipAddress;
+            ipAddressLabel.text = DataController.Instance.LocalIPAddress();
         }
 
         public void IPAddressChanged(string ipaddress)
         {
-            GlobalVariables.ipAddress = ipaddress;
+            DataController.Instance.ipAddress = ipaddress;
 
             PlayerPrefs.SetString("IPAddress", ipaddress); // Save the new ip address locally on the device
             PlayerPrefs.Save();
@@ -71,18 +79,16 @@ namespace BMW.Verification.CloudRayTracing
 
             ServerController.Instance.StartServer();
 
-            GlobalVariables.applicationType = GlobalVariables.ApplicationType.Server;
+            DataController.Instance.applicationType = DataController.ApplicationType.Server;
         }
 
         private void ConnectToServer()
         {
             subTitle.text = "Connecting to server...";
-            menuCanvas.SetActive(false);
-            Destroy(ServerController.Instance); Destroy(HostController.Instance);
 
             ClientController.Instance.ConnectToServer();
 
-            GlobalVariables.applicationType = GlobalVariables.ApplicationType.Client;
+            DataController.Instance.applicationType = DataController.ApplicationType.Client;
         }
 
         private void HostClicked()
@@ -92,7 +98,7 @@ namespace BMW.Verification.CloudRayTracing
 
             HostController.Instance.HostSelected();
 
-            GlobalVariables.applicationType = GlobalVariables.ApplicationType.Host;
+            DataController.Instance.applicationType = DataController.ApplicationType.Host;
         }
     }
 }

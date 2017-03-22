@@ -6,17 +6,35 @@ using UnityEngine;
 
 namespace BMW.Verification.CloudRayTracing
 {
-    public static class GlobalVariables
+    public class DataController : MonoBehaviour
     {
-        public static bool isClient = false;
-        public static bool activated = false;
+        #region Singleton
 
-        public static string ipAddress = PlayerPrefs.GetString("IPAddress", "127.0.0.1");
-        public static int defaultBufferSize = 1300; // Max ethernet MTU is ~1400
-        public static ApplicationType applicationType;
+        private static DataController _instance;
+
+        public static DataController Instance { get { return _instance; } }
+
+        private void Awake()
+        {
+            if (_instance != null && _instance != this)
+            {
+                Destroy(this.gameObject);
+            }
+            else
+            {
+                ipAddress = PlayerPrefs.GetString("IPAddress", "127.0.0.1");
+                _instance = this;
+            }
+        }
+
+        #endregion
+
+        public string ipAddress;
+        public int defaultBufferSize = 1300; // Max ethernet MTU is ~1400
+        public ApplicationType applicationType = ApplicationType.Undefined;
 
         public enum PacketType { ToggleRaytracer, }
-        public enum ApplicationType { Client, Server, Host, }
+        public enum ApplicationType { Undefined, Client, Server, Host, }
 
         public class TransmissionData
         {
@@ -30,7 +48,7 @@ namespace BMW.Verification.CloudRayTracing
             }
         }
 
-        public static string LocalIPAddress()
+        public string LocalIPAddress()
         {
             IPHostEntry host;
             string localIP = "";

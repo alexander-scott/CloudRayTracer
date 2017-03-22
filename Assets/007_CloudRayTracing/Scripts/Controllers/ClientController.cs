@@ -29,10 +29,8 @@ namespace BMW.Verification.CloudRayTracing
         #endregion
 
         public GameObject pointCloud;
-        public GameObject clientCanvas;
-        public Button startRaytracer;
 
-        private Client client;
+        public Client client;
 
         // Use this for initialization
         void Start()
@@ -46,33 +44,32 @@ namespace BMW.Verification.CloudRayTracing
 
             client.Connection.OnDataCompletelyReceived += Connection_OnDataCompletelyReceived;
 
-            startRaytracer.onClick.AddListener(StartRayTracer);
+            MenuController.Instance.startRaytracerButton.onClick.AddListener(StartRayTracer);
         }
 
         public void ConnectToServer()
         {
-            GlobalVariables.isClient = true;
-            GlobalVariables.activated = true;
-
-            client.Connect(GlobalVariables.ipAddress, 7777);
+            client.Connect(DataController.Instance.ipAddress, 7777);
         }
 
         public void UpdateObjectPositionOnServer(Vector3 oldkey, Vector3 position, Vector3 rotation, Vector3 localScale)
         {
             if (client.IsConnected)
+            {
                 client.Connection.UpdateObjectPosition(oldkey, position, rotation, localScale);
+            }   
         }
 
-        public void SendPacket(GlobalVariables.PacketType packetType, string contents)
+        public void SendPacket(DataController.PacketType packetType, string contents)
         {
             client.Connection.SendPacket((int)packetType, contents); 
         }
 
-        public void PacketRecieved(GlobalVariables.PacketType packetType, string contents)
-        {
+        public void PacketRecieved(DataController.PacketType packetType, string contents)
+        {  
             switch (packetType)
             {
-                case GlobalVariables.PacketType.ToggleRaytracer:
+                case DataController.PacketType.ToggleRaytracer:
                     // DO SOMETHING
                     break;
             }
@@ -88,7 +85,7 @@ namespace BMW.Verification.CloudRayTracing
 
         private void StartRayTracer()
         {
-            SendPacket(GlobalVariables.PacketType.ToggleRaytracer, true.ToString());
+            SendPacket(DataController.PacketType.ToggleRaytracer, true.ToString());
         }
 
         private void Client_OnConnectFailed()
@@ -104,8 +101,11 @@ namespace BMW.Verification.CloudRayTracing
         private void Client_OnConnected()
         {
             Debug.Log("Connected");
+            Destroy(ServerController.Instance); Destroy(HostController.Instance);
+
             MenuController.Instance.UpdateSubTitleText("You are the CLIENT");
-            clientCanvas.SetActive(true);
+            MenuController.Instance.menuCanvas.SetActive(false);
+            MenuController.Instance.clientCanvas.SetActive(true);
         }
     }
 }

@@ -29,18 +29,16 @@ namespace BMW.Verification.CloudRayTracing
         #endregion
 
         public GameObject pointCloud;
-        public GameObject clientCanvas;
-        public Button startRaytracer;
 
         // Use this for initialization
         void Start()
         {
-            startRaytracer.onClick.AddListener(StartRayTracer);
+            MenuController.Instance.startRaytracerButton.onClick.AddListener(StartRayTracer);
         }
 
         public void HostSelected()
         {
-            clientCanvas.SetActive(true);
+            MenuController.Instance.clientCanvas.SetActive(true);
             MenuController.Instance.UpdateSubTitleText("You are the HOST");
         }
 

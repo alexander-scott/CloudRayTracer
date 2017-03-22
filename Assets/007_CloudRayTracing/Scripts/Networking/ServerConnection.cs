@@ -56,7 +56,7 @@ namespace BMW.Verification.CloudRayTracing
         [Signal]
         public void RecievePacket(int packetNum, string contents)
         {
-            ServerController.Instance.PacketRecieved((GlobalVariables.PacketType)packetNum, contents);
+            ServerController.Instance.PacketRecieved((DataController.PacketType)packetNum, contents);
         }
 
         #endregion
@@ -74,8 +74,8 @@ namespace BMW.Verification.CloudRayTracing
 
             // Begin transmission of data. send chunks of 'bufferSize' until completely transmitted.
             serverTransmissionIds.Add(transmissionId);
-            GlobalVariables.TransmissionData dataToTransmit = new GlobalVariables.TransmissionData(data);
-            int bufferSize = GlobalVariables.defaultBufferSize;
+            DataController.TransmissionData dataToTransmit = new DataController.TransmissionData(data);
+            int bufferSize = DataController.Instance.defaultBufferSize;
 
             while (dataToTransmit.curDataIndex < dataToTransmit.data.Length - 1)
             {

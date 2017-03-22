@@ -16,7 +16,7 @@ namespace BMW.Verification.CloudRayTracing
         // Update is called once per frame
         void Update()
         {
-            if (GlobalVariables.isClient && GlobalVariables.activated)
+            if (DataController.Instance.applicationType == DataController.ApplicationType.Client && ClientController.Instance.client.IsConnected)
             {
                 if (transform.hasChanged)
                 {

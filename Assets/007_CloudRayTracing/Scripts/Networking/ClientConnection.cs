@@ -10,7 +10,7 @@ namespace BMW.Verification.CloudRayTracing
     public partial class ClientConnection : ClientScope
     {
         // Maps the transmission id to the data being received.
-        Dictionary<int, GlobalVariables.TransmissionData> clientTransmissionData = new Dictionary<int, GlobalVariables.TransmissionData>();
+        Dictionary<int, DataController.TransmissionData> clientTransmissionData = new Dictionary<int, DataController.TransmissionData>();
 
         public event UnityAction<int, byte[]> OnDataFragmentReceived;
         public event UnityAction<int, byte[]> OnDataCompletelyReceived;
@@ -39,7 +39,7 @@ namespace BMW.Verification.CloudRayTracing
         [Signal]
         public void RecievePacket(int packetNum, string contents)
         {
-            ClientController.Instance.PacketRecieved((GlobalVariables.PacketType)packetNum, contents);
+            ClientController.Instance.PacketRecieved((DataController.PacketType)packetNum, contents);
         }
 
         #endregion
@@ -53,7 +53,7 @@ namespace BMW.Verification.CloudRayTracing
                 return;
 
             // Prepare data array which will be filled chunk by chunk by the received data
-            GlobalVariables.TransmissionData receivingData = new GlobalVariables.TransmissionData(new byte[expectedSize]);
+            DataController.TransmissionData receivingData = new DataController.TransmissionData(new byte[expectedSize]);
             clientTransmissionData.Add(transmissionId, receivingData);
         }
 
@@ -65,7 +65,7 @@ namespace BMW.Verification.CloudRayTracing
                 return;
 
             // Copy received data into prepared array and remember current dataposition
-            GlobalVariables.TransmissionData dataToReceive = clientTransmissionData[transmissionId];
+            DataController.TransmissionData dataToReceive = clientTransmissionData[transmissionId];
             System.Array.Copy(recBuffer, 0, dataToReceive.data, dataToReceive.curDataIndex, recBuffer.Length);
             dataToReceive.curDataIndex += recBuffer.Length;
 

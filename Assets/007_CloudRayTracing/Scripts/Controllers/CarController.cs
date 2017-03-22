@@ -39,7 +39,7 @@ namespace BMW.Verification.CloudRayTracing
         {
             sensorManager.StartRayTracer();
 
-            if (GlobalVariables.applicationType == GlobalVariables.ApplicationType.Host)
+            if (DataController.Instance.applicationType == DataController.ApplicationType.Host)
             {
                 StartCoroutine(SendMeshToHost());
             }
@@ -70,7 +70,7 @@ namespace BMW.Verification.CloudRayTracing
                 sensorManager.finishedRayTracing = false;
 
                 // How long should we wait before doing it all again? Bear in mind the data might not have fully reached the client yet.
-                yield return new WaitForSeconds(0.3f);
+                yield return new WaitForSeconds(0.1f);
             }
         }
 
@@ -89,7 +89,8 @@ namespace BMW.Verification.CloudRayTracing
                 sensorManager.finishedRayTracing = false;
 
                 // How long should we wait before doing it all again? Bear in mind the data might not have fully reached the client yet.
-                yield return new WaitForSeconds(0.3f);
+                //yield return new WaitForSeconds(0.3f);
+                yield return new WaitForFixedUpdate();
             }
         }
     }

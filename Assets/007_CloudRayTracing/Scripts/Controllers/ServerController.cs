@@ -40,8 +40,6 @@ namespace BMW.Verification.CloudRayTracing
 
         public void StartServer()
         {
-            GlobalVariables.isClient = false;
-            GlobalVariables.activated = true;
             server.StartServer(7777);
 
             MenuController.Instance.UpdateSubTitleText("You are the SERVER");
@@ -57,16 +55,16 @@ namespace BMW.Verification.CloudRayTracing
             ObjectManager.Instance.UpdateKey(oldKey);
         }
 
-        public void SendPacket(GlobalVariables.PacketType packetType, string contents)
+        public void SendPacket(DataController.PacketType packetType, string contents)
         {
             server.Connection.SendPacket((int)packetType, contents);
         }
 
-        public void PacketRecieved(GlobalVariables.PacketType packetType, string contents)
+        public void PacketRecieved(DataController.PacketType packetType, string contents)
         {
             switch (packetType)
             {
-                case GlobalVariables.PacketType.ToggleRaytracer:
+                case DataController.PacketType.ToggleRaytracer:
                     Debug.Log("Raytrace start");
                     CarController.Instance.StartRayTracing();
                     break;
@@ -75,6 +73,7 @@ namespace BMW.Verification.CloudRayTracing
 
         public void SendSeralisedMeshToClient(int transmissionID, byte[] mesh)
         {
+            // SPLIT UP ARRAY
             StartCoroutine(server.Connection.SendBytesToClientsRoutine(transmissionID, mesh));
         }
 
