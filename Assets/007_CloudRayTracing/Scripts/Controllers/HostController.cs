@@ -38,7 +38,7 @@ namespace BMW.Verification.CloudRayTracing
 
         public void HostSelected()
         {
-            MenuController.Instance.clientCanvas.SetActive(true);
+            MenuController.Instance.clientCanvas.gameObject.SetActive(true);
             MenuController.Instance.UpdateSubTitleText("You are the HOST");
         }
 

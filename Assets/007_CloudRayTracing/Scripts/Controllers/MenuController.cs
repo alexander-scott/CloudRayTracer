@@ -28,22 +28,24 @@ namespace BMW.Verification.CloudRayTracing
 
         #endregion
 
+        [Header("Client objects")]
+        public CanvasGroup clientCanvas;
         public Button connectToServerButton;
         public Text ipAddressLabel;
-        public GameObject clientCanvas;
         public Button startRaytracerButton;
 
         [Space(10)]
-
+        [Header("Server objects")]
+        public CanvasGroup serverCanvas;
         public Button startServer;
         public InputField ipAddress;
 
         [Space(10)]
-
+        [Header("Host objects")]
         public Button host;
 
         [Space(10)]
-
+        [Header("Config menu objects")]
         public GameObject menuCanvas;
         public Text subTitle;
 
@@ -71,11 +73,22 @@ namespace BMW.Verification.CloudRayTracing
             subTitle.text = text;
         }
 
+        public void OnClientConnected()
+        {
+            subTitle.text = "You are the CLIENT";
+            Destroy(ServerController.Instance); Destroy(HostController.Instance);
+
+            StartCoroutine(FadeCanvasGroupIn(MenuController.Instance.clientCanvas, 0.5f));
+
+            DataController.Instance.applicationType = DataController.ApplicationType.Client;
+        }
+
         private void StartServerClicked()
         {
             subTitle.text = "Starting server...";
-            menuCanvas.SetActive(false);
             Destroy(ClientController.Instance); Destroy(HostController.Instance);
+
+            StartCoroutine(FadeCanvasGroupIn(serverCanvas, 0.5f));
 
             ServerController.Instance.StartServer();
 
@@ -87,18 +100,38 @@ namespace BMW.Verification.CloudRayTracing
             subTitle.text = "Connecting to server...";
 
             ClientController.Instance.ConnectToServer();
-
-            DataController.Instance.applicationType = DataController.ApplicationType.Client;
         }
 
         private void HostClicked()
         {
-            menuCanvas.SetActive(false);
             Destroy(ServerController.Instance); Destroy(ClientController.Instance);
+
+            StartCoroutine(FadeCanvasGroupIn(clientCanvas, 0.5f));
 
             HostController.Instance.HostSelected();
 
             DataController.Instance.applicationType = DataController.ApplicationType.Host;
+        }
+
+        private IEnumerator FadeCanvasGroupIn(CanvasGroup canvasGroup, float duration)
+        {
+            float smoothness = 0.02f;
+            float progress = 0; // This float will serve as the 3rd parameter of the lerp function.
+            float increment = smoothness / duration; // The amount of change to apply.
+
+            if (!canvasGroup.gameObject.activeInHierarchy)
+            {
+                canvasGroup.gameObject.SetActive(true);
+                canvasGroup.alpha = 0f;
+            }
+
+            while (progress < 1)
+            {
+                canvasGroup.alpha = Mathf.Lerp(0f, 1f, progress);
+
+                progress += increment;
+                yield return new WaitForSeconds(smoothness);
+            }
         }
     }
 }

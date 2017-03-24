@@ -29,8 +29,8 @@ public class NetworkScopePostProcessor
 			File.WriteAllText(path, NetworkScopeUtility.SerializerClass.ToString());
 		}
 
-		AssetDatabase.Refresh();
-	}
+        AssetDatabase.Refresh();
+    }
 
 	static void ProcessType(Type type)
 	{

@@ -100,12 +100,7 @@ namespace BMW.Verification.CloudRayTracing
 
         private void Client_OnConnected()
         {
-            Debug.Log("Connected");
-            Destroy(ServerController.Instance); Destroy(HostController.Instance);
-
-            MenuController.Instance.UpdateSubTitleText("You are the CLIENT");
-            MenuController.Instance.menuCanvas.SetActive(false);
-            MenuController.Instance.clientCanvas.SetActive(true);
+            MenuController.Instance.OnClientConnected();
         }
     }
 }

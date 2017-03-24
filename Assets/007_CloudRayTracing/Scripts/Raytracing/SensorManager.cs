@@ -53,7 +53,7 @@ namespace BMW.Verification.CloudRayTracing
             CreateVerticies();
             CreateTriangles();
 
-            sensors = FindObjectsOfType<Sensor>();
+            sensors = GetComponentsInChildren<Sensor>();
 
             if (DataController.Instance.applicationType == DataController.ApplicationType.Client)
                 pointCloud = ClientController.Instance.pointCloud;
