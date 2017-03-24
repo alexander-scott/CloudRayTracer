@@ -4,13 +4,13 @@ using UnityEngine;
 
 namespace BMW.Verification.CloudRayTracing
 {
-    public class CarController : MonoBehaviour
+    public class RayTraceController : MonoBehaviour
     {
         #region Singleton
 
-        private static CarController _instance;
+        private static RayTraceController _instance;
 
-        public static CarController Instance { get { return _instance; } }
+        public static RayTraceController Instance { get { return _instance; } }
 
         private void Awake()
         {
@@ -26,14 +26,8 @@ namespace BMW.Verification.CloudRayTracing
 
         #endregion
 
-        private SensorManager sensorManager;
+        public SensorManager sensorManager;
         private int meshCount;
-
-        // Use this for initialization
-        void Start()
-        {
-            sensorManager = GetComponentInChildren<SensorManager>();
-        }
 
         public void StartRayTracing()
         {
@@ -88,8 +82,6 @@ namespace BMW.Verification.CloudRayTracing
                 sensorManager.listOfMeshes.Clear();
                 sensorManager.finishedRayTracing = false;
 
-                // How long should we wait before doing it all again? Bear in mind the data might not have fully reached the client yet.
-                //yield return new WaitForSeconds(0.3f);
                 yield return new WaitForFixedUpdate();
             }
         }

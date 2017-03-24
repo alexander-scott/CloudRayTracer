@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExampleClass : MonoBehaviour
+public class WireFrameRenderer : MonoBehaviour
 {
     void OnPreRender()
     {

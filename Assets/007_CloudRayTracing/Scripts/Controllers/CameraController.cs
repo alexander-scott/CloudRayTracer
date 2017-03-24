@@ -63,34 +63,39 @@ namespace BMW.Verification.CloudRayTracing
 
         void LateUpdate()
         {
-            if (Input.GetMouseButton(0))
+            if (DataController.Instance.applicationType != DataController.ApplicationType.Undefined)
             {
-                velocityX += xSpeed * Input.GetAxis("Mouse X") * distance * 0.02f;
-                velocityY += ySpeed * Input.GetAxis("Mouse Y") * 0.02f;
+                if (Input.GetMouseButton(0))
+                {
+                    velocityX += xSpeed * Input.GetAxis("Mouse X") * distance * 0.02f;
+                    velocityY += ySpeed * Input.GetAxis("Mouse Y") * 0.02f;
+                }
+
+                rotationYAxis += velocityX;
+                rotationXAxis -= velocityY;
+                rotationXAxis = ClampAngle(rotationXAxis, yMinLimit, yMaxLimit);
+
+                Quaternion fromRotation = Quaternion.Euler(cameraDefault.transform.rotation.eulerAngles.x, cameraDefault.transform.rotation.eulerAngles.y, 0);
+                Quaternion toRotation = Quaternion.Euler(rotationXAxis, rotationYAxis, 0);
+                Quaternion rotation = toRotation;
+
+                distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel") * 5, distanceMin, distanceMax);
+
+                // Don't need this as there won't be anything blocking our view of the car
+                //RaycastHit hit;
+                //if (Physics.Linecast(car.transform.position, cameraDefault.transform.position, out hit))
+                //{
+                //    distance -= hit.distance;
+                //}
+
+                Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
+                Vector3 position = rotation * negDistance + car.transform.position;
+
+                UpdateCameras(rotation, position);
+
+                velocityX = Mathf.Lerp(velocityX, 0, Time.deltaTime * smoothTime);
+                velocityY = Mathf.Lerp(velocityY, 0, Time.deltaTime * smoothTime);
             }
-
-            rotationYAxis += velocityX;
-            rotationXAxis -= velocityY;
-            rotationXAxis = ClampAngle(rotationXAxis, yMinLimit, yMaxLimit);
-
-            Quaternion fromRotation = Quaternion.Euler(cameraDefault.transform.rotation.eulerAngles.x, cameraDefault.transform.rotation.eulerAngles.y, 0);
-            Quaternion toRotation = Quaternion.Euler(rotationXAxis, rotationYAxis, 0);
-            Quaternion rotation = toRotation;
-
-            distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel") * 5, distanceMin, distanceMax);
-
-            RaycastHit hit;
-            if (Physics.Linecast(car.transform.position, cameraDefault.transform.position, out hit))
-            {
-                distance -= hit.distance;
-            }
-            Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
-            Vector3 position = rotation * negDistance + car.transform.position;
-
-            UpdateCameras(rotation, position);
-
-            velocityX = Mathf.Lerp(velocityX, 0, Time.deltaTime * smoothTime);
-            velocityY = Mathf.Lerp(velocityY, 0, Time.deltaTime * smoothTime);
         }
 
         public static float ClampAngle(float angle, float min, float max)
@@ -147,7 +152,6 @@ namespace BMW.Verification.CloudRayTracing
                 }
 
                 camera.rect = new Rect(newXPos, newYPos, Mathf.Lerp(originalWidth, width, progress), Mathf.Lerp(originalHeight, height, progress));
-                Debug.Log(camera.rect);
 
                 progress += increment;
                 yield return Timing.WaitForSeconds(smoothness);

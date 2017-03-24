@@ -66,7 +66,7 @@ namespace BMW.Verification.CloudRayTracing
             {
                 case DataController.PacketType.ToggleRaytracer:
                     Debug.Log("Raytrace start");
-                    CarController.Instance.StartRayTracing();
+                    RayTraceController.Instance.StartRayTracing();
                     break;
             }
         }

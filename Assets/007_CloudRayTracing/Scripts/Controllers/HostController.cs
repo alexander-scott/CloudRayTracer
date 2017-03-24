@@ -50,7 +50,7 @@ namespace BMW.Verification.CloudRayTracing
         private void StartRayTracer()
         {
             Debug.Log("Raytrace start");
-            CarController.Instance.StartRayTracing();
+            RayTraceController.Instance.StartRayTracing();
         }
     }
 }

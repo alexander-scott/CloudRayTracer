@@ -57,21 +57,29 @@ namespace BMW.Verification.CloudRayTracing
             if (client.IsConnected)
             {
                 client.Connection.UpdateObjectPosition(oldkey, position, rotation, localScale);
-            }   
+            }
         }
 
         public void SendPacket(DataController.PacketType packetType, string contents)
         {
-            client.Connection.SendPacket((int)packetType, contents); 
+            client.Connection.SendPacket((int)packetType, contents);
         }
 
         public void PacketRecieved(DataController.PacketType packetType, string contents)
-        {  
+        {
             switch (packetType)
             {
                 case DataController.PacketType.ToggleRaytracer:
                     // DO SOMETHING
                     break;
+            }
+        }
+
+        public void OnApplicationQuit()
+        {
+            if (client.IsConnected)
+            {
+                client.Disconnect();
             }
         }
 
