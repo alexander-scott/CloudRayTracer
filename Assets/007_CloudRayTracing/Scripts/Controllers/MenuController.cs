@@ -28,6 +28,10 @@ namespace BMW.Verification.CloudRayTracing
 
         #endregion
 
+        [Header("Top UI")]
+        public Text topTitle;
+
+        [Space(10)]
         [Header("Client objects")]
         public CanvasGroup clientCanvas;
         public Button connectToServerButton;
@@ -43,11 +47,6 @@ namespace BMW.Verification.CloudRayTracing
         [Space(10)]
         [Header("Host objects")]
         public Button host;
-
-        [Space(10)]
-        [Header("Config menu objects")]
-        public GameObject menuCanvas;
-        public Text subTitle;
 
         // Use this for initialization
         void Start()
@@ -70,25 +69,21 @@ namespace BMW.Verification.CloudRayTracing
 
         public void UpdateSubTitleText(string text)
         {
-            subTitle.text = text;
+            topTitle.text = text;
         }
 
         public void OnClientConnected()
         {
-            subTitle.text = "You are the CLIENT";
+            topTitle.text = "You are the CLIENT";
             Destroy(ServerController.Instance); Destroy(HostController.Instance);
-
-            StartCoroutine(FadeCanvasGroupIn(MenuController.Instance.clientCanvas, 0.5f));
 
             DataController.Instance.applicationType = DataController.ApplicationType.Client;
         }
 
         private void StartServerClicked()
         {
-            subTitle.text = "Starting server...";
+            topTitle.text = "Starting server...";
             Destroy(ClientController.Instance); Destroy(HostController.Instance);
-
-            StartCoroutine(FadeCanvasGroupIn(serverCanvas, 0.5f));
 
             ServerController.Instance.StartServer();
 
@@ -97,7 +92,7 @@ namespace BMW.Verification.CloudRayTracing
 
         private void ConnectToServer()
         {
-            subTitle.text = "Connecting to server...";
+            topTitle.text = "Connecting to server...";
 
             ClientController.Instance.ConnectToServer();
         }
@@ -105,8 +100,6 @@ namespace BMW.Verification.CloudRayTracing
         private void HostClicked()
         {
             Destroy(ServerController.Instance); Destroy(ClientController.Instance);
-
-            StartCoroutine(FadeCanvasGroupIn(clientCanvas, 0.5f));
 
             HostController.Instance.HostSelected();
 
