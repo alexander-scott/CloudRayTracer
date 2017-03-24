@@ -30,6 +30,7 @@ namespace BMW.Verification.CloudRayTracing
 
         [Header("Top UI")]
         public Text topTitle;
+        public GameObject configCanvas;
 
         [Space(10)]
         [Header("Client objects")]
@@ -77,6 +78,8 @@ namespace BMW.Verification.CloudRayTracing
             topTitle.text = "You are the CLIENT";
             Destroy(ServerController.Instance); Destroy(HostController.Instance);
 
+            clientCanvas.gameObject.SetActive(true); configCanvas.gameObject.SetActive(false);
+
             DataController.Instance.applicationType = DataController.ApplicationType.Client;
         }
 
@@ -100,6 +103,8 @@ namespace BMW.Verification.CloudRayTracing
         private void HostClicked()
         {
             Destroy(ServerController.Instance); Destroy(ClientController.Instance);
+
+            clientCanvas.gameObject.SetActive(true); configCanvas.gameObject.SetActive(false);
 
             HostController.Instance.HostSelected();
 

@@ -6,19 +6,7 @@ namespace BMW.Verification.CloudRayTracing
     {
         #region Publics
 
-        [Range(0, 500)]
-        public float sensorWidth;
-
-        [Range(0, 500)]
-        public float sensorHeight;
-
-        [Range(0, 500)]
-        public float sensorDepth;
-
-        [Range(0.001f, 1)]
-        public float gapBetweenPoints;
-
-        public LayerMask toDetect;
+        public SensorManager sensorManager;
 
         public GameObject sensorArea;
         public Transform rayPoint;
@@ -42,13 +30,6 @@ namespace BMW.Verification.CloudRayTracing
 
         #endregion
 
-        private SensorManager sensorManager;
-
-        public void Init(SensorManager sm)
-        {
-            sensorManager = sm;
-        }
-
         public void Update()
         {
             UpdateValues();
@@ -62,14 +43,14 @@ namespace BMW.Verification.CloudRayTracing
             finishedRayCasting = false;
 
             // Iterate through every point within the bounds
-            for (float i = topY; i > botY; i -= gapBetweenPoints) // Go from top to bottom of the bounds
+            for (float i = topY; i > botY; i -= sensorManager.gapBetweenPoints) // Go from top to bottom of the bounds
             {
-                for (float j = leftX; j < rightX; j += gapBetweenPoints) // Go from left to right of the bounds
+                for (float j = leftX; j < rightX; j += sensorManager.gapBetweenPoints) // Go from left to right of the bounds
                 {
-                    dir = (MovePointerToLoc(j, i, sensorDepth) - transform.position).normalized; // Direction vector from sensor to point within bounds
+                    dir = (MovePointerToLoc(j, i, sensorManager.sensorDepth) - transform.position).normalized; // Direction vector from sensor to point within bounds
 
                     // Fire a ray from the sensor to the current point in the bounds
-                    if (Physics.Raycast(transform.position, dir, out hit, sensorDepth, toDetect.value))
+                    if (Physics.Raycast(transform.position, dir, out hit, sensorManager.sensorDepth, sensorManager.toDetect.value))
                     {
                         // If it intersects with an object, add that point to the list of hit positions
                         sensorManager.hitPositions.Add(hit.point);
@@ -82,18 +63,18 @@ namespace BMW.Verification.CloudRayTracing
 
         private void UpdateValues()
         {
-            sensorArea.transform.localScale = new Vector3(sensorWidth / 10, sensorHeight / 10, 0f);
-            sensorArea.transform.localPosition = new Vector3(0f, 0f, sensorDepth);
+            sensorArea.transform.localScale = new Vector3(sensorManager.sensorWidth / 10, sensorManager.sensorHeight / 10, 0f);
+            sensorArea.transform.localPosition = new Vector3(0f, 0f, sensorManager.sensorDepth);
 
-            leftX = (-(sensorWidth / 2) / 10f) / sensorArea.transform.localScale.x;
-            rightX = ((sensorWidth / 2) / 10f) / sensorArea.transform.localScale.x;
-            topY = ((sensorHeight / 2) / 10f) / sensorArea.transform.localScale.y;
-            botY = (-(sensorHeight / 2) / 10f) / sensorArea.transform.localScale.y;
+            leftX = (-(sensorManager.sensorWidth / 2) / 10f) / sensorArea.transform.localScale.x;
+            rightX = ((sensorManager.sensorWidth / 2) / 10f) / sensorArea.transform.localScale.x;
+            topY = ((sensorManager.sensorHeight / 2) / 10f) / sensorArea.transform.localScale.y;
+            botY = (-(sensorManager.sensorHeight / 2) / 10f) / sensorArea.transform.localScale.y;
 
-            topLeft = MovePointerToLoc(leftX, topY, sensorDepth);
-            topRight = MovePointerToLoc(rightX, topY, sensorDepth);
-            botRight = MovePointerToLoc(rightX, botY, sensorDepth);
-            botLeft = MovePointerToLoc(leftX, botY, sensorDepth);
+            topLeft = MovePointerToLoc(leftX, topY, sensorManager.sensorDepth);
+            topRight = MovePointerToLoc(rightX, topY, sensorManager.sensorDepth);
+            botRight = MovePointerToLoc(rightX, botY, sensorManager.sensorDepth);
+            botLeft = MovePointerToLoc(leftX, botY, sensorManager.sensorDepth);
         }
 
         void OnDrawGizmos()

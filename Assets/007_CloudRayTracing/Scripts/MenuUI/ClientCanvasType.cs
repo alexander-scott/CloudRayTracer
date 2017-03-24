@@ -7,7 +7,7 @@ namespace BMW.Verification.CloudRayTracing
 {
     public class ClientCanvasType : MonoBehaviour
     {
-        public DataController.ClientCanvasButton type;
+        public DataController.ClientCanvasButtonType type;
 
         public Button Button
         {

@@ -35,7 +35,7 @@ namespace BMW.Verification.CloudRayTracing
 
         public enum PacketType { ToggleRaytracer, }
         public enum ApplicationType { Undefined, Client, Server, Host, }
-        public enum ClientCanvasButton { Information, Controls, Viewports, Performance, }
+        public enum ClientCanvasButtonType { Information, Controls, Viewports, Performance, Disconnect, }
 
         public class TransmissionData
         {

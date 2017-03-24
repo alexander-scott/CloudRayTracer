@@ -7,8 +7,21 @@ namespace BMW.Verification.CloudRayTracing
 {
     public class SensorManager : MonoBehaviour
     {
-        private GameObject pointCloud;
         public GameObject pointCloudMesh;
+
+        [Range(0, 500)]
+        public float sensorWidth = 142f;
+
+        [Range(0, 500)]
+        public float sensorHeight = 36f;
+
+        [Range(0, 500)]
+        public float sensorDepth = 14f;
+
+        [Range(0.001f, 1)]
+        public float gapBetweenPoints = 0.02f;
+
+        public LayerMask toDetect;
 
         [HideInInspector]
         public List<Vector3> hitPositions = new List<Vector3>();
@@ -19,6 +32,8 @@ namespace BMW.Verification.CloudRayTracing
         public Vector3[] vertexPool;
         [HideInInspector]
         public int[] trianglePool;
+
+        private GameObject pointCloud;
 
         private const float pointRadius = 0.01f;
 
@@ -59,11 +74,6 @@ namespace BMW.Verification.CloudRayTracing
                 pointCloud = ClientController.Instance.pointCloud;
             else
                 pointCloud = HostController.Instance.pointCloud;
-
-            for (int i = 0; i < sensors.Length; i++)
-            {
-                sensors[i].Init(this);
-            }
 
             CreateNewMeshFilter(); // Add one to start with
         }
