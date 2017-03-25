@@ -1,11 +1,10 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace BMW.Verification.CloudRayTracing
 {
     public class Sensor : MonoBehaviour
     {
-        #region Publics
-
         public SensorManager sensorManager;
 
         public GameObject sensorArea;
@@ -13,10 +12,6 @@ namespace BMW.Verification.CloudRayTracing
 
         [HideInInspector]
         public bool finishedRayCasting = false;
-
-        #endregion
-
-        #region Firing Rays Privates
 
         private float leftX;
         private float rightX;
@@ -28,9 +23,62 @@ namespace BMW.Verification.CloudRayTracing
         private Vector3 botRight;
         private Vector3 botLeft;
 
-        #endregion
+        private List<GameObject> sensorLines = new List<GameObject>();
 
-        public void Update()
+        void Start()
+        {
+            UpdateValues();
+
+            for (int i = 0; i < 8; i++)
+            {
+                GameObject sensorLine = Instantiate(sensorManager.linePrefab, transform);
+
+                switch (i)
+                {
+                    case 0:
+                        sensorLine.GetComponent<LineRenderer>().SetPosition(0, transform.position);
+                        sensorLine.GetComponent<LineRenderer>().SetPosition(1, topLeft);
+                        break;
+
+                    case 1:
+                        sensorLine.GetComponent<LineRenderer>().SetPosition(0, transform.position);
+                        sensorLine.GetComponent<LineRenderer>().SetPosition(1, topRight);
+                        break;
+
+                    case 2:
+                        sensorLine.GetComponent<LineRenderer>().SetPosition(0, transform.position);
+                        sensorLine.GetComponent<LineRenderer>().SetPosition(1, botRight);
+                        break;
+
+                    case 3:
+                        sensorLine.GetComponent<LineRenderer>().SetPosition(0, transform.position);
+                        sensorLine.GetComponent<LineRenderer>().SetPosition(1, botLeft);
+                        break;
+
+                    case 4:
+                        sensorLine.GetComponent<LineRenderer>().SetPosition(0, topLeft);
+                        sensorLine.GetComponent<LineRenderer>().SetPosition(1, topRight);
+                        break;
+
+                    case 5:
+                        sensorLine.GetComponent<LineRenderer>().SetPosition(0, topLeft);
+                        sensorLine.GetComponent<LineRenderer>().SetPosition(1, botLeft);
+                        break;
+
+                    case 6:
+                        sensorLine.GetComponent<LineRenderer>().SetPosition(0, topRight);
+                        sensorLine.GetComponent<LineRenderer>().SetPosition(1, botRight);
+                        break;
+
+                    case 7:
+                        sensorLine.GetComponent<LineRenderer>().SetPosition(0, botLeft);
+                        sensorLine.GetComponent<LineRenderer>().SetPosition(1, botRight);
+                        break;
+                }
+            }
+        }
+
+        void Update()
         {
             UpdateValues();
         }
@@ -77,25 +125,25 @@ namespace BMW.Verification.CloudRayTracing
             botLeft = MovePointerToLoc(leftX, botY, sensorManager.sensorDepth);
         }
 
-        void OnDrawGizmos()
-        {
-            if (sensorArea != null)
-            {
-                UpdateValues(); // Should this be called in this function?
+        //void OnDrawGizmos()
+        //{
+        //    if (sensorArea != null)
+        //    {
+        //        UpdateValues(); // Should this be called in this function?
 
-                Gizmos.color = Color.blue;
+        //        Gizmos.color = Color.blue;
 
-                Gizmos.DrawLine(transform.position, topLeft);
-                Gizmos.DrawLine(transform.position, topRight);
-                Gizmos.DrawLine(transform.position, botRight);
-                Gizmos.DrawLine(transform.position, botLeft);
+        //        Gizmos.DrawLine(transform.position, topLeft); 
+        //        Gizmos.DrawLine(transform.position, topRight);
+        //        Gizmos.DrawLine(transform.position, botRight);
+        //        Gizmos.DrawLine(transform.position, botLeft);
 
-                Gizmos.DrawLine(topLeft, topRight);
-                Gizmos.DrawLine(topLeft, botLeft);
-                Gizmos.DrawLine(topRight, botRight);
-                Gizmos.DrawLine(botLeft, botRight);
-            }
-        }
+        //        Gizmos.DrawLine(topLeft, topRight);//
+        //        Gizmos.DrawLine(topLeft, botLeft); //
+        //        Gizmos.DrawLine(topRight, botRight);
+        //        Gizmos.DrawLine(botLeft, botRight);
+        //    }
+        //}
 
         Vector3 MovePointerToLoc(float x, float y, float z)
         {

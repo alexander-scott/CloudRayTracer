@@ -23,6 +23,8 @@ namespace BMW.Verification.CloudRayTracing
 
         public LayerMask toDetect;
 
+        public GameObject linePrefab;
+
         [HideInInspector]
         public List<Vector3> hitPositions = new List<Vector3>();
 
