@@ -33,7 +33,7 @@ namespace BMW.Verification.CloudRayTracing
         [Space(10)]
         [Header("Cameras")]
         public GameObject cameraDefault;
-        public GameObject cameraPCandObjects;
+        public GameObject cameraEverything;
         public GameObject cameraPCOnly;
         public GameObject cameraWireFrame;
 
@@ -120,8 +120,8 @@ namespace BMW.Verification.CloudRayTracing
             cameraPCOnly.transform.rotation = rotation;
             cameraPCOnly.transform.position = position;
 
-            cameraPCandObjects.transform.rotation = rotation;
-            cameraPCandObjects.transform.position = position;
+            cameraEverything.transform.rotation = rotation;
+            cameraEverything.transform.position = position;
         }
 
         public IEnumerator<float> ResizeCamera(Camera camera, float xPos, float yPos, float width, float height, float duration, bool instaMove)

@@ -89,11 +89,11 @@ namespace BMW.Verification.CloudRayTracing
         {
             clientFpsLabel.text = "FPS: " + Mathf.Floor(fpsVal);
 
-            if (fpsVal > 60f)
+            if (fpsVal >= 60f)
             {
                 clientFpsLabel.color = Color.green;
             }
-            else if (fpsVal < 30f)
+            else if (fpsVal <= 30f)
             {
                 clientFpsLabel.color = Color.red;
             }
@@ -112,11 +112,11 @@ namespace BMW.Verification.CloudRayTracing
             float avgFpsVal = totalFps / count;
             clientAvgFpsLabel.text = "AVG: " + Mathf.Floor(avgFpsVal);
 
-            if (avgFpsVal > 60f)
+            if (avgFpsVal >= 60f)
             {
                 clientAvgFpsLabel.color = Color.green;
             }
-            else if (avgFpsVal < 30f)
+            else if (avgFpsVal <= 30f)
             {
                 clientAvgFpsLabel.color = Color.red;
             }
@@ -128,21 +128,21 @@ namespace BMW.Verification.CloudRayTracing
 
         private void CalcMINMAX(float fpsVal)
         {
-            if (fpsVal < minFPS)
+            if (fpsVal <= minFPS)
             {
                 minFPS = fpsVal;
             }
 
-            if (fpsVal > maxFPS)
+            if (fpsVal >= maxFPS)
             {
                 maxFPS = fpsVal;
             }
 
-            if (minFPS > 60f)
+            if (minFPS >= 60f)
             {
                 clientMinFpsLabel.color = Color.green;
             }
-            else if (minFPS < 30f)
+            else if (minFPS <= 30f)
             {
                 clientMinFpsLabel.color = Color.red;
             }
@@ -151,11 +151,11 @@ namespace BMW.Verification.CloudRayTracing
                 clientMinFpsLabel.color = Color.yellow;
             }
 
-            if (maxFPS > 60f)
+            if (maxFPS >= 60f)
             {
                 clientMaxFpsLabel.color = Color.green;
             }
-            else if (maxFPS < 30f)
+            else if (maxFPS <= 30f)
             {
                 clientMaxFpsLabel.color = Color.red;
             }
@@ -183,11 +183,11 @@ namespace BMW.Verification.CloudRayTracing
             {
                 serverFpsLabel.text = "FPS: " + DataController.Instance.performanceDictionary[DataController.StatisticType.FPS];
 
-                if (DataController.Instance.performanceDictionary[DataController.StatisticType.FPS] > 60)
+                if (DataController.Instance.performanceDictionary[DataController.StatisticType.FPS] >= 60)
                 {
                     serverFpsLabel.color = Color.green;
                 }
-                else if (DataController.Instance.performanceDictionary[DataController.StatisticType.FPS] < 30)
+                else if (DataController.Instance.performanceDictionary[DataController.StatisticType.FPS] <= 30)
                 {
                     serverFpsLabel.color = Color.red;
                 }
@@ -198,11 +198,11 @@ namespace BMW.Verification.CloudRayTracing
 
                 serverAvgFpsLabel.text = "AVG: " + DataController.Instance.performanceDictionary[DataController.StatisticType.AVGFPS];
 
-                if (DataController.Instance.performanceDictionary[DataController.StatisticType.AVGFPS] > 60)
+                if (DataController.Instance.performanceDictionary[DataController.StatisticType.AVGFPS] >= 60)
                 {
                     serverAvgFpsLabel.color = Color.green;
                 }
-                else if (DataController.Instance.performanceDictionary[DataController.StatisticType.AVGFPS] < 30)
+                else if (DataController.Instance.performanceDictionary[DataController.StatisticType.AVGFPS] <= 30)
                 {
                     serverAvgFpsLabel.color = Color.red;
                 }
@@ -213,11 +213,11 @@ namespace BMW.Verification.CloudRayTracing
 
                 serverMinFpsLabel.text = "MIN: " + DataController.Instance.performanceDictionary[DataController.StatisticType.MINFPS];
 
-                if (DataController.Instance.performanceDictionary[DataController.StatisticType.MINFPS] > 60)
+                if (DataController.Instance.performanceDictionary[DataController.StatisticType.MINFPS] >= 60)
                 {
                     serverMinFpsLabel.color = Color.green;
                 }
-                else if (DataController.Instance.performanceDictionary[DataController.StatisticType.MINFPS] < 30)
+                else if (DataController.Instance.performanceDictionary[DataController.StatisticType.MINFPS] <= 30)
                 {
                     serverMinFpsLabel.color = Color.red;
                 }
@@ -228,11 +228,11 @@ namespace BMW.Verification.CloudRayTracing
 
                 serverMinFpsLabel.text = "MAX: " + DataController.Instance.performanceDictionary[DataController.StatisticType.MAXFPS];
 
-                if (DataController.Instance.performanceDictionary[DataController.StatisticType.MAXFPS] > 60)
+                if (DataController.Instance.performanceDictionary[DataController.StatisticType.MAXFPS] >= 60)
                 {
                     serverMaxFpsLabel.color = Color.green;
                 }
-                else if (DataController.Instance.performanceDictionary[DataController.StatisticType.MAXFPS] < 30)
+                else if (DataController.Instance.performanceDictionary[DataController.StatisticType.MAXFPS] <= 30)
                 {
                     serverMaxFpsLabel.color = Color.red;
                 }

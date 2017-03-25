@@ -59,6 +59,16 @@ namespace BMW.Verification.CloudRayTracing
 
             ipAddress.text = DataController.Instance.ipAddress;
             ipAddressLabel.text = DataController.Instance.LocalIPAddress();
+
+            // If we are running in headless mode go straight to start server
+            if (SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null)
+            {
+                Destroy(ClientController.Instance); Destroy(HostController.Instance);
+
+                ServerController.Instance.StartServer();
+
+                DataController.Instance.applicationType = DataController.ApplicationType.Server;
+            }
         }
 
         public void IPAddressChanged(string ipaddress)

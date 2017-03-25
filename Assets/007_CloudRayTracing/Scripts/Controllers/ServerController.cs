@@ -84,8 +84,15 @@ namespace BMW.Verification.CloudRayTracing
 
         public void SendSeralisedMeshToClient(int transmissionID, byte[] mesh)
         {
-            // SPLIT UP ARRAY
-            StartCoroutine(server.Connection.SendBytesToClientsRoutine(transmissionID, mesh));
+            if (server.NumberOfPeers != 0)
+            {
+                // SPLIT UP ARRAY
+                StartCoroutine(server.Connection.SendBytesToClientsRoutine(transmissionID, mesh));
+            }
+            else
+            {
+                RayTraceController.Instance.StopRayTracing();
+            }
         }
 
         private void Server_OnPeerConnected(Peer obj)
