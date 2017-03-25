@@ -34,6 +34,7 @@ namespace BMW.Verification.CloudRayTracing
         void Start()
         {
             MenuController.Instance.startRaytracerButton.onClick.AddListener(StartRayTracer);
+            MenuController.Instance.stopRaytracerButton.onClick.AddListener(StopRayTracer);
         }
 
         public void HostSelected()
@@ -51,6 +52,13 @@ namespace BMW.Verification.CloudRayTracing
         {
             Debug.Log("Raytrace start");
             RayTraceController.Instance.StartRayTracing();
+        }
+
+        private void StopRayTracer()
+        {
+            Debug.Log("Raytrace stop");
+            RayTraceController.Instance.StopRayTracing();
+            pointCloud.GetComponent<MeshFilter>().mesh = null;
         }
     }
 }

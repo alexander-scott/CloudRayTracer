@@ -33,7 +33,7 @@ namespace BMW.Verification.CloudRayTracing
         public int defaultBufferSize = 1300; // Max ethernet MTU is ~1400
         public ApplicationType applicationType = ApplicationType.Undefined;
 
-        public enum PacketType { ToggleRaytracer, }
+        public enum PacketType { StartRayTracer, StopRayTracer, }
         public enum ApplicationType { Undefined, Client, Server, Host, }
         public enum ClientCanvasButtonType { Information, Controls, Viewports, Performance, Disconnect, }
 

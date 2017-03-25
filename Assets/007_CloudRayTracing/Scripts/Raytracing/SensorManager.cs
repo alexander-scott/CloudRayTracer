@@ -62,6 +62,8 @@ namespace BMW.Verification.CloudRayTracing
         public bool finishedRayTracing = false;
         public List<Mesh> listOfMeshes = new List<Mesh>();
 
+        private bool rayTracing = false;
+
         void Start()
         {
             CreateUVs();
@@ -80,12 +82,18 @@ namespace BMW.Verification.CloudRayTracing
 
         public void StartRayTracer()
         {
+            rayTracing = true;
             StartCoroutine(StartRaytracing());
+        }
+
+        public void StopRayTracer()
+        {
+            rayTracing = false;
         }
 
         IEnumerator StartRaytracing()
         {
-            while (true)
+            while (rayTracing)
             {
                 for (int i = 0; i < sensors.Length; i++)
                 {
@@ -121,7 +129,6 @@ namespace BMW.Verification.CloudRayTracing
             mesh.vertices = points;
             mesh.colors = colors;
             mesh.SetIndices(indecies, MeshTopology.Points, 0);
-            ;
 
             pcMeshes.First().GetComponent<MeshFilter>().mesh = mesh;
         }

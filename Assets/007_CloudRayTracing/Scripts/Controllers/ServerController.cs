@@ -64,9 +64,14 @@ namespace BMW.Verification.CloudRayTracing
         {
             switch (packetType)
             {
-                case DataController.PacketType.ToggleRaytracer:
+                case DataController.PacketType.StartRayTracer:
                     Debug.Log("Raytrace start");
                     RayTraceController.Instance.StartRayTracing();
+                    break;
+
+                case DataController.PacketType.StopRayTracer:
+                    Debug.Log("Raytrace stop");
+                    RayTraceController.Instance.StopRayTracing();
                     break;
             }
         }

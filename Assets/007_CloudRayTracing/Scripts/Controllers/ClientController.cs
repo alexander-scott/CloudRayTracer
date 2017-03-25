@@ -45,6 +45,7 @@ namespace BMW.Verification.CloudRayTracing
             client.Connection.OnDataCompletelyReceived += Connection_OnDataCompletelyReceived;
 
             MenuController.Instance.startRaytracerButton.onClick.AddListener(StartRayTracer);
+            MenuController.Instance.stopRaytracerButton.onClick.AddListener(StopRayTracer);
         }
 
         public void ConnectToServer()
@@ -69,9 +70,7 @@ namespace BMW.Verification.CloudRayTracing
         {
             switch (packetType)
             {
-                case DataController.PacketType.ToggleRaytracer:
-                    // DO SOMETHING
-                    break;
+
             }
         }
 
@@ -93,7 +92,13 @@ namespace BMW.Verification.CloudRayTracing
 
         private void StartRayTracer()
         {
-            SendPacket(DataController.PacketType.ToggleRaytracer, true.ToString());
+            SendPacket(DataController.PacketType.StartRayTracer, true.ToString());
+        }
+
+        private void StopRayTracer()
+        {
+            SendPacket(DataController.PacketType.StopRayTracer, true.ToString());
+            pointCloud.GetComponent<MeshFilter>().mesh = null;
         }
 
         private void Client_OnConnectFailed()

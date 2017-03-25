@@ -29,9 +29,13 @@ namespace BMW.Verification.CloudRayTracing
         public SensorManager sensorManager;
         private int meshCount;
 
+        private bool rayTracing = false;
+
         public void StartRayTracing()
         {
             sensorManager.StartRayTracer();
+
+            rayTracing = true;
 
             if (DataController.Instance.applicationType == DataController.ApplicationType.Host)
             {
@@ -43,10 +47,17 @@ namespace BMW.Verification.CloudRayTracing
             }
         }
 
+        public void StopRayTracing()
+        {
+            sensorManager.StopRayTracer();
+
+            rayTracing = false;
+        }
+
         private IEnumerator SendMeshToClient()
         {
             int count = 0;
-            while (true)
+            while (rayTracing)
             {
                 // Wait until all the sensors have finished ray tracing and built the meshes
                 yield return new WaitUntil(() => sensorManager.finishedRayTracing);
@@ -56,7 +67,8 @@ namespace BMW.Verification.CloudRayTracing
                 // Loop through each mesh and send it back
                 for (int i = 0; i < meshCount; i++)
                 {
-                    ServerController.Instance.SendSeralisedMeshToClient(count, MeshSerializer.WriteMesh(sensorManager.listOfMeshes[i], true, true));
+                    if (rayTracing)
+                        ServerController.Instance.SendSeralisedMeshToClient(count, MeshSerializer.WriteMesh(sensorManager.listOfMeshes[i], true, true));
                     count++; // Count is used so the tranmission ID is never identical to a previous transmission
                 }
 
@@ -70,14 +82,15 @@ namespace BMW.Verification.CloudRayTracing
 
         private IEnumerator SendMeshToHost()
         {
-            while (true)
+            while (rayTracing)
             {
                 // Wait until all the sensors have finished ray tracing and built the meshes
                 yield return new WaitUntil(() => sensorManager.finishedRayTracing);
 
                 meshCount = sensorManager.listOfMeshes.Count;
 
-                HostController.Instance.RenderMesh(sensorManager.listOfMeshes);
+                if (rayTracing)
+                    HostController.Instance.RenderMesh(sensorManager.listOfMeshes);
 
                 sensorManager.listOfMeshes.Clear();
                 sensorManager.finishedRayTracing = false;
