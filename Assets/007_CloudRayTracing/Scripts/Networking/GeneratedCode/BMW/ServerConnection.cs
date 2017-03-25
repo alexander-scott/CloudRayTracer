@@ -72,6 +72,14 @@ namespace BMW.Verification.CloudRayTracing
 				_netSender.PrepareAndSendWriter(writer);
 			}
 			
+			public void RecieveServerPerformanceDictionary(Int32 performanceType, Single performanceVal)
+			{
+				NetworkWriter writer = _netSender.CreateWriter(-1851791576);
+				writer.Write(performanceType);
+				writer.Write(performanceVal);
+				_netSender.PrepareAndSendWriter(writer);
+			}
+			
 			public void ClientPrepareToRecieveTransmission(Int32 transmissionId, Int32 expectedSize)
 			{
 				NetworkWriter writer = _netSender.CreateWriter(-2015836376);

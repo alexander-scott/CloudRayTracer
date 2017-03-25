@@ -25,6 +25,13 @@ namespace BMW.Verification.CloudRayTracing
 			RecievePacket(packetNum, contents);
 		}
 		
+		public void Receive_RecieveServerPerformanceDictionary(NetworkReader reader)
+		{
+			Int32 performanceType = reader.ReadInt32();
+			Single performanceVal = reader.ReadSingle();
+			RecieveServerPerformanceDictionary(performanceType, performanceVal);
+		}
+		
 		public void Receive_ClientPrepareToRecieveTransmission(NetworkReader reader)
 		{
 			Int32 transmissionId = reader.ReadInt32();

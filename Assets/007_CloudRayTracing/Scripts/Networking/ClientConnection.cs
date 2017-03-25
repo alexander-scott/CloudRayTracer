@@ -42,6 +42,12 @@ namespace BMW.Verification.CloudRayTracing
             ClientController.Instance.PacketRecieved((DataController.PacketType)packetNum, contents);
         }
 
+        [Signal]
+        public void RecieveServerPerformanceDictionary(int performanceType, float performanceVal)
+        {
+            DataController.Instance.performanceDictionary[(DataController.StatisticType)performanceType] = performanceVal;
+        }
+
         #endregion
 
         #region Network transmitter

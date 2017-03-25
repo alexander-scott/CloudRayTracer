@@ -30,6 +30,12 @@ namespace BMW.Verification.CloudRayTracing
 
         private Server server;
 
+        private float count = 0f;
+        private float totalFps = 0f;
+
+        private float minFPS = 60f;
+        private float maxFPS = 60f;
+
         // Use this for initialization
         void Start()
         {
@@ -85,6 +91,36 @@ namespace BMW.Verification.CloudRayTracing
         private void Server_OnPeerConnected(Peer obj)
         {
             Debug.Log("Peer connected!");
+
+            Timing.RunCoroutine(SendPerformanceData(), "SendPerformanceData");
+        }
+
+        private IEnumerator<float> SendPerformanceData()
+        {
+            while (server.NumberOfPeers != 0)
+            {
+                float fpsVal = 1.0f / Time.deltaTime;
+                DataController.Instance.performanceDictionary[DataController.StatisticType.FPS] = Mathf.Floor(fpsVal);
+
+                count++;
+                totalFps += fpsVal;
+                DataController.Instance.performanceDictionary[DataController.StatisticType.AVGFPS] = Mathf.Floor(totalFps / count);
+
+                if (fpsVal < minFPS)
+                {
+                    minFPS = fpsVal;
+                }
+
+                if (fpsVal > maxFPS)
+                {
+                    maxFPS = fpsVal;
+                }
+
+                DataController.Instance.performanceDictionary[DataController.StatisticType.MINFPS] = Mathf.Floor(minFPS);
+                DataController.Instance.performanceDictionary[DataController.StatisticType.MAXFPS] = Mathf.Floor(maxFPS);
+
+                yield return Timing.WaitForSeconds(0.5f);
+            }
         }
     }
 }

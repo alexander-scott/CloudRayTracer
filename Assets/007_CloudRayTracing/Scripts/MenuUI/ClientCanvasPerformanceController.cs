@@ -8,13 +8,27 @@ namespace BMW.Verification.CloudRayTracing
 {
     public class ClientCanvasPerformanceController : MonoBehaviour
     {
-        [Header("Label references")]
-        public Text fps;
-        public Text averageFps;
-        public Text minFps;
-        public Text maxFps;
-        public Text memTotal;
-        public Text memAlloc;
+        [Header("Client Label references")]
+        public Text clientFpsLabel;
+        public Text clientAvgFpsLabel;
+        public Text clientMinFpsLabel;
+        public Text clientMaxFpsLabel;
+        public Text clientMemTotalLabel;
+        public Text clientMemAllocLabel;
+
+        [Space(10)]
+        [Header("Server Label references")]
+        public Text serverFpsLabel;
+        public Text serverAvgFpsLabel;
+        public Text serverMinFpsLabel;
+        public Text serverMaxFpsLabel;
+        public Text serverMemTotalLabel;
+        public Text serverMemAllocLabel;
+
+        [Space(10)]
+        [Header("Other server references")]
+        public GameObject labelParent;
+        public GameObject naLabel;
 
         [Space(10)]
         [Header("Options")]
@@ -39,10 +53,16 @@ namespace BMW.Verification.CloudRayTracing
 
             totalMemory = ramCounter.NextValue();
 
-            memTotal.text = "MEM TOTAL: " + totalMemory + " MB";
-            memTotal.color = Color.yellow;
+            clientMemTotalLabel.text = "MEM TOTAL: " + totalMemory + " MB";
+            clientMemTotalLabel.color = Color.yellow;
 
             Timing.RunCoroutine(DisplayFPS(), "FPSCounter");
+
+            if (DataController.Instance.applicationType != DataController.ApplicationType.Client)
+            {
+                labelParent.SetActive(false);
+                naLabel.SetActive(true);
+            }
         }
 
         private IEnumerator<float> DisplayFPS()
@@ -56,25 +76,30 @@ namespace BMW.Verification.CloudRayTracing
                 CalcMINMAX(fpsVal);
                 CalcMemAlloc();
 
+                if (DataController.Instance.applicationType == DataController.ApplicationType.Client)
+                {
+                    DisplayServerInfo();
+                }
+
                 yield return Timing.WaitForSeconds(refreshRate);
             }
         }
 
         private void CalcFPS(float fpsVal)
         {
-            fps.text = "FPS: " + Mathf.Floor(fpsVal);
+            clientFpsLabel.text = "FPS: " + Mathf.Floor(fpsVal);
 
             if (fpsVal > 60f)
             {
-                fps.color = Color.green;
+                clientFpsLabel.color = Color.green;
             }
             else if (fpsVal < 30f)
             {
-                fps.color = Color.red;
+                clientFpsLabel.color = Color.red;
             }
             else
             {
-                fps.color = Color.yellow;
+                clientFpsLabel.color = Color.yellow;
             }
         }
 
@@ -85,19 +110,19 @@ namespace BMW.Verification.CloudRayTracing
             count++;
 
             float avgFpsVal = totalFps / count;
-            averageFps.text = "AVG: " + Mathf.Floor(avgFpsVal);
+            clientAvgFpsLabel.text = "AVG: " + Mathf.Floor(avgFpsVal);
 
             if (avgFpsVal > 60f)
             {
-                averageFps.color = Color.green;
+                clientAvgFpsLabel.color = Color.green;
             }
             else if (avgFpsVal < 30f)
             {
-                averageFps.color = Color.red;
+                clientAvgFpsLabel.color = Color.red;
             }
             else
             {
-                averageFps.color = Color.yellow;
+                clientAvgFpsLabel.color = Color.yellow;
             }
         }
 
@@ -115,41 +140,107 @@ namespace BMW.Verification.CloudRayTracing
 
             if (minFPS > 60f)
             {
-                minFps.color = Color.green;
+                clientMinFpsLabel.color = Color.green;
             }
             else if (minFPS < 30f)
             {
-                minFps.color = Color.red;
+                clientMinFpsLabel.color = Color.red;
             }
             else
             {
-                minFps.color = Color.yellow;
+                clientMinFpsLabel.color = Color.yellow;
             }
 
             if (maxFPS > 60f)
             {
-                maxFps.color = Color.green;
+                clientMaxFpsLabel.color = Color.green;
             }
             else if (maxFPS < 30f)
             {
-                maxFps.color = Color.red;
+                clientMaxFpsLabel.color = Color.red;
             }
             else
             {
-                maxFps.color = Color.yellow;
+                clientMaxFpsLabel.color = Color.yellow;
             }
 
-            minFps.text = "MIN: " + Mathf.Floor(minFPS);
+            clientMinFpsLabel.text = "MIN: " + Mathf.Floor(minFPS);
 
-            maxFps.text = "MAX: " + Mathf.Floor(maxFPS);
+            clientMaxFpsLabel.text = "MAX: " + Mathf.Floor(maxFPS);
         }
 
         private void CalcMemAlloc()
         {
             float memoryAlloc = totalMemory - currentMemCounter.NextValue();
 
-            memAlloc.text = "MEM ALLOC: " + memoryAlloc + " MB";
-            memAlloc.color = Color.yellow;
+            clientMemAllocLabel.text = "MEM ALLOC: " + memoryAlloc + " MB";
+            clientMemAllocLabel.color = Color.yellow;
+        }
+
+        private void DisplayServerInfo()
+        {
+            if (DataController.Instance.performanceDictionary.Count > 0)
+            {
+                serverFpsLabel.text = "FPS: " + DataController.Instance.performanceDictionary[DataController.StatisticType.FPS];
+
+                if (DataController.Instance.performanceDictionary[DataController.StatisticType.FPS] > 60)
+                {
+                    serverFpsLabel.color = Color.green;
+                }
+                else if (DataController.Instance.performanceDictionary[DataController.StatisticType.FPS] < 30)
+                {
+                    serverFpsLabel.color = Color.red;
+                }
+                else
+                {
+                    serverFpsLabel.color = Color.yellow;
+                }
+
+                serverAvgFpsLabel.text = "AVG: " + DataController.Instance.performanceDictionary[DataController.StatisticType.AVGFPS];
+
+                if (DataController.Instance.performanceDictionary[DataController.StatisticType.AVGFPS] > 60)
+                {
+                    serverAvgFpsLabel.color = Color.green;
+                }
+                else if (DataController.Instance.performanceDictionary[DataController.StatisticType.AVGFPS] < 30)
+                {
+                    serverAvgFpsLabel.color = Color.red;
+                }
+                else
+                {
+                    serverAvgFpsLabel.color = Color.yellow;
+                }
+
+                serverMinFpsLabel.text = "MIN: " + DataController.Instance.performanceDictionary[DataController.StatisticType.MINFPS];
+
+                if (DataController.Instance.performanceDictionary[DataController.StatisticType.MINFPS] > 60)
+                {
+                    serverMinFpsLabel.color = Color.green;
+                }
+                else if (DataController.Instance.performanceDictionary[DataController.StatisticType.MINFPS] < 30)
+                {
+                    serverMinFpsLabel.color = Color.red;
+                }
+                else
+                {
+                    serverMinFpsLabel.color = Color.yellow;
+                }
+
+                serverMinFpsLabel.text = "MAX: " + DataController.Instance.performanceDictionary[DataController.StatisticType.MAXFPS];
+
+                if (DataController.Instance.performanceDictionary[DataController.StatisticType.MAXFPS] > 60)
+                {
+                    serverMaxFpsLabel.color = Color.green;
+                }
+                else if (DataController.Instance.performanceDictionary[DataController.StatisticType.MAXFPS] < 30)
+                {
+                    serverMaxFpsLabel.color = Color.red;
+                }
+                else
+                {
+                    serverMaxFpsLabel.color = Color.yellow;
+                }
+            }
         }
     }
 }

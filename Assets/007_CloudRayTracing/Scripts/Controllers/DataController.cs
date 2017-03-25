@@ -35,7 +35,10 @@ namespace BMW.Verification.CloudRayTracing
 
         public enum PacketType { StartRayTracer, StopRayTracer, }
         public enum ApplicationType { Undefined, Client, Server, Host, }
+        public enum StatisticType { FPS, AVGFPS, MINFPS, MAXFPS, MEMTOTAL, MEMALLOC, }
         public enum ClientCanvasButtonType { Information, Controls, Viewports, Performance, Disconnect, }
+
+        public Dictionary<DataController.StatisticType, float> performanceDictionary = new Dictionary<DataController.StatisticType, float>();
 
         public class TransmissionData
         {
@@ -54,6 +57,7 @@ namespace BMW.Verification.CloudRayTracing
             IPHostEntry host;
             string localIP = "";
             host = Dns.GetHostEntry(Dns.GetHostName());
+
             foreach (IPAddress ip in host.AddressList)
             {
                 if (ip.AddressFamily == AddressFamily.InterNetwork)
@@ -62,6 +66,7 @@ namespace BMW.Verification.CloudRayTracing
                     break;
                 }
             }
+
             return localIP;
         }
     }
