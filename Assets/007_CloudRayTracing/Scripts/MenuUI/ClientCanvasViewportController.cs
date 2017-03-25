@@ -37,8 +37,7 @@ namespace BMW.Verification.CloudRayTracing
             everythingCameraToggle.onValueChanged.AddListener(EverythingCameraChanged);
 
             activeCameras.Add(CameraController.Instance.cameraDefault.GetComponent<Camera>());
-            activeCameraNames.Add("Default");
-            topCentreText.text = "Default";
+            activeCameraNames.Add("Default Camera");
         }
 
         private void EverythingCameraChanged(bool arg0)
@@ -99,7 +98,7 @@ namespace BMW.Verification.CloudRayTracing
         {
             if (arg0 && !autoToggle)
             {
-                AddCamera(CameraController.Instance.cameraPCOnly.GetComponent<Camera>(), "Point Cloud Only Camera");
+                AddCamera(CameraController.Instance.cameraPCOnly.GetComponent<Camera>(), "Point Cloud Camera");
             }
             else
             {

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Profiling;
 using UnityEngine.UI;
 
 namespace BMW.Verification.CloudRayTracing
@@ -95,16 +96,20 @@ namespace BMW.Verification.CloudRayTracing
             }
         }
 
-        private void Server_OnPeerConnected(Peer obj)
+        public void Server_OnPeerConnected(Peer obj)
         {
             Debug.Log("Peer connected!");
 
-            Timing.RunCoroutine(SendPerformanceData(), "SendPerformanceData");
+            if (obj.isConnected)
+            {
+                Timing.RunCoroutine(SendPerformanceData(obj), "SendPerformanceData");
+            }
         }
 
-        private IEnumerator<float> SendPerformanceData()
+        public IEnumerator<float> SendPerformanceData(Peer peer)
         {
-            while (server.NumberOfPeers != 0)
+            yield return Timing.WaitForSeconds(3f); 
+            while (peer.isConnected)
             {
                 float fpsVal = 1.0f / Time.deltaTime;
                 DataController.Instance.performanceDictionary[DataController.StatisticType.FPS] = Mathf.Floor(fpsVal);
@@ -125,6 +130,17 @@ namespace BMW.Verification.CloudRayTracing
 
                 DataController.Instance.performanceDictionary[DataController.StatisticType.MINFPS] = Mathf.Floor(minFPS);
                 DataController.Instance.performanceDictionary[DataController.StatisticType.MAXFPS] = Mathf.Floor(maxFPS);
+
+                uint totalMem = (Profiler.GetTotalReservedMemory() / 1048576);
+                uint memoryAlloc = totalMem - (Profiler.GetTotalAllocatedMemory() / 1048576);
+
+                DataController.Instance.performanceDictionary[DataController.StatisticType.MEMTOTAL] = float.Parse(totalMem.ToString());
+                DataController.Instance.performanceDictionary[DataController.StatisticType.MEMALLOC] = float.Parse(memoryAlloc.ToString());
+
+                foreach (KeyValuePair<DataController.StatisticType, float> kvp in DataController.Instance.performanceDictionary)
+                {
+                    server.Connection.SendPerformanceDictionary(peer, (int)kvp.Key, kvp.Value);
+                }
 
                 yield return Timing.WaitForSeconds(0.5f);
             }

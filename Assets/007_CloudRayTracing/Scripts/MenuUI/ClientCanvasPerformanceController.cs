@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.Profiling;
 using UnityEngine.UI;
 
 namespace BMW.Verification.CloudRayTracing
@@ -41,28 +41,9 @@ namespace BMW.Verification.CloudRayTracing
         private float minFPS = 60f;
         private float maxFPS = 60f;
 
-        private PerformanceCounter currentMemCounter;
-        private PerformanceCounter ramCounter;
-
-        private float totalMemory;
-
         void Start()
         {
-            currentMemCounter = new PerformanceCounter("Memory", "Available MBytes");
-            ramCounter = new PerformanceCounter("Memory", "% Committed Bytes In Use");
-
-            totalMemory = ramCounter.NextValue();
-
-            clientMemTotalLabel.text = "MEM TOTAL: " + totalMemory + " MB";
-            clientMemTotalLabel.color = Color.yellow;
-
             Timing.RunCoroutine(DisplayFPS(), "FPSCounter");
-
-            if (DataController.Instance.applicationType != DataController.ApplicationType.Client)
-            {
-                labelParent.SetActive(false);
-                naLabel.SetActive(true);
-            }
         }
 
         private IEnumerator<float> DisplayFPS()
@@ -171,16 +152,23 @@ namespace BMW.Verification.CloudRayTracing
 
         private void CalcMemAlloc()
         {
-            float memoryAlloc = totalMemory - currentMemCounter.NextValue();
+            uint totalMem = (Profiler.GetTotalReservedMemory() / 1048576);
+            uint memoryAlloc = totalMem - (Profiler.GetTotalAllocatedMemory() / 1048576);
 
             clientMemAllocLabel.text = "MEM ALLOC: " + memoryAlloc + " MB";
             clientMemAllocLabel.color = Color.yellow;
+
+            clientMemTotalLabel.text = "MEM TOTAL: " + totalMem + " MB";
+            clientMemTotalLabel.color = Color.yellow;
         }
 
         private void DisplayServerInfo()
         {
-            if (DataController.Instance.performanceDictionary.Count > 0)
+            if (DataController.Instance.performanceDictionary.Count > 3)
             {
+                labelParent.SetActive(true);
+                naLabel.SetActive(false);
+
                 serverFpsLabel.text = "FPS: " + DataController.Instance.performanceDictionary[DataController.StatisticType.FPS];
 
                 if (DataController.Instance.performanceDictionary[DataController.StatisticType.FPS] >= 60)
@@ -226,7 +214,7 @@ namespace BMW.Verification.CloudRayTracing
                     serverMinFpsLabel.color = Color.yellow;
                 }
 
-                serverMinFpsLabel.text = "MAX: " + DataController.Instance.performanceDictionary[DataController.StatisticType.MAXFPS];
+                serverMaxFpsLabel.text = "MAX: " + DataController.Instance.performanceDictionary[DataController.StatisticType.MAXFPS];
 
                 if (DataController.Instance.performanceDictionary[DataController.StatisticType.MAXFPS] >= 60)
                 {
@@ -240,6 +228,17 @@ namespace BMW.Verification.CloudRayTracing
                 {
                     serverMaxFpsLabel.color = Color.yellow;
                 }
+
+                serverMemAllocLabel.text = "MEM ALLOC: " + DataController.Instance.performanceDictionary[DataController.StatisticType.MEMALLOC] + " MB";
+                serverMemAllocLabel.color = Color.yellow;
+
+                serverMemTotalLabel.text = "MEM TOTAL: " + DataController.Instance.performanceDictionary[DataController.StatisticType.MEMTOTAL] + " MB";
+                serverMemTotalLabel.color = Color.yellow;
+            }
+            else
+            {
+                labelParent.SetActive(false);
+                naLabel.SetActive(true);
             }
         }
     }

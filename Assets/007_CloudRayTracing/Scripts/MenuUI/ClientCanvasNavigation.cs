@@ -70,11 +70,15 @@ namespace BMW.Verification.CloudRayTracing
             {
                 if (canvases[i].type != currentSelectedButtonType)
                 {
-                    canvases[i].gameObject.SetActive(false);
+                    canvases[i].GetComponent<CanvasGroup>().alpha = 0;
+                    canvases[i].GetComponent<CanvasGroup>().interactable = false;
+                    canvases[i].GetComponent<CanvasGroup>().blocksRaycasts = false;
                 }
                 else
                 {
-                    canvases[i].gameObject.SetActive(true);
+                    canvases[i].GetComponent<CanvasGroup>().alpha = 1;
+                    canvases[i].GetComponent<CanvasGroup>().interactable = true;
+                    canvases[i].GetComponent<CanvasGroup>().blocksRaycasts = true;
                 }
             }
         }

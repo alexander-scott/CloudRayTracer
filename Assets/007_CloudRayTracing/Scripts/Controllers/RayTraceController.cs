@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -69,6 +70,7 @@ namespace BMW.Verification.CloudRayTracing
                 {
                     if (rayTracing)
                         ServerController.Instance.SendSeralisedMeshToClient(count, MeshSerializer.WriteMesh(sensorManager.listOfMeshes[i], true, true));
+                    Destroy(sensorManager.listOfMeshes[i]);
                     count++; // Count is used so the tranmission ID is never identical to a previous transmission
                 }
 

@@ -43,9 +43,9 @@ namespace BMW.Verification.CloudRayTracing
             SendToPeer(SenderPeer).RecievePacket(packetNum, contents);
         }
 
-        public void SendPerformanceDictionary(int performanceType, float performanceVal)
+        public void SendPerformanceDictionary(Peer peer, int performanceType, float performanceVal)
         {
-            SendToPeer(SenderPeer).RecieveServerPerformanceDictionary(performanceType, performanceVal);
+            SendToPeer(peer).RecieveServerPerformanceDictionary(performanceType, performanceVal);
         }
 
         #endregion
