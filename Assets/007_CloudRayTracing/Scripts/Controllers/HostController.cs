@@ -28,8 +28,6 @@ namespace BMW.Verification.CloudRayTracing
 
         #endregion
 
-        public GameObject pointCloud;
-
         // Use this for initialization
         void Start()
         {
@@ -45,7 +43,7 @@ namespace BMW.Verification.CloudRayTracing
 
         public void RenderMesh(List<Mesh> meshes)
         {
-            pointCloud.GetComponent<MeshFilter>().mesh = meshes[0];
+            
         }
 
         private void StartRayTracer()
@@ -58,7 +56,6 @@ namespace BMW.Verification.CloudRayTracing
         {
             Debug.Log("Raytrace stop");
             RayTraceController.Instance.StopRayTracing();
-            pointCloud.GetComponent<MeshFilter>().mesh = null;
         }
     }
 }

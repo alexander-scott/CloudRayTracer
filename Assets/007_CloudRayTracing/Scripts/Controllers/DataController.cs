@@ -32,6 +32,8 @@ namespace BMW.Verification.CloudRayTracing
         public string ipAddress;
         public int defaultBufferSize = 1300; // Max ethernet MTU is ~1400
         public ApplicationType applicationType = ApplicationType.Undefined;
+        public float timeBetweenTransmissions = 0.1f;
+        public float pointsPerMesh = 500f;
 
         public enum PacketType { StartRayTracer, StopRayTracer, }
         public enum ApplicationType { Undefined, Client, Server, Host, }

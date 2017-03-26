@@ -28,77 +28,130 @@ namespace BMW.Verification.CloudRayTracing
         #endregion
 
         public SensorManager sensorManager;
+        public Transform pointCloudParent;
+        public GameObject pointCloudPrefab;
+
+        private List<GameObject> pointCloudMeshses = new List<GameObject>();
         private int meshCount;
 
         private bool rayTracing = false;
+        private int count = 0;
 
         public void StartRayTracing()
         {
-            sensorManager.StartRayTracer();
-
             rayTracing = true;
 
-            if (DataController.Instance.applicationType == DataController.ApplicationType.Host)
-            {
-                StartCoroutine(SendMeshToHost());
-            }
-            else
-            {
-                StartCoroutine(SendMeshToClient());
-            }
+            StartCoroutine(RayTracerCoroutine());
         }
 
         public void StopRayTracing()
         {
-            sensorManager.StopRayTracer();
-
             rayTracing = false;
+
+            for (int i = 0; i < pointCloudMeshses.Count; i++)
+            {
+                Destroy(pointCloudMeshses[i]);
+            }
+
+            pointCloudMeshses.Clear();
         }
 
-        private IEnumerator SendMeshToClient()
+        public void RecieveMesh(int number, int total, Mesh mesh)
         {
-            int count = 0;
+            if (!rayTracing)
+                return;
+
+            if ((number + 1) > pointCloudMeshses.Count) // If we have been given more meshes than we have in the list create a new one
+            {
+                CreateNewMeshFilter();
+            }
+
+            if ((number + 1) == total) // If we've done all the meshes
+            {
+                if (pointCloudMeshses.Count > total) // If we have more meshes in the list than we were sent destroy the unused ones
+                {
+                    for (int i = pointCloudMeshses.Count - 1; i >= total; i--)
+                    {
+                        Destroy(pointCloudMeshses[i]);
+                    }
+                }
+            }
+
+            if (pointCloudMeshses[number] == null)
+            {
+                pointCloudMeshses[number] = Instantiate(pointCloudPrefab, pointCloudParent);
+            }
+            else
+            {
+                Destroy(pointCloudMeshses[number].GetComponent<MeshFilter>().sharedMesh);
+            }
+            
+            pointCloudMeshses[number].GetComponent<MeshFilter>().mesh = mesh;
+        }
+
+        private IEnumerator RayTracerCoroutine()
+        {
             while (rayTracing)
             {
+                sensorManager.StartRayTracer();
+
                 // Wait until all the sensors have finished ray tracing and built the meshes
                 yield return new WaitUntil(() => sensorManager.finishedRayTracing);
 
                 meshCount = sensorManager.listOfMeshes.Count;
 
+                SendData(sensorManager.listOfMeshes);
+
+                sensorManager.listOfMeshes.Clear();
+                sensorManager.finishedRayTracing = false;
+
+                if (DataController.Instance.applicationType == DataController.ApplicationType.Client)
+                {
+                    // How long should we wait before doing it all again? Bear in mind the data might not have fully reached the client yet.
+                    yield return new WaitForSeconds(DataController.Instance.timeBetweenTransmissions);
+                }
+                else
+                {
+                    yield return new WaitForFixedUpdate();
+                }
+            }
+        }
+
+        private void SendData(List<Mesh> meshList)
+        {
+            if (DataController.Instance.applicationType == DataController.ApplicationType.Client)
+            {
                 // Loop through each mesh and send it back
                 for (int i = 0; i < meshCount; i++)
                 {
                     if (rayTracing)
+                    {
                         ServerController.Instance.SendSeralisedMeshToClient(count, MeshSerializer.WriteMesh(sensorManager.listOfMeshes[i], true, true));
-                    Destroy(sensorManager.listOfMeshes[i]);
+                        Destroy(sensorManager.listOfMeshes[i]);
+                    }
+                        
                     count++; // Count is used so the tranmission ID is never identical to a previous transmission
                 }
-
-                sensorManager.listOfMeshes.Clear();
-                sensorManager.finishedRayTracing = false;
-
-                // How long should we wait before doing it all again? Bear in mind the data might not have fully reached the client yet.
-                yield return new WaitForSeconds(0.1f);
+            }
+            else
+            {
+                for (int i = 0; i < meshCount; i++)
+                {
+                    if (rayTracing)
+                    {
+                        RecieveMesh(i, meshCount, sensorManager.listOfMeshes[i]);
+                        //HostController.Instance.RenderMesh(sensorManager.listOfMeshes);
+                    }  
+                }
             }
         }
 
-        private IEnumerator SendMeshToHost()
+        public void CreateNewMeshFilter()
         {
-            while (rayTracing)
-            {
-                // Wait until all the sensors have finished ray tracing and built the meshes
-                yield return new WaitUntil(() => sensorManager.finishedRayTracing);
+            GameObject newMesh = Instantiate(pointCloudPrefab, pointCloudParent) as GameObject;
 
-                meshCount = sensorManager.listOfMeshes.Count;
-
-                if (rayTracing)
-                    HostController.Instance.RenderMesh(sensorManager.listOfMeshes);
-
-                sensorManager.listOfMeshes.Clear();
-                sensorManager.finishedRayTracing = false;
-
-                yield return new WaitForFixedUpdate();
-            }
+            newMesh.GetComponent<MeshFilter>().mesh = new Mesh();
+            pointCloudMeshses.Add(newMesh);
         }
     }
 }

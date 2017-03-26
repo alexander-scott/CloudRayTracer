@@ -28,8 +28,6 @@ namespace BMW.Verification.CloudRayTracing
 
         #endregion
 
-        public GameObject pointCloud;
-
         public Client client;
 
         // Use this for initialization
@@ -84,7 +82,7 @@ namespace BMW.Verification.CloudRayTracing
             // Deserialize data back to a mesh
             Mesh newMesh = MeshSerializer.ReadMesh(mesh, true);
 
-            pointCloud.GetComponent<MeshFilter>().mesh = newMesh;
+            //pointCloud.GetComponent<MeshFilter>().mesh = newMesh;
         }
 
         private void StartRayTracer()
@@ -95,7 +93,7 @@ namespace BMW.Verification.CloudRayTracing
         private void StopRayTracer()
         {
             SendPacket(DataController.PacketType.StopRayTracer, true.ToString());
-            pointCloud.GetComponent<MeshFilter>().mesh = null;
+            //pointCloud.GetComponent<MeshFilter>().mesh = null;
         }
 
         private void Client_OnConnectFailed()
