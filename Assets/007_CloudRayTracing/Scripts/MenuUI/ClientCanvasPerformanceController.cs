@@ -43,6 +43,9 @@ namespace BMW.Verification.CloudRayTracing
 
         void Start()
         {
+            labelParent.SetActive(false);
+            naLabel.SetActive(true);
+
             Timing.RunCoroutine(DisplayFPS(), "FPSCounter");
         }
 
@@ -166,8 +169,11 @@ namespace BMW.Verification.CloudRayTracing
         {
             if (DataController.Instance.performanceDictionary.Count > 3)
             {
-                labelParent.SetActive(true);
-                naLabel.SetActive(false);
+                if (!labelParent.activeInHierarchy)
+                {
+                    labelParent.SetActive(true);
+                    naLabel.SetActive(false);
+                }
 
                 serverFpsLabel.text = "FPS: " + DataController.Instance.performanceDictionary[DataController.StatisticType.FPS];
 
@@ -234,11 +240,6 @@ namespace BMW.Verification.CloudRayTracing
 
                 serverMemTotalLabel.text = "MEM TOTAL: " + DataController.Instance.performanceDictionary[DataController.StatisticType.MEMTOTAL] + " MB";
                 serverMemTotalLabel.color = Color.yellow;
-            }
-            else
-            {
-                labelParent.SetActive(false);
-                naLabel.SetActive(true);
             }
         }
     }

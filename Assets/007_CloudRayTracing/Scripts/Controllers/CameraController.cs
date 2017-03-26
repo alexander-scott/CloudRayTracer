@@ -26,7 +26,6 @@ namespace BMW.Verification.CloudRayTracing
 
         #endregion
 
-
         [Header("Car")]
         public GameObject car;
 

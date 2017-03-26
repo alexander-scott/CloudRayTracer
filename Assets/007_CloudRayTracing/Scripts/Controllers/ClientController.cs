@@ -68,10 +68,7 @@ namespace BMW.Verification.CloudRayTracing
 
         public void PacketRecieved(DataController.PacketType packetType, string contents)
         {
-            switch (packetType)
-            {
 
-            }
         }
 
         public void OnApplicationQuit()

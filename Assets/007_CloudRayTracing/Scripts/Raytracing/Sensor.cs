@@ -10,7 +10,6 @@ namespace BMW.Verification.CloudRayTracing
         public GameObject sensorArea;
         public Transform rayPoint;
 
-        [HideInInspector]
         public bool finishedRayCasting = false;
 
         private float leftX;
