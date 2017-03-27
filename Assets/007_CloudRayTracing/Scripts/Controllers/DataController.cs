@@ -1,7 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Sockets;
 using UnityEngine;
 
 namespace BMW.Verification.CloudRayTracing
@@ -59,20 +57,23 @@ namespace BMW.Verification.CloudRayTracing
 
         public string LocalIPAddress()
         {
-            IPHostEntry host;
+#if UNITY_EDITOR_OSX
+            return "NULL";
+#else
+            System.Net.IPHostEntry host;
             string localIP = "";
-            host = Dns.GetHostEntry(Dns.GetHostName());
+            host = System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName());
 
-            foreach (IPAddress ip in host.AddressList)
+            foreach (System.Net.IPAddress ip in host.AddressList)
             {
-                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                 {
                     localIP = ip.ToString();
                     break;
                 }
             }
-
             return localIP;
+#endif
         }
     }
 }
