@@ -68,13 +68,13 @@ namespace BMW.Verification.CloudRayTracing
 
         #region Network Transmitter
 
-        public IEnumerator SendBytesToClientsRoutine(int transmissionId, byte[] data)
+        public IEnumerator SendBytesToClientsRoutine(int transmissionId, int frameNumber, int meshIndex, int meshTotal, byte[] data)
         {
             Debug.Assert(!serverTransmissionIds.Contains(transmissionId));
             Debug.Log("SendBytesToClients processId=" + transmissionId + " | datasize=" + data.Length);
 
             // Tell client that he is going to receive some data and tell him how much it will be.
-            SendToPeer(SenderPeer).ClientPrepareToRecieveTransmission(transmissionId, data.Length);
+            SendToPeer(SenderPeer).ClientPrepareToRecieveTransmission(transmissionId, data.Length, frameNumber, meshTotal);
             yield return null;
 
             // Begin transmission of data. send chunks of 'bufferSize' until completely transmitted.
@@ -94,7 +94,7 @@ namespace BMW.Verification.CloudRayTracing
                 System.Array.Copy(dataToTransmit.data, dataToTransmit.curDataIndex, buffer, 0, bufferSize);
 
                 // Send the chunk
-                SendToPeer(SenderPeer).ClientRecieveTransmission(transmissionId, buffer);
+                SendToPeer(SenderPeer).ClientRecieveTransmission(transmissionId, meshIndex, buffer);
                 dataToTransmit.curDataIndex += bufferSize;
 
                 yield return null;

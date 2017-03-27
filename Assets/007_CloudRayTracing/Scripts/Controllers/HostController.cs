@@ -28,12 +28,6 @@ namespace BMW.Verification.CloudRayTracing
 
         #endregion
 
-        // Use this for initialization
-        void Start()
-        {
-            MenuController.Instance.startRaytracerButton.onClick.AddListener(StartRayTracer);
-            MenuController.Instance.stopRaytracerButton.onClick.AddListener(StopRayTracer);
-        }
 
         public void HostSelected()
         {
@@ -46,13 +40,13 @@ namespace BMW.Verification.CloudRayTracing
             
         }
 
-        private void StartRayTracer()
+        public void StartRayTracer()
         {
             Debug.Log("Raytrace start");
             RayTraceController.Instance.StartRayTracing();
         }
 
-        private void StopRayTracer()
+        public void StopRayTracer()
         {
             Debug.Log("Raytrace stop");
             RayTraceController.Instance.StopRayTracing();

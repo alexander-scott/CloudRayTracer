@@ -37,8 +37,6 @@ namespace BMW.Verification.CloudRayTracing
         public CanvasGroup clientCanvas;
         public Button connectToServerButton;
         public Text ipAddressLabel;
-        public Button startRaytracerButton;
-        public Button stopRaytracerButton;
 
         [Space(10)]
         [Header("Server objects")]

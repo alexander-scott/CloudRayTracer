@@ -30,6 +30,8 @@ namespace BMW.Verification.CloudRayTracing
 
         public Client client;
 
+        private int meshTotal;
+
         // Use this for initialization
         void Start()
         {
@@ -41,9 +43,18 @@ namespace BMW.Verification.CloudRayTracing
             client.OnConnectFailed += Client_OnConnectFailed;
 
             client.Connection.OnDataCompletelyReceived += Connection_OnDataCompletelyReceived;
+            client.Connection.OnFrameChanged += Connection_OnFrameChanged;
+            client.Connection.OnTransmissionPreparation += Connection_OnTransmissionPreparation;
+        }
 
-            MenuController.Instance.startRaytracerButton.onClick.AddListener(StartRayTracer);
-            MenuController.Instance.stopRaytracerButton.onClick.AddListener(StopRayTracer);
+        private void Connection_OnTransmissionPreparation(int meshCount)
+        {
+            meshTotal = meshCount;
+        }
+
+        private void Connection_OnFrameChanged()
+        {
+            //throw new NotImplementedException();
         }
 
         public void ConnectToServer()
@@ -77,23 +88,24 @@ namespace BMW.Verification.CloudRayTracing
             }
         }
 
-        private void Connection_OnDataCompletelyReceived(int arg0, byte[] mesh)
+        private void Connection_OnDataCompletelyReceived(int transmissionID, int meshCount, byte[] mesh)
         {
             // Deserialize data back to a mesh
             Mesh newMesh = MeshSerializer.ReadMesh(mesh, true);
 
-            //pointCloud.GetComponent<MeshFilter>().mesh = newMesh;
+            RayTraceController.Instance.RecieveMesh(meshCount, meshTotal, newMesh);
         }
 
-        private void StartRayTracer()
+        public void StartRayTracer()
         {
+            SendPacket(DataController.PacketType.UpdateNetworkSendRate, DataController.Instance.networkSendRate.ToString());
+            SendPacket(DataController.PacketType.UpdateRayTracerGap, DataController.Instance.rayTracerGap.ToString());
             SendPacket(DataController.PacketType.StartRayTracer, true.ToString());
         }
 
-        private void StopRayTracer()
+        public void StopRayTracer()
         {
             SendPacket(DataController.PacketType.StopRayTracer, true.ToString());
-            //pointCloud.GetComponent<MeshFilter>().mesh = null;
         }
 
         private void Client_OnConnectFailed()

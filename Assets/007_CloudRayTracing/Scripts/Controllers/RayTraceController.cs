@@ -32,10 +32,11 @@ namespace BMW.Verification.CloudRayTracing
         public GameObject pointCloudPrefab;
 
         private List<GameObject> pointCloudMeshses = new List<GameObject>();
-        private int meshCount;
+        private int meshTotal;
 
         private bool rayTracing = false;
-        private int count = 0;
+        private int transmissionID = 0;
+        private int frameNumber = 0;
 
         public void StartRayTracing()
         {
@@ -58,7 +59,7 @@ namespace BMW.Verification.CloudRayTracing
 
         public void RecieveMesh(int number, int total, Mesh mesh)
         {
-            if (!rayTracing)
+            if (!rayTracing && DataController.Instance.applicationType != DataController.ApplicationType.Client)
                 return;
 
             if ((number + 1) > pointCloudMeshses.Count) // If we have been given more meshes than we have in the list create a new one
@@ -98,49 +99,50 @@ namespace BMW.Verification.CloudRayTracing
                 // Wait until all the sensors have finished ray tracing and built the meshes
                 yield return new WaitUntil(() => sensorManager.finishedRayTracing);
 
-                meshCount = sensorManager.listOfMeshes.Count;
+                meshTotal = sensorManager.listOfMeshes.Count;
 
                 SendData(sensorManager.listOfMeshes);
 
                 sensorManager.listOfMeshes.Clear();
                 sensorManager.finishedRayTracing = false;
 
-                if (DataController.Instance.applicationType == DataController.ApplicationType.Client)
-                {
-                    // How long should we wait before doing it all again? Bear in mind the data might not have fully reached the client yet.
-                    yield return new WaitForSeconds(DataController.Instance.timeBetweenTransmissions);
-                }
-                else
+                if (DataController.Instance.networkSendRate == 0)
                 {
                     yield return new WaitForFixedUpdate();
                 }
+                else
+                {
+                    // How long should we wait before doing it all again? Bear in mind the data might not have fully reached the client yet.
+                    yield return new WaitForSeconds(DataController.Instance.networkSendRate);
+                }
+
+                frameNumber++;
             }
         }
 
         private void SendData(List<Mesh> meshList)
         {
-            if (DataController.Instance.applicationType == DataController.ApplicationType.Client)
+            if (DataController.Instance.applicationType == DataController.ApplicationType.Server)
             {
                 // Loop through each mesh and send it back
-                for (int i = 0; i < meshCount; i++)
+                for (int i = 0; i < meshTotal; i++)
                 {
                     if (rayTracing)
                     {
-                        ServerController.Instance.SendSeralisedMeshToClient(count, MeshSerializer.WriteMesh(sensorManager.listOfMeshes[i], true, true));
+                        ServerController.Instance.SendSeralisedMeshToClient(transmissionID, i, meshTotal, frameNumber, MeshSerializer.WriteMesh(sensorManager.listOfMeshes[i], true, true));
                         Destroy(sensorManager.listOfMeshes[i]);
                     }
                         
-                    count++; // Count is used so the tranmission ID is never identical to a previous transmission
+                    transmissionID++; // Count is used so the tranmission ID is never identical to a previous transmission
                 }
             }
             else
             {
-                for (int i = 0; i < meshCount; i++)
+                for (int i = 0; i < meshTotal; i++)
                 {
                     if (rayTracing)
                     {
-                        RecieveMesh(i, meshCount, sensorManager.listOfMeshes[i]);
-                        //HostController.Instance.RenderMesh(sensorManager.listOfMeshes);
+                        RecieveMesh(i, meshTotal, sensorManager.listOfMeshes[i]);
                     }  
                 }
             }

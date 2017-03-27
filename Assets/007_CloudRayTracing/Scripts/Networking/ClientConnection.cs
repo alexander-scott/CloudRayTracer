@@ -10,10 +10,14 @@ namespace BMW.Verification.CloudRayTracing
     public partial class ClientConnection : ClientScope
     {
         // Maps the transmission id to the data being received.
-        Dictionary<int, DataController.TransmissionData> clientTransmissionData = new Dictionary<int, DataController.TransmissionData>();
+        private Dictionary<int, DataController.TransmissionData> clientTransmissionData = new Dictionary<int, DataController.TransmissionData>();
 
+        public event UnityAction<int> OnTransmissionPreparation;
         public event UnityAction<int, byte[]> OnDataFragmentReceived;
-        public event UnityAction<int, byte[]> OnDataCompletelyReceived;
+        public event UnityAction<int, int, byte[]> OnDataCompletelyReceived;
+        public event UnityAction OnFrameChanged;
+
+        private int currentFrameCount;
 
         protected override void OnEnterScope()
         {
@@ -53,10 +57,21 @@ namespace BMW.Verification.CloudRayTracing
         #region Network transmitter
 
         [Signal]
-        public void ClientPrepareToRecieveTransmission(int transmissionId, int expectedSize)
+        public void ClientPrepareToRecieveTransmission(int transmissionId, int expectedSize, int frameCount,  int meshTotal)
         {
             if (clientTransmissionData.ContainsKey(transmissionId))
                 return;
+
+            if (currentFrameCount != frameCount)
+            {
+                currentFrameCount = frameCount;
+
+                if (null != OnFrameChanged)
+                    OnFrameChanged.Invoke();
+            }
+
+            if (null != OnTransmissionPreparation)
+                OnTransmissionPreparation.Invoke(meshTotal);
 
             // Prepare data array which will be filled chunk by chunk by the received data
             DataController.TransmissionData receivingData = new DataController.TransmissionData(new byte[expectedSize]);
@@ -64,7 +79,7 @@ namespace BMW.Verification.CloudRayTracing
         }
 
         [Signal]
-        public void ClientRecieveTransmission(int transmissionId, byte[] recBuffer)
+        public void ClientRecieveTransmission(int transmissionId, int meshCount, byte[] recBuffer)
         {
             // Already completely received or not prepared?
             if (!clientTransmissionData.ContainsKey(transmissionId))
@@ -87,7 +102,7 @@ namespace BMW.Verification.CloudRayTracing
             clientTransmissionData.Remove(transmissionId);
 
             if (null != OnDataCompletelyReceived)
-                OnDataCompletelyReceived.Invoke(transmissionId, dataToReceive.data);
+                OnDataCompletelyReceived.Invoke(transmissionId, meshCount, dataToReceive.data);
         }
 
         #endregion

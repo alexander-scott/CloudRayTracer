@@ -32,10 +32,13 @@ namespace BMW.Verification.CloudRayTracing
         public string ipAddress;
         public int defaultBufferSize = 1300; // Max ethernet MTU is ~1400
         public ApplicationType applicationType = ApplicationType.Undefined;
-        public float timeBetweenTransmissions = 0.1f;
         public float pointsPerMesh = 500f;
+        [Range(0.001f, 5)]
+        public float networkSendRate = 1f;
+        [Range(0.001f, 1)]
+        public float rayTracerGap = 0.02f; // The gap between each ray fired in the sensor bounds
 
-        public enum PacketType { StartRayTracer, StopRayTracer, }
+        public enum PacketType { StartRayTracer, StopRayTracer, UpdateNetworkSendRate, UpdateRayTracerGap, }
         public enum ApplicationType { Undefined, Client, Server, Host, }
         public enum StatisticType { FPS, AVGFPS, MINFPS, MAXFPS, MEMTOTAL, MEMALLOC, }
         public enum ClientCanvasButtonType { Information, Controls, Viewports, Performance, Disconnect, }

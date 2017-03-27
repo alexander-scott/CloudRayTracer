@@ -90,9 +90,9 @@ namespace BMW.Verification.CloudRayTracing
             finishedRayCasting = false;
 
             // Iterate through every point within the bounds
-            for (float i = topY; i > botY; i -= sensorManager.gapBetweenPoints) // Go from top to bottom of the bounds
+            for (float i = topY; i > botY; i -= DataController.Instance.rayTracerGap) // Go from top to bottom of the bounds
             {
-                for (float j = leftX; j < rightX; j += sensorManager.gapBetweenPoints) // Go from left to right of the bounds
+                for (float j = leftX; j < rightX; j += DataController.Instance.rayTracerGap) // Go from left to right of the bounds
                 {
                     dir = (MovePointerToLoc(j, i, sensorManager.sensorDepth) - transform.position).normalized; // Direction vector from sensor to point within bounds
 

@@ -14,8 +14,6 @@ namespace BMW.Verification.CloudRayTracing
         public float sensorHeight = 36f; 
         [Range(0, 500)]
         public float sensorDepth = 14f;
-        [Range(0.001f, 1)]
-        public float gapBetweenPoints = 0.02f; // The gap between each ray fired in the sensor bounds
 
         [Space(10)]
         [Header("References")]

@@ -80,15 +80,31 @@ namespace BMW.Verification.CloudRayTracing
                     Debug.Log("Raytrace stop");
                     RayTraceController.Instance.StopRayTracing();
                     break;
+
+                case DataController.PacketType.UpdateNetworkSendRate:
+                    float parseVal;
+                    if (float.TryParse(contents, out parseVal))
+                    {
+                        DataController.Instance.networkSendRate = parseVal;
+                    }
+                    break;
+
+                case DataController.PacketType.UpdateRayTracerGap:
+                    float parseVals;
+                    if (float.TryParse(contents, out parseVals))
+                    {
+                        DataController.Instance.rayTracerGap = parseVals;
+                    }
+                    break;
             }
         }
 
-        public void SendSeralisedMeshToClient(int transmissionID, byte[] mesh)
+        public void SendSeralisedMeshToClient(int transmissionID, int meshIndex, int meshTotal, int frameNumber, byte[] mesh)
         {
             if (server.NumberOfPeers != 0)
             {
                 // SPLIT UP ARRAY
-                StartCoroutine(server.Connection.SendBytesToClientsRoutine(transmissionID, mesh));
+                StartCoroutine(server.Connection.SendBytesToClientsRoutine(transmissionID, frameNumber, meshIndex, meshTotal, mesh));
             }
             else
             {
