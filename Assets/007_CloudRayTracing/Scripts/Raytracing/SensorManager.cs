@@ -7,14 +7,6 @@ namespace BMW.Verification.CloudRayTracing
 {
     public class SensorManager : MonoBehaviour
     {
-        [Header("Sensor Config")]
-        [Range(0, 500)]
-        public float sensorWidth = 142f; 
-        [Range(0, 500)]
-        public float sensorHeight = 36f; 
-        [Range(0, 500)]
-        public float sensorDepth = 14f;
-
         [Space(10)]
         [Header("References")]
         public LayerMask toDetect;

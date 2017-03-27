@@ -18,6 +18,7 @@ namespace BMW.Verification.CloudRayTracing
         {
             for (int i = 0; i < clientCanvasButtons.Length; i++)
             {
+                //clientCanvasButtons[i].Button.onClick.AddListener(() => ButtonClicked(clientCanvasButtons[i].type));
                 // SWITCH STATEMENT ISN'T NECESSARY
                 switch (clientCanvasButtons[i].type)
                 {
@@ -39,6 +40,10 @@ namespace BMW.Verification.CloudRayTracing
 
                     case DataController.ClientCanvasButtonType.Viewports:
                         clientCanvasButtons[i].Button.onClick.AddListener(() => ButtonClicked(DataController.ClientCanvasButtonType.Viewports));
+                        break;
+
+                    case DataController.ClientCanvasButtonType.Sensors:
+                        clientCanvasButtons[i].Button.onClick.AddListener(() => ButtonClicked(DataController.ClientCanvasButtonType.Sensors));
                         break;
                 }
             }
