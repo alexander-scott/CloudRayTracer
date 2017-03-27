@@ -74,9 +74,9 @@ namespace BMW.Verification.CloudRayTracing
                 rotationXAxis -= velocityY;
                 rotationXAxis = ClampAngle(rotationXAxis, yMinLimit, yMaxLimit);
 
-                Quaternion fromRotation = Quaternion.Euler(cameraDefault.transform.rotation.eulerAngles.x, cameraDefault.transform.rotation.eulerAngles.y, 0);
-                Quaternion toRotation = Quaternion.Euler(rotationXAxis, rotationYAxis, 0);
-                Quaternion rotation = toRotation;
+                //Quaternion fromRotation = Quaternion.Euler(cameraDefault.transform.rotation.eulerAngles.x, cameraDefault.transform.rotation.eulerAngles.y, 0);
+                //Quaternion toRotation = Quaternion.Euler(rotationXAxis, rotationYAxis, 0);
+                Quaternion rotation = Quaternion.Euler(rotationXAxis, rotationYAxis, 0);
 
                 distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel") * 5, distanceMin, distanceMax);
 

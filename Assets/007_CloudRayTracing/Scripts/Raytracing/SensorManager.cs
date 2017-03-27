@@ -28,7 +28,6 @@ namespace BMW.Verification.CloudRayTracing
         public List<Mesh> listOfMeshes = new List<Mesh>();
 
         private Sensor[] sensors;
-        private List<GameObject> pcMeshes = new List<GameObject>();
 
         void Start()
         {

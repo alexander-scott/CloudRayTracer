@@ -5,12 +5,12 @@ namespace BMW.Verification.CloudRayTracing
 {
     public class Sensor : MonoBehaviour
     {
-        public SensorManager sensorManager;
-
         public GameObject sensorArea;
         public Transform rayPoint;
 
         public bool finishedRayCasting = false;
+
+        private SensorManager sensorManager;
 
         private float leftX;
         private float rightX;
@@ -26,6 +26,8 @@ namespace BMW.Verification.CloudRayTracing
 
         void Start()
         {
+            sensorManager = GetComponentInParent<SensorManager>();
+
             UpdateValues();
 
             for (int i = 0; i < 8; i++)

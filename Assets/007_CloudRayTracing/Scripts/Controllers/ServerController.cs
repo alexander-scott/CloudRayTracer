@@ -124,7 +124,7 @@ namespace BMW.Verification.CloudRayTracing
 
         public IEnumerator<float> SendPerformanceData(Peer peer)
         {
-            yield return Timing.WaitForSeconds(3f); 
+            yield return Timing.WaitForSeconds(1f); 
             while (peer.isConnected)
             {
                 float fpsVal = 1.0f / Time.deltaTime;

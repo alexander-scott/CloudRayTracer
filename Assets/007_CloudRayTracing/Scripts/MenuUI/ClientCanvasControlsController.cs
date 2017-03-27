@@ -19,6 +19,9 @@ namespace BMW.Verification.CloudRayTracing
             startRaytracerButton.onClick.AddListener(StartRayTracer);
             stopRaytracerButton.onClick.AddListener(StopRayTracer);
 
+            DataController.Instance.networkSendRate = PlayerPrefs.GetFloat("NetworkSendRate", DataController.Instance.networkSendRate);
+            DataController.Instance.rayTracerGap = PlayerPrefs.GetFloat("RayTracerGap", DataController.Instance.rayTracerGap);
+
             networkSendRateInput.text = DataController.Instance.networkSendRate.ToString();
             rayTracerGapSizeInput.text = DataController.Instance.rayTracerGap.ToString();
         }
@@ -29,6 +32,8 @@ namespace BMW.Verification.CloudRayTracing
             if(float.TryParse(newVal, out parsedVal))
             {
                 DataController.Instance.networkSendRate = parsedVal;
+                PlayerPrefs.SetFloat("NetworkSendRate", parsedVal);
+                PlayerPrefs.Save();
                 if (DataController.Instance.applicationType == DataController.ApplicationType.Client)
                 {
                     ClientController.Instance.SendPacket(DataController.PacketType.UpdateNetworkSendRate, newVal);
@@ -46,6 +51,8 @@ namespace BMW.Verification.CloudRayTracing
             if (float.TryParse(newVal, out parsedVal))
             {
                 DataController.Instance.rayTracerGap = parsedVal;
+                PlayerPrefs.SetFloat("RayTracerGap", parsedVal);
+                PlayerPrefs.Save();
                 if (DataController.Instance.applicationType == DataController.ApplicationType.Client)
                 {
                     ClientController.Instance.SendPacket(DataController.PacketType.UpdateNetworkSendRate, newVal);
