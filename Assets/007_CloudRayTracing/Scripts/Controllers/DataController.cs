@@ -40,7 +40,6 @@ namespace BMW.Verification.CloudRayTracing
         public enum ApplicationType { Undefined, Client, Server, Host, }
         public enum StatisticType { FPS, AVGFPS, MINFPS, MAXFPS, MEMTOTAL, MEMALLOC, }
         public enum ClientCanvasButtonType { Information, Controls, Viewports, Performance, Sensors, Disconnect, }
-        public enum SensorType { Square, Curved, }
 
         public Dictionary<DataController.StatisticType, float> performanceDictionary = new Dictionary<DataController.StatisticType, float>();
 
