@@ -80,7 +80,8 @@ namespace BMW.Verification.CloudRayTracing
 
             if (pointCloudMeshses[number] == null)
             {
-                pointCloudMeshses[number] = Instantiate(pointCloudPrefab, pointCloudParent);
+                pointCloudMeshses[number] = Instantiate(pointCloudPrefab);
+                pointCloudMeshses[number].transform.parent = pointCloudParent;
             }
             else
             {
@@ -88,6 +89,8 @@ namespace BMW.Verification.CloudRayTracing
             }
             
             pointCloudMeshses[number].GetComponent<MeshFilter>().mesh = mesh;
+            pointCloudMeshses[number].transform.localPosition = new Vector3(0, 0, 0);
+            pointCloudMeshses[number].transform.localRotation = new Quaternion(0, 0, 0, 0);
         }
 
         private IEnumerator RayTracerCoroutine()
@@ -106,15 +109,8 @@ namespace BMW.Verification.CloudRayTracing
                 sensorManager.listOfMeshes.Clear();
                 sensorManager.finishedRayTracing = false;
 
-                if (DataController.Instance.networkSendRate == 0)
-                {
-                    yield return new WaitForFixedUpdate();
-                }
-                else
-                {
-                    // How long should we wait before doing it all again? Bear in mind the data might not have fully reached the client yet.
-                    yield return new WaitForSeconds(DataController.Instance.networkSendRate);
-                }
+                // How long should we wait before doing it all again? Bear in mind the data might not have fully reached the client yet.
+                yield return new WaitForSeconds(DataController.Instance.networkSendRate);
 
                 frameNumber++;
             }
@@ -150,7 +146,8 @@ namespace BMW.Verification.CloudRayTracing
 
         public void CreateNewMeshFilter()
         {
-            GameObject newMesh = Instantiate(pointCloudPrefab, pointCloudParent) as GameObject;
+            GameObject newMesh = Instantiate(pointCloudPrefab) as GameObject;
+            newMesh.transform.parent = pointCloudParent;
 
             newMesh.GetComponent<MeshFilter>().mesh = new Mesh();
             pointCloudMeshses.Add(newMesh);

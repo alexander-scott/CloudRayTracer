@@ -20,11 +20,6 @@ namespace BMW.Verification.CloudRayTracing
 
         private SensorManager sensorManager;
 
-        private float leftX;
-        private float rightX;
-        private float topY;
-        private float botY;
-
         private Vector3 topLeft;
         private Vector3 topRight;
         private Vector3 botRight;
@@ -59,6 +54,11 @@ namespace BMW.Verification.CloudRayTracing
 
         public void FireRays()
         {
+            Timing.RunCoroutine(RayTraceCoroutine());
+        }
+
+        private IEnumerator<float> RayTraceCoroutine()
+        {
             RaycastHit hit;
             Vector3 dir;
 
@@ -75,12 +75,14 @@ namespace BMW.Verification.CloudRayTracing
                     if (Physics.Raycast(transform.position, dir, out hit, sensorDepth, sensorManager.toDetect.value))
                     {
                         // If it intersects with an object, add that point to the list of hit positions
-                        sensorManager.hitPositions.Add(hit.point);
+                        sensorManager.hitPositions.Add(RayTraceController.Instance.pointCloudParent.transform.InverseTransformPoint(hit.point)); 
                     }
                 }
             }
 
             finishedRayCasting = true;
+
+            yield return 0f;
         }
 
         private void RearrangeLinesCurved()
@@ -143,11 +145,6 @@ namespace BMW.Verification.CloudRayTracing
 
         private void UpdateValues()
         {
-            if (sensorManager == null)
-            {
-                sensorManager = GetComponentInParent<SensorManager>();
-            }
-
             centre = ((transform.position + (transform.forward * sensorDepth)) - transform.position);
 
             topRight = transform.position + (Quaternion.Euler(0, +(radius / 2), 0) * centre) + new Vector3(0f, sensorHeight / 2, 0f);
@@ -167,23 +164,26 @@ namespace BMW.Verification.CloudRayTracing
 
         void OnDrawGizmos()
         {
-            UpdateValues(); // Should this be called in this function?
-
-            Gizmos.color = Color.blue;
-
-            for (int i = 0; i < botCurvePositions.Count - 1; i++)
+            if (GetComponentInParent<SensorManager>().enableSensorGizmos)
             {
-                Gizmos.DrawLine(botCurvePositions[i], botCurvePositions[i + 1]);
-                Gizmos.DrawLine(topCurvePositions[i], topCurvePositions[i + 1]);
+                UpdateValues(); // Should this be called in this function?
+
+                Gizmos.color = Color.blue;
+
+                for (int i = 0; i < botCurvePositions.Count - 1; i++)
+                {
+                    Gizmos.DrawLine(botCurvePositions[i], botCurvePositions[i + 1]);
+                    Gizmos.DrawLine(topCurvePositions[i], topCurvePositions[i + 1]);
+                }
+
+                Gizmos.DrawLine(transform.position, topLeft);
+                Gizmos.DrawLine(transform.position, topRight);
+                Gizmos.DrawLine(transform.position, botRight);
+                Gizmos.DrawLine(transform.position, botLeft);
+
+                Gizmos.DrawLine(topLeft, botLeft);
+                Gizmos.DrawLine(topRight, botRight);
             }
-
-            Gizmos.DrawLine(transform.position, topLeft);
-            Gizmos.DrawLine(transform.position, topRight);
-            Gizmos.DrawLine(transform.position, botRight);
-            Gizmos.DrawLine(transform.position, botLeft);
-
-            Gizmos.DrawLine(topLeft, botLeft);
-            Gizmos.DrawLine(topRight, botRight);
         }
 
         private Vector3[] MakeSmoothCurve(Vector3[] arrayToCurve, float smoothness)

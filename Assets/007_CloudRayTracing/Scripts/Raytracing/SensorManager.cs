@@ -27,10 +27,9 @@ namespace BMW.Verification.CloudRayTracing
 
         #endregion
 
-        [Space(10)]
-        [Header("References")]
         public LayerMask toDetect;
         public GameObject linePrefab;
+        public bool enableSensorGizmos = false;
 
         [HideInInspector]
         public List<Vector3> hitPositions = new List<Vector3>();
@@ -91,7 +90,7 @@ namespace BMW.Verification.CloudRayTracing
             Vector3[] points = new Vector3[hitPositions.Count];
             int[] indecies = new int[hitPositions.Count];
 
-            Debug.Log("TOTAL POINTS: " + hitPositions.Count);
+            //Debug.Log("TOTAL POINTS: " + hitPositions.Count);
 
             for (int i = 0; i < hitPositions.Count; ++i)
             {
