@@ -56,7 +56,7 @@ namespace BMW.Verification.CloudRayTracing
             host.onClick.AddListener(HostClicked);
 
             ipAddress.text = DataController.Instance.ipAddress;
-            ipAddressLabel.text = DataController.Instance.LocalIPAddress();
+            ipAddressLabel.text = "@" + DataController.Instance.LocalIPAddress();
 
             // If we are running in headless mode go straight to start server
             if (SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null)

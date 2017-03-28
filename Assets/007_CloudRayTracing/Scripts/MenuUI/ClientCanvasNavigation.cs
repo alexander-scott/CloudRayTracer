@@ -8,8 +8,8 @@ namespace BMW.Verification.CloudRayTracing
 {
     public class ClientCanvasNavigation : MonoBehaviour
     {
-        public ClientCanvasType[] canvases;
-        public ClientCanvasType[] clientCanvasButtons;
+        public ClientCanvasButtonType[] canvases;
+        public ClientCanvasButtonType[] clientCanvasButtons;
 
         private DataController.ClientCanvasButtonType currentSelectedButtonType = DataController.ClientCanvasButtonType.Information; // Set as default
 

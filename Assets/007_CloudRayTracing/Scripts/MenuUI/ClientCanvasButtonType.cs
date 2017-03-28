@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace BMW.Verification.CloudRayTracing
 {
-    public class ClientCanvasType : MonoBehaviour
+    public class ClientCanvasButtonType : MonoBehaviour
     {
         public DataController.ClientCanvasButtonType type;
 

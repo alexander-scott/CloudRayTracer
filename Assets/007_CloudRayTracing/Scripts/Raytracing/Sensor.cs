@@ -5,17 +5,15 @@ namespace BMW.Verification.CloudRayTracing
 {
     public class Sensor : MonoBehaviour
     {
-        [Space(10)]
         [Header("Sensor Properties")]
+        public DataController.SensorType sensorType;
         [Range(0, 20)]
         public float sensorDepth = 14f;
         [Range(0, 20)]
         public float sensorHeight = 10f;
         [Range(0, 180)]
         public float radius = 30f;
-        [Range(0.5f, 2)]
-        public float spaceBetweenWireFrameVerticies = 1f;
-
+        
         [Space(10)]
 
         public bool finishedRayCasting = false;

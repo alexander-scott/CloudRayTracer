@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,43 +7,6 @@ namespace BMW.Verification.CloudRayTracing
 {
     public class DataController : MonoBehaviour
     {
-        #region Singleton
-
-        private static DataController _instance;
-
-        public static DataController Instance { get { return _instance; } }
-
-        private void Awake()
-        {
-            if (_instance != null && _instance != this)
-            {
-                Destroy(this.gameObject);
-            }
-            else
-            {
-                ipAddress = PlayerPrefs.GetString("IPAddress", "127.0.0.1");
-                _instance = this;
-            }
-        }
-
-        #endregion
-
-        public string ipAddress;
-        public int defaultBufferSize = 1300; // Max ethernet MTU is ~1400
-        public ApplicationType applicationType = ApplicationType.Undefined;
-        public float pointsPerMesh = 500f;
-        [Range(0.001f, 5)]
-        public float networkSendRate = 1f;
-        [Range(0.001f, 1)]
-        public float rayTracerGap = 0.02f; // The gap between each ray fired in the sensor bounds
-
-        public enum PacketType { StartRayTracer, StopRayTracer, UpdateNetworkSendRate, UpdateRayTracerGap, }
-        public enum ApplicationType { Undefined, Client, Server, Host, }
-        public enum StatisticType { FPS, AVGFPS, MINFPS, MAXFPS, MEMTOTAL, MEMALLOC, }
-        public enum ClientCanvasButtonType { Information, Controls, Viewports, Performance, Sensors, Disconnect, }
-
-        public Dictionary<DataController.StatisticType, float> performanceDictionary = new Dictionary<DataController.StatisticType, float>();
-
         public class TransmissionData
         {
             public int curDataIndex; // Current position in the array of data already received.
@@ -52,6 +16,52 @@ namespace BMW.Verification.CloudRayTracing
             {
                 curDataIndex = 0;
                 data = _data;
+            }
+        }
+
+        private static DataController _instance;
+        public static DataController Instance { get { return _instance; } }
+
+        public string ipAddress;
+        public int defaultBufferSize = 1300; // Max ethernet MTU is ~1400
+        public ApplicationType applicationType = ApplicationType.Undefined;
+        public float pointsPerMesh = 500f;
+        public float networkSendRate = 1f;
+        public float rayTracerGap = 0.02f; // The gap between each ray fired in the sensor bounds
+        public Dictionary<SensorType, bool> activeSensors = new Dictionary<SensorType, bool>();
+
+        public enum PacketType { StartRayTracer, StopRayTracer, UpdateNetworkSendRate, UpdateRayTracerGap, }
+        public enum ApplicationType { Undefined, Client, Server, Host, }
+        public enum StatisticType { FPS, AVGFPS, MINFPS, MAXFPS, MEMTOTAL, MEMALLOC, }
+        public enum ClientCanvasButtonType { Information, Controls, Viewports, Performance, Sensors, Disconnect, }
+        public enum SensorType
+        {
+            FrontLong,
+            FrontShort,
+            FrontLeft,
+            FrontRight,
+            BackLong,
+            BackShort,
+            BackLeft,
+            BackRight,
+            RightLong,
+            RightShort,
+            LeftLong,
+            LeftShort,
+        }
+
+        public Dictionary<StatisticType, float> performanceDictionary = new Dictionary<DataController.StatisticType, float>();
+
+        private void Awake()
+        {
+            if (_instance != null && _instance != this)
+            {
+                Destroy(this.gameObject);
+            }
+            else
+            {
+                GetPlayerPrefs();
+                _instance = this;
             }
         }
 
@@ -74,6 +84,28 @@ namespace BMW.Verification.CloudRayTracing
             }
             return localIP;
 #endif
+        }
+
+        public void GetPlayerPrefs()
+        {
+            ipAddress = PlayerPrefs.GetString("IPAddress", "127.0.0.1");
+
+            int numOfSensorTypes = Enum.GetNames(typeof(SensorType)).Length;
+
+            for (int i = 0; i < numOfSensorTypes; i++)
+            {
+                string key = "SensorState" + ((SensorType)i).ToString();
+                bool active = bool.Parse(PlayerPrefs.GetString(key, "true"));
+                activeSensors[(SensorType)i] = active;
+            }
+        }
+
+        public void SaveSensorState(SensorType sensorType, bool state)
+        {
+            activeSensors[sensorType] = state;
+            SensorManager.Instance.ToggleSensor(sensorType, state);
+            PlayerPrefs.SetString("SensorState" + sensorType.ToString(), state.ToString());
+            PlayerPrefs.Save();
         }
     }
 }
