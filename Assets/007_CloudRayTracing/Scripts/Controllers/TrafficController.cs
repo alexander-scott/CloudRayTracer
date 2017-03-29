@@ -21,12 +21,15 @@ namespace BMW.Verification.CloudRayTracing
             else
             {
                 _instance = this;
+                wayPoints = wayPointParent.GetComponentsInChildren<Transform>();
             }
         }
 
         #endregion
 
-        
+        public GameObject wayPointParent;
+        public GameObject carPrefab;
 
+        public Transform[] wayPoints;
     }
 }
