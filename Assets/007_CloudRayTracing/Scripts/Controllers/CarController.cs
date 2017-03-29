@@ -6,19 +6,12 @@ namespace BMW.Verification.CloudRayTracing
     public class CarController : MonoBehaviour
     {
         public float acceleration = 0.1f;
-
         public float speedDecay = 0.96f;
-
         public float rotationStep = 1;
-
         public float maxSpeed = 1;
 
         private float speed = 0;
-
-        private float rotation = 0;
-
         private float speedx = 0;
-
         private float speedy = 0;
 
         // Update is called once per frame
@@ -35,6 +28,11 @@ namespace BMW.Verification.CloudRayTracing
                     speed = 0;
                 }
 
+                if (Input.GetKey(KeyCode.Space))
+                {
+                    transform.rotation = Quaternion.Euler(0, 0, 0);
+                }
+
                 if (Input.GetKey(KeyCode.W) && speed < maxSpeed)
                 {
                     speed += acceleration;
@@ -47,14 +45,14 @@ namespace BMW.Verification.CloudRayTracing
 
                 if (Input.GetKey(KeyCode.A))
                 {
-                    rotation -= rotationStep * (speed / maxSpeed);
-                    transform.rotation = Quaternion.Euler(0, rotation, 0);
+                    //rotation -= ;
+                    transform.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y - rotationStep * (speed / maxSpeed), transform.eulerAngles.z);
                 }
 
                 if (Input.GetKey(KeyCode.D))
                 {
-                    rotation += rotationStep * (speed / maxSpeed);
-                    transform.rotation = Quaternion.Euler(0, rotation, 0);
+                    //rotation += ;
+                    transform.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y + rotationStep * (speed / maxSpeed), transform.eulerAngles.z);
                 }
 
                 speedx = Mathf.Sin(transform.eulerAngles.y * (Mathf.PI / 180)) * speed;

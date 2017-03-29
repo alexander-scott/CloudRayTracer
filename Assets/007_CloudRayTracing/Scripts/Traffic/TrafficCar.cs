@@ -7,22 +7,19 @@ namespace BMW.Verification.CloudRayTracing
     public class TrafficCar : MonoBehaviour
     {
         public float acceleration = 0.1f;
-
         public float speedDecay = 0.96f;
-
         public float rotationStep = 1;
-
         public float maxSpeed = 1;
 
+        public int currentWayPointIndex = 0;
+
         private float speed = 0;
-
-        private float rotation = 0;
-
         private float speedx = 0;
-
         private float speedy = 0;
 
-        public int currentWayPointIndex = 0;
+        private float sameDirectionTimer = 0f;
+        private float reverseTimer = 0f;
+        private bool turningLeft = false;
 
         void Update()
         {
@@ -35,38 +32,62 @@ namespace BMW.Verification.CloudRayTracing
                 speed = 0;
             }
 
-            if (DataController.Instance.applicationType != DataController.ApplicationType.Undefined && speed < maxSpeed)
-            {
-                speed += acceleration;
-            }
-
             Vector3 targetDir = (TrafficController.Instance.wayPoints[currentWayPointIndex].position - transform.position).normalized;
             float angleToWaypoint = AngleSigned(transform.forward, targetDir, transform.up);
 
-            if (Mathf.Abs(angleToWaypoint - 1f) > 1f)
+            if (sameDirectionTimer > 3f)
             {
-                if (angleToWaypoint < 0f)
+                if (reverseTimer < 1f)
                 {
-                    rotation -= rotationStep * (speed / maxSpeed);
-                    transform.rotation = Quaternion.Euler(0, rotation, 0);
+                    if (DataController.Instance.applicationType != DataController.ApplicationType.Undefined && speed > -maxSpeed)
+                    {
+                        speed -= acceleration;
+                    }
+
+                    reverseTimer += Time.deltaTime;
                 }
                 else
                 {
-                    rotation += rotationStep * (speed / maxSpeed);
-                    transform.rotation = Quaternion.Euler(0, rotation, 0);
+                    reverseTimer = 0f;
+                    sameDirectionTimer = 0f;
+                }
+            }
+            else if (transform.eulerAngles.z > 90f || transform.eulerAngles.z < -90f)
+            {
+                if (speed < 0.1f && speed > -0.1f)
+                {
+                    transform.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + (300f * Time.deltaTime));
                 }
             }
             else
             {
-                if (rotation > 0.1f)
+                if (DataController.Instance.applicationType != DataController.ApplicationType.Undefined && speed < maxSpeed)
                 {
-                    rotation -= rotationStep * (speed / maxSpeed);
-                    transform.rotation = Quaternion.Euler(0, rotation, 0);
+                    speed += acceleration;
                 }
-                else if (rotation < -0.1f)
+
+                if (Mathf.Abs(angleToWaypoint - 1f) > 1f)
                 {
-                    rotation += rotationStep * (speed / maxSpeed);
-                    transform.rotation = Quaternion.Euler(0, rotation, 0);
+                    if (angleToWaypoint < 0f)
+                    {
+                        if (turningLeft)
+                        {
+                            turningLeft = false;
+                            sameDirectionTimer = 0f;
+                        }
+                        transform.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y - rotationStep * (speed / maxSpeed), transform.eulerAngles.z);
+                    }
+                    else
+                    {
+                        if (!turningLeft)
+                        {
+                            turningLeft = true;
+                            sameDirectionTimer = 0f;
+                        }
+                        transform.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y + rotationStep * (speed / maxSpeed), transform.eulerAngles.z);
+                    }
+
+                    sameDirectionTimer += Time.deltaTime;
                 }
             }
 
