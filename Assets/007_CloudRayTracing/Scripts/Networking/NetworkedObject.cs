@@ -11,6 +11,15 @@ namespace BMW.Verification.CloudRayTracing
         void Start()
         {
             oldKey = transform.position;
+
+            if (DataController.Instance.applicationType == DataController.ApplicationType.Server)
+            {
+                Rigidbody rb = GetComponent<Rigidbody>();
+                if (rb != null)
+                {
+                    Destroy(rb);
+                }
+            }
         }
 
         // Update is called once per frame
