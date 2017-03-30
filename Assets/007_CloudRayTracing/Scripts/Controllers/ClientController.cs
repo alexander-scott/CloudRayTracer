@@ -98,7 +98,7 @@ namespace BMW.Verification.CloudRayTracing
 
         public void StartRayTracer()
         {
-            SendPacket(DataController.PacketType.UpdateNetworkSendRate, DataController.Instance.networkSendRate.ToString());
+            SendPacket(DataController.PacketType.UpdateNetworkSendRate, DataController.Instance.meshSendRate.ToString());
             SendPacket(DataController.PacketType.UpdateRayTracerGap, DataController.Instance.rayTracerGap.ToString());
             SendPacket(DataController.PacketType.StartRayTracer, true.ToString());
         }

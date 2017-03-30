@@ -85,7 +85,7 @@ namespace BMW.Verification.CloudRayTracing
                     float parseVal;
                     if (float.TryParse(contents, out parseVal))
                     {
-                        DataController.Instance.networkSendRate = parseVal;
+                        DataController.Instance.meshSendRate = parseVal;
                     }
                     break;
 
@@ -94,6 +94,14 @@ namespace BMW.Verification.CloudRayTracing
                     if (float.TryParse(contents, out parseVals))
                     {
                         DataController.Instance.rayTracerGap = parseVals;
+                    }
+                    break;
+
+                case DataController.PacketType.UpdateNetworkedObjectSendRate:
+                    float parseVals1;
+                    if (float.TryParse(contents, out parseVals1))
+                    {
+                        DataController.Instance.networkedObjectSendRate = parseVals1;
                     }
                     break;
             }

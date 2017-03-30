@@ -8,10 +8,10 @@ namespace BMW.Verification.CloudRayTracing
     {
         private Vector3 oldKey;
 
+        private float sendTimer = 0f;
+
         void Start()
         {
-            oldKey = transform.position;
-
             if (DataController.Instance.applicationType == DataController.ApplicationType.Server)
             {
                 Rigidbody rb = GetComponent<Rigidbody>();
@@ -19,7 +19,11 @@ namespace BMW.Verification.CloudRayTracing
                 {
                     Destroy(rb);
                 }
+
+                Destroy(this);
             }
+
+            oldKey = transform.position;
         }
 
         // Update is called once per frame
@@ -27,13 +31,20 @@ namespace BMW.Verification.CloudRayTracing
         {
             if (DataController.Instance.applicationType == DataController.ApplicationType.Client && ClientController.Instance.client.IsConnected)
             {
-                if (transform.hasChanged)
+                if (transform.hasChanged
+                    && sendTimer > DataController.Instance.networkedObjectSendRate)
                 {
                     transform.hasChanged = false;
 
                     ClientController.Instance.UpdateObjectPositionOnServer(oldKey, transform.position, transform.eulerAngles, transform.localScale);
 
                     oldKey = transform.position;
+
+                    sendTimer = 0f;
+                }
+                else
+                {
+                    sendTimer += Time.deltaTime;
                 }
             }
         }

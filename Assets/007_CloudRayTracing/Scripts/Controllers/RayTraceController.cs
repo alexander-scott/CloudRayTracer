@@ -110,7 +110,7 @@ namespace BMW.Verification.CloudRayTracing
                 sensorManager.finishedRayTracing = false;
 
                 // How long should we wait before doing it all again? Bear in mind the data might not have fully reached the client yet.
-                yield return new WaitForSeconds(DataController.Instance.networkSendRate);
+                yield return new WaitForSeconds(DataController.Instance.meshSendRate);
 
                 frameNumber++;
             }
