@@ -156,8 +156,8 @@ namespace BMW.Verification.CloudRayTracing
                 DataController.Instance.performanceDictionary[DataController.StatisticType.MINFPS] = Mathf.Floor(minFPS);
                 DataController.Instance.performanceDictionary[DataController.StatisticType.MAXFPS] = Mathf.Floor(maxFPS);
 
-                uint totalMem = (Profiler.GetTotalReservedMemory() / 1048576);
-                uint memoryAlloc = totalMem - (Profiler.GetTotalAllocatedMemory() / 1048576);
+                long totalMem = (Profiler.GetTotalReservedMemoryLong() / 1048576);
+                long memoryAlloc = totalMem - (Profiler.GetTotalAllocatedMemoryLong() / 1048576);
 
                 DataController.Instance.performanceDictionary[DataController.StatisticType.MEMTOTAL] = float.Parse(totalMem.ToString());
                 DataController.Instance.performanceDictionary[DataController.StatisticType.MEMALLOC] = float.Parse(memoryAlloc.ToString());

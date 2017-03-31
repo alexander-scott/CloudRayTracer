@@ -112,7 +112,7 @@ namespace BMW.Verification.CloudRayTracing
                         break;
 
                     case 4:
-                        sensorLines[i].LineRenderer.numPositions = topCurvePositions.Count;
+                        sensorLines[i].LineRenderer.positionCount = topCurvePositions.Count;
 
                         for (int j = 0; j < topCurvePositions.Count; j++)
                         {
@@ -132,7 +132,7 @@ namespace BMW.Verification.CloudRayTracing
                         break;
 
                     case 7:
-                        sensorLines[i].LineRenderer.numPositions = botCurvePositions.Count;
+                        sensorLines[i].LineRenderer.positionCount = botCurvePositions.Count;
 
                         for (int j = 0; j < botCurvePositions.Count; j++)
                         {

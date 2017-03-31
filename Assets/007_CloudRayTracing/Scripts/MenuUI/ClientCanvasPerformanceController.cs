@@ -155,8 +155,8 @@ namespace BMW.Verification.CloudRayTracing
 
         private void CalcMemAlloc()
         {
-            uint totalMem = (Profiler.GetTotalReservedMemory() / 1048576);
-            uint memoryAlloc = totalMem - (Profiler.GetTotalAllocatedMemory() / 1048576);
+            long totalMem = (Profiler.GetTotalReservedMemoryLong() / 1048576);
+            long memoryAlloc = totalMem - (Profiler.GetTotalAllocatedMemoryLong() / 1048576);
 
             clientMemAllocLabel.text = "MEM ALLOC: " + memoryAlloc + " MB";
             clientMemAllocLabel.color = Color.yellow;
