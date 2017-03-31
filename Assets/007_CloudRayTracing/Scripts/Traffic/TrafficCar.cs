@@ -59,6 +59,11 @@ namespace BMW.Verification.CloudRayTracing
         {
             if (DataController.Instance.applicationType == DataController.ApplicationType.Server)
             {
+                Destroy(backLeftWheel.GetComponent<SphereCollider>());
+                Destroy(frontLeftWheel.GetComponent<SphereCollider>());
+                Destroy(frontRightWheel.GetComponent<SphereCollider>());
+                Destroy(backRightWheel.GetComponent<SphereCollider>());
+
                 Destroy(this);
             }
 
@@ -77,7 +82,9 @@ namespace BMW.Verification.CloudRayTracing
 
                 speedx = Mathf.Sin(transform.eulerAngles.y * (Mathf.PI / 180)) * speed;
                 speedy = Mathf.Cos(transform.eulerAngles.y * (Mathf.PI / 180)) * speed;
+
                 transform.position += new Vector3(speedx, 0, speedy);
+                //GetComponent<Rigidbody>().AddForce(new Vector3(speedx, 0, speedy));
 
                 if (Vector3.Distance(transform.position, TrafficController.Instance.wayPoints[currentWayPointIndex].position) < 15f)
                 {
@@ -148,6 +155,7 @@ namespace BMW.Verification.CloudRayTracing
                     if ((transform.up.y < 0f))
                     {
                         carState = CarState.Flipping;
+                        
                     }
 
                     break;

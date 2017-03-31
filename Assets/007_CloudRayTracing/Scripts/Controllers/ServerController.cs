@@ -52,14 +52,14 @@ namespace BMW.Verification.CloudRayTracing
             MenuController.Instance.UpdateSubTitleText("You are the SERVER");
         }
 
-        public void UpdateObjectPosition(Vector3 oldKey, Vector3 position, Vector3 rotation, Vector3 localScale)
+        public void UpdateObjectPosition(int key, Vector3 position, Vector3 rotation, Vector3 localScale)
         {
-            GameObject go = ObjectManager.Instance.GetGameObject(oldKey);
+            GameObject go = DataController.Instance.networkedObjectDictionary[key];
             go.transform.position = position;
             go.transform.eulerAngles = rotation;
             go.transform.localScale = localScale;
 
-            ObjectManager.Instance.UpdateKey(oldKey);
+            //ObjectManager.Instance.UpdateKey(oldKey);
         }
 
         public void SendPacket(DataController.PacketType packetType, string contents)
@@ -109,7 +109,7 @@ namespace BMW.Verification.CloudRayTracing
 
         public void SendSeralisedMeshToClient(int transmissionID, int meshIndex, int meshTotal, int frameNumber, byte[] mesh)
         {
-            if (server.NumberOfPeers != 0)
+            if (server.NumberOfPeers > 0)
             {
                 // SPLIT UP ARRAY
                 StartCoroutine(server.Connection.SendBytesToClientsRoutine(transmissionID, frameNumber, meshIndex, meshTotal, mesh));
@@ -126,14 +126,15 @@ namespace BMW.Verification.CloudRayTracing
 
             if (obj.isConnected)
             {
-                Timing.RunCoroutine(SendPerformanceData(obj), "SendPerformanceData");
+                Timing.RunCoroutine(SendPerformanceData(), "SendPerformanceData");
             }
         }
 
-        public IEnumerator<float> SendPerformanceData(Peer peer)
+        public IEnumerator<float> SendPerformanceData()
         {
             yield return Timing.WaitForSeconds(1f); 
-            while (peer.isConnected)
+
+            while (server.NumberOfPeers > 0)
             {
                 float fpsVal = 1.0f / Time.deltaTime;
                 DataController.Instance.performanceDictionary[DataController.StatisticType.FPS] = Mathf.Floor(fpsVal);
@@ -163,7 +164,7 @@ namespace BMW.Verification.CloudRayTracing
 
                 foreach (KeyValuePair<DataController.StatisticType, float> kvp in DataController.Instance.performanceDictionary)
                 {
-                    server.Connection.SendPerformanceDictionary(peer, (int)kvp.Key, kvp.Value);
+                    server.Connection.SendPerformanceDictionary((int)kvp.Key, kvp.Value);
                 }
 
                 yield return Timing.WaitForSeconds(0.5f);

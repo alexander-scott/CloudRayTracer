@@ -17,12 +17,14 @@ namespace BMW.Verification.CloudRayTracing
         public event UnityAction<int, int, byte[]> OnDataCompletelyReceived;
         public event UnityAction OnFrameChanged;
 
-        private int currentFrameCount;
+        private int currentFrameCount; 
 
-        protected override void OnEnterScope()
-        {
-            //SendToServer.Authenticate("sour", "testpw");
-        }
+        //protected override void OnEnterScope()
+        //{
+        //    //SendToServer.Authenticate("sour", "testpw");
+        //    Debug.Log("Scope entered");
+        //    base.OnEnterScope();
+        //}
 
         #region Send to server
 
@@ -31,7 +33,6 @@ namespace BMW.Verification.CloudRayTracing
             SendToServer.RecievePacket(packetNum, contents);
         }
 
-        public void UpdateObjectPosition(Vector3 oldKey, Vector3 position, Vector3 rotation, Vector3 localScale)
         {
             SendToServer.RecieveObjectPosition(oldKey, position, rotation, localScale);
         }

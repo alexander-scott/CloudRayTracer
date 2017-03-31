@@ -62,11 +62,11 @@ namespace BMW.Verification.CloudRayTracing
             client.Connect(DataController.Instance.ipAddress, 7777);
         }
 
-        public void UpdateObjectPositionOnServer(Vector3 oldkey, Vector3 position, Vector3 rotation, Vector3 localScale)
+        public void UpdateObjectPositionOnServer(int key, Vector3 position, Vector3 rotation, Vector3 localScale)
         {
             if (client.IsConnected)
             {
-                client.Connection.UpdateObjectPosition(oldkey, position, rotation, localScale);
+                client.Connection.UpdateObjectPosition(key, position, rotation, localScale);
             }
         }
 

@@ -99,6 +99,8 @@ namespace BMW.Verification.CloudRayTracing
 
             ServerController.Instance.StartServer();
 
+            clientCanvas.gameObject.SetActive(false); configCanvas.gameObject.SetActive(false);
+
             DataController.Instance.applicationType = DataController.ApplicationType.Server;
         }
 

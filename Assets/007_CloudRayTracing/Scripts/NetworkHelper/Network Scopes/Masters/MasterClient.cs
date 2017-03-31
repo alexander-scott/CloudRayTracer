@@ -47,7 +47,7 @@ namespace NetworkScopes
 			conConfig.NetworkDropThreshold = 20;
 			conConfig.DisconnectTimeout = 5000;
 
-			conConfig.AddChannel(QosType.ReliableSequenced);
+			conConfig.AddChannel(QosType.Unreliable);
 
 			return conConfig;
 		}

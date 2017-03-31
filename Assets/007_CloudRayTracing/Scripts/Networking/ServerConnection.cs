@@ -43,9 +43,9 @@ namespace BMW.Verification.CloudRayTracing
             SendToPeer(SenderPeer).RecievePacket(packetNum, contents);
         }
 
-        public void SendPerformanceDictionary(Peer peer, int performanceType, float performanceVal)
+        public void SendPerformanceDictionary(int performanceType, float performanceVal)
         {
-            SendToPeer(peer).RecieveServerPerformanceDictionary(performanceType, performanceVal);
+            SendToPeer(SenderPeer).RecieveServerPerformanceDictionary(performanceType, performanceVal);
         }
 
         #endregion
@@ -53,7 +53,7 @@ namespace BMW.Verification.CloudRayTracing
         #region Recieve from clients
 
         [Signal]
-        public void RecieveObjectPosition(Vector3 oldKey, Vector3 position, Vector3 rotation, Vector3 localScale)
+        public void RecieveObjectPosition(int oldKey, Vector3 position, Vector3 rotation, Vector3 localScale)
         {
             ServerController.Instance.UpdateObjectPosition(oldKey, position, rotation, localScale);
         }

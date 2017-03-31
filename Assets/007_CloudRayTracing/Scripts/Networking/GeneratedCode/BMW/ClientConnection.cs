@@ -68,7 +68,6 @@ namespace BMW.Verification.CloudRayTracing
 				_netSender.PrepareAndSendWriter(writer);
 			}
 			
-			public void RecieveObjectPosition(Vector3 oldKey, Vector3 position, Vector3 rotation, Vector3 localScale)
 			{
 				NetworkWriter writer = _netSender.CreateWriter(-1684256861);
 				writer.Write(oldKey);

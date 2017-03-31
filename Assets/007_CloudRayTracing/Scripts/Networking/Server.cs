@@ -1,8 +1,5 @@
 ﻿
 using NetworkScopes;
-using UnityEngine;
-using UnityEngine.Networking;
-using System.Collections.Generic;
 
 namespace BMW.Verification.CloudRayTracing
 {

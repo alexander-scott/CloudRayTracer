@@ -32,6 +32,8 @@ namespace BMW.Verification.CloudRayTracing
         public Dictionary<SensorType, bool> activeSensors = new Dictionary<SensorType, bool>();
         public bool carControl = false;
 
+        public Dictionary<int, GameObject> networkedObjectDictionary = new Dictionary<int, GameObject>();
+
         public enum PacketType { StartRayTracer, StopRayTracer, UpdateNetworkSendRate, UpdateRayTracerGap, UpdateNetworkedObjectSendRate, }
         public enum ApplicationType { Undefined, Client, Server, Host, }
         public enum StatisticType { FPS, AVGFPS, MINFPS, MAXFPS, MEMTOTAL, MEMALLOC, }

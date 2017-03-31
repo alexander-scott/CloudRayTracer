@@ -18,7 +18,7 @@ namespace BMW.Verification.CloudRayTracing
 		
 		public void Receive_RecieveObjectPosition(NetworkReader reader)
 		{
-			Vector3 oldKey = reader.ReadVector3();
+			Int32 oldKey = reader.ReadInt32();
 			Vector3 position = reader.ReadVector3();
 			Vector3 rotation = reader.ReadVector3();
 			Vector3 localScale = reader.ReadVector3();
