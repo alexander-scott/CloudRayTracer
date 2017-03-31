@@ -89,6 +89,8 @@ namespace BMW.Verification.CloudRayTracing
 
             clientCanvas.gameObject.SetActive(true); configCanvas.gameObject.SetActive(false);
 
+            TrafficController.Instance.SpawnCarsClient();
+
             DataController.Instance.applicationType = DataController.ApplicationType.Client;
         }
 
@@ -118,6 +120,8 @@ namespace BMW.Verification.CloudRayTracing
             clientCanvas.gameObject.SetActive(true); configCanvas.gameObject.SetActive(false);
 
             HostController.Instance.HostSelected();
+
+            TrafficController.Instance.SpawnCarsHost();
 
             DataController.Instance.applicationType = DataController.ApplicationType.Host;
         }

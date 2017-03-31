@@ -45,7 +45,14 @@ namespace BMW.Verification.CloudRayTracing
 
         public void SendPerformanceDictionary(int performanceType, float performanceVal)
         {
-            SendToPeer(SenderPeer).RecieveServerPerformanceDictionary(performanceType, performanceVal);
+            if (SenderPeer != null)
+            {
+                SendToPeer(SenderPeer).RecieveServerPerformanceDictionary(performanceType, performanceVal);
+            }
+            else
+            {
+                Debug.Log("SENDER PEER IS NULL");
+            }
         }
 
         #endregion
@@ -62,6 +69,12 @@ namespace BMW.Verification.CloudRayTracing
         public void RecievePacket(int packetNum, string contents)
         {
             ServerController.Instance.PacketRecieved((DataController.PacketType)packetNum, contents);
+        }
+
+        [Signal]
+        public void RecieveNewObjectSpawnID(int objectID)
+        {
+            TrafficController.Instance.SpawnCarServer(objectID);
         }
 
         #endregion

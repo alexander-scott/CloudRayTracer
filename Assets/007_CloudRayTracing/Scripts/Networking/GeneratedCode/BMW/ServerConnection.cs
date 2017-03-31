@@ -32,6 +32,12 @@ namespace BMW.Verification.CloudRayTracing
 			RecievePacket(packetNum, contents);
 		}
 		
+		public void Receive_RecieveNewObjectSpawnID(NetworkReader reader)
+		{
+			Int32 objectID = reader.ReadInt32();
+			RecieveNewObjectSpawnID(objectID);
+		}
+		
 		public RemoteClientConnection SendToPeer(BMW.Verification.CloudRayTracing.Peer targetPeer)
 		{
 			if (_Remote == null)

@@ -11,6 +11,8 @@ namespace BMW.Verification.CloudRayTracing
         public Transform frontRightWheel;
         public Transform frontLeftWheel;
 
+        public GameObject colliderParent;
+
         public float acceleration = 0.1f;
         public float speedDecay = 0.96f;
         public float rotationStep = 1;
@@ -63,6 +65,7 @@ namespace BMW.Verification.CloudRayTracing
                 Destroy(frontLeftWheel.GetComponent<SphereCollider>());
                 Destroy(frontRightWheel.GetComponent<SphereCollider>());
                 Destroy(backRightWheel.GetComponent<SphereCollider>());
+                Destroy(colliderParent);
 
                 Destroy(this);
             }

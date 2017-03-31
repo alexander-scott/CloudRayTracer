@@ -100,12 +100,25 @@ namespace BMW.Verification.CloudRayTracing
         {
             SendPacket(DataController.PacketType.UpdateNetworkSendRate, DataController.Instance.meshSendRate.ToString());
             SendPacket(DataController.PacketType.UpdateRayTracerGap, DataController.Instance.rayTracerGap.ToString());
+            SendPacket(DataController.PacketType.UpdateNetworkSendRate, DataController.Instance.networkedObjectSendRate.ToString());
             SendPacket(DataController.PacketType.StartRayTracer, true.ToString());
         }
 
         public void StopRayTracer()
         {
             SendPacket(DataController.PacketType.StopRayTracer, true.ToString());
+        }
+
+        public IEnumerator<float> SpawnCarsOnServer(List<int> objectIDs)
+        {
+            int count = 0;
+            while (count < objectIDs.Count)
+            {
+                client.Connection.SpawnCarOnServer(objectIDs[count]);
+                count++;
+
+                yield return Timing.WaitForSeconds(0.05f);
+            }
         }
 
         private void Client_OnConnectFailed()

@@ -36,14 +36,47 @@ namespace BMW.Verification.CloudRayTracing
         public Transform[] wayPoints;
         private List<GameObject> trafficCars = new List<GameObject>();
 
-        void Start()
+        public void SpawnCarsHost()
         {
             for (int i = 0; i < totalCarsToSpawn; i++)
             {
                 trafficCars.Add(Instantiate(carPrefab, transform));
 
                 trafficCars[i].transform.position = new Vector3(Random.Range(-100f, 200f), 2f, Random.Range(-200f, 200f));
+
+                trafficCars[i].GetComponent<NetworkedObject>().objectID = Random.Range(1, 10000000);
             }
+        }
+
+        public void SpawnCarsClient()
+        {
+            List<int> objectIDs = new List<int>();
+
+            for (int i = 0; i < totalCarsToSpawn; i++)
+            {
+                trafficCars.Add(Instantiate(carPrefab, transform));
+
+                trafficCars[i].transform.position = new Vector3(Random.Range(-100f, 200f), 2f, Random.Range(-200f, 200f));
+
+                int objectID = Random.Range(1, 10000000);
+
+                trafficCars[i].GetComponent<NetworkedObject>().objectID = objectID;
+
+                objectIDs.Add(objectID);
+            }
+
+            Timing.RunCoroutine(ClientController.Instance.SpawnCarsOnServer(objectIDs));
+        }
+
+        public void SpawnCarServer(int objectID)
+        {
+            GameObject newCar = Instantiate(carPrefab, transform);
+
+            newCar.transform.position = new Vector3(Random.Range(-100f, 200f), 2f, Random.Range(-200f, 200f));
+
+            newCar.GetComponent<NetworkedObject>().objectID = objectID;
+
+            trafficCars.Add(newCar);
         }
     }
 }

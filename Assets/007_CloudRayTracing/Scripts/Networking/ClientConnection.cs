@@ -33,8 +33,14 @@ namespace BMW.Verification.CloudRayTracing
             SendToServer.RecievePacket(packetNum, contents);
         }
 
+        public void UpdateObjectPosition(int oldKey, Vector3 position, Vector3 rotation, Vector3 localScale)
         {
             SendToServer.RecieveObjectPosition(oldKey, position, rotation, localScale);
+        }
+
+        public void SpawnCarOnServer(int objectID)
+        {
+            SendToServer.RecieveNewObjectSpawnID(objectID);
         }
 
         #endregion

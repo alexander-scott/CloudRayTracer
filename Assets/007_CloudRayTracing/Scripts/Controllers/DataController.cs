@@ -22,6 +22,10 @@ namespace BMW.Verification.CloudRayTracing
         private static DataController _instance;
         public static DataController Instance { get { return _instance; } }
 
+        public GameObject centralCar;
+
+        [Space(10)]
+
         public string ipAddress;
         public int defaultBufferSize = 1300; // Max ethernet MTU is ~1400
         public ApplicationType applicationType = ApplicationType.Undefined;
@@ -29,6 +33,7 @@ namespace BMW.Verification.CloudRayTracing
         public float meshSendRate = 1f;
         public float networkedObjectSendRate = 0.3f;
         public float rayTracerGap = 0.02f; // The gap between each ray fired in the sensor bounds
+        public float updateDistance = 5f;
         public Dictionary<SensorType, bool> activeSensors = new Dictionary<SensorType, bool>();
         public bool carControl = false;
 

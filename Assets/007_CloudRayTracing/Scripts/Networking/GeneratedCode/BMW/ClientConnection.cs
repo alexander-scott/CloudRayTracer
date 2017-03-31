@@ -68,6 +68,7 @@ namespace BMW.Verification.CloudRayTracing
 				_netSender.PrepareAndSendWriter(writer);
 			}
 			
+			public void RecieveObjectPosition(Int32 oldKey, Vector3 position, Vector3 rotation, Vector3 localScale)
 			{
 				NetworkWriter writer = _netSender.CreateWriter(-1684256861);
 				writer.Write(oldKey);
@@ -82,6 +83,13 @@ namespace BMW.Verification.CloudRayTracing
 				NetworkWriter writer = _netSender.CreateWriter(55045539);
 				writer.Write(packetNum);
 				writer.Write(contents);
+				_netSender.PrepareAndSendWriter(writer);
+			}
+			
+			public void RecieveNewObjectSpawnID(Int32 objectID)
+			{
+				NetworkWriter writer = _netSender.CreateWriter(1571950386);
+				writer.Write(objectID);
 				_netSender.PrepareAndSendWriter(writer);
 			}
 			

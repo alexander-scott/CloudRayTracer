@@ -34,7 +34,8 @@ namespace BMW.Verification.CloudRayTracing
                 return;
 
             if (DataController.Instance.applicationType == DataController.ApplicationType.Client
-                && ClientController.Instance.client.IsConnected)
+                && ClientController.Instance.client.IsConnected
+                && Vector3.Distance(transform.position, DataController.Instance.centralCar.transform.position) < DataController.Instance.updateDistance)
             {
                 if (transform.hasChanged
                     && sendTimer > DataController.Instance.networkedObjectSendRate)
@@ -56,6 +57,12 @@ namespace BMW.Verification.CloudRayTracing
                 if (rb != null)
                 {
                     Destroy(rb);
+                }
+
+                Collider col = GetComponent<Collider>();
+                if (col != null)
+                {
+                    Destroy(col);
                 }
 
                 Destroy(this);
