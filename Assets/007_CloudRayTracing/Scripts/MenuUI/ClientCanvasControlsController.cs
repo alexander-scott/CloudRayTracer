@@ -41,7 +41,7 @@ namespace BMW.Verification.CloudRayTracing
                 DataController.Instance.meshSendRate = parsedVal;
                 PlayerPrefs.SetFloat("NetworkSendRate", parsedVal);
                 PlayerPrefs.Save();
-                if (DataController.Instance.applicationType == DataController.ApplicationType.Client)
+                if (DataController.Instance.applicationState == DataController.ApplicationState.Client)
                 {
                     ClientController.Instance.SendPacket(DataController.PacketType.UpdateNetworkSendRate, newVal);
                 }
@@ -56,7 +56,7 @@ namespace BMW.Verification.CloudRayTracing
         {
             if (arg0)
             {
-                if (DataController.Instance.applicationType == DataController.ApplicationType.Client)
+                if (DataController.Instance.applicationState == DataController.ApplicationState.Client)
                 {
                     ClientController.Instance.StartRayTracer();
                 }
@@ -67,7 +67,7 @@ namespace BMW.Verification.CloudRayTracing
             }
             else
             {
-                if (DataController.Instance.applicationType == DataController.ApplicationType.Client)
+                if (DataController.Instance.applicationState == DataController.ApplicationState.Client)
                 {
                     ClientController.Instance.StopRayTracer();
                 }
@@ -91,7 +91,7 @@ namespace BMW.Verification.CloudRayTracing
                 DataController.Instance.networkedObjectSendRate = parsedVal;
                 PlayerPrefs.SetFloat("NetworkedObjectSendRate", parsedVal);
                 PlayerPrefs.Save();
-                if (DataController.Instance.applicationType == DataController.ApplicationType.Client)
+                if (DataController.Instance.applicationState == DataController.ApplicationState.Client)
                 {
                     ClientController.Instance.SendPacket(DataController.PacketType.UpdateNetworkedObjectSendRate, newVal);
                 }
@@ -110,7 +110,7 @@ namespace BMW.Verification.CloudRayTracing
                 DataController.Instance.rayTracerGap = parsedVal;
                 PlayerPrefs.SetFloat("RayTracerGap", parsedVal);
                 PlayerPrefs.Save();
-                if (DataController.Instance.applicationType == DataController.ApplicationType.Client)
+                if (DataController.Instance.applicationState == DataController.ApplicationState.Client)
                 {
                     ClientController.Instance.SendPacket(DataController.PacketType.UpdateNetworkSendRate, newVal);
                 }

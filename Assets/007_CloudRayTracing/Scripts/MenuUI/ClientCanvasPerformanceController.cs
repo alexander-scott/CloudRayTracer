@@ -60,7 +60,7 @@ namespace BMW.Verification.CloudRayTracing
                 CalcMINMAX(fpsVal);
                 CalcMemAlloc();
 
-                if (DataController.Instance.applicationType == DataController.ApplicationType.Client)
+                if (DataController.Instance.applicationState == DataController.ApplicationState.Client)
                 {
                     DisplayServerInfo();
                 }

@@ -28,7 +28,7 @@ namespace BMW.Verification.CloudRayTracing
 
         public string ipAddress;
         public int defaultBufferSize = 1300; // Max ethernet MTU is ~1400
-        public ApplicationType applicationType = ApplicationType.Undefined;
+        public ApplicationState applicationState = ApplicationState.Undefined;
         public float pointsPerMesh = 500f;
         public float meshSendRate = 1f;
         public float networkedObjectSendRate = 0.3f;
@@ -37,10 +37,10 @@ namespace BMW.Verification.CloudRayTracing
         public Dictionary<SensorType, bool> activeSensors = new Dictionary<SensorType, bool>();
         public bool aiMovement = false;
 
-        public Dictionary<int, GameObject> networkedObjectDictionary = new Dictionary<int, GameObject>();
+        public Dictionary<int, NetworkedObject> networkedObjectDictionary = new Dictionary<int, NetworkedObject>();
 
-        public enum PacketType { StartRayTracer, StopRayTracer, UpdateNetworkSendRate, UpdateRayTracerGap, UpdateNetworkedObjectSendRate, }
-        public enum ApplicationType { Undefined, Client, Server, Host, }
+        public enum PacketType { StartRayTracer, StopRayTracer, UpdateNetworkSendRate, UpdateRayTracerGap, UpdateNetworkedObjectSendRate, FinishedSyncing, }
+        public enum ApplicationState { Undefined, Client, ClientSynchronising, Server, Host, }
         public enum StatisticType { FPS, AVGFPS, MINFPS, MAXFPS, MEMTOTAL, MEMALLOC, }
         public enum ClientCanvasButtonType { Information, Controls, Viewports, Performance, Sensors, Disconnect, }
         public enum SensorType

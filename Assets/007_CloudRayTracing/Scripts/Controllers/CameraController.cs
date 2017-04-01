@@ -62,7 +62,7 @@ namespace BMW.Verification.CloudRayTracing
 
         void LateUpdate()
         {
-            if (DataController.Instance.applicationType != DataController.ApplicationType.Undefined)
+            if (DataController.Instance.applicationState != DataController.ApplicationState.Undefined)
             {
                 if (Input.GetMouseButton(0))
                 {

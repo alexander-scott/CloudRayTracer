@@ -48,9 +48,9 @@ namespace BMW.Verification.CloudRayTracing
             }
         }
 
-        public void SpawnCarsClient()
+        public List<NetworkedObject> SpawnCarsClient()
         {
-            List<int> objectIDs = new List<int>();
+            List<NetworkedObject> networkObjects = new List<NetworkedObject>();
 
             for (int i = 0; i < totalCarsToSpawn; i++)
             {
@@ -62,19 +62,27 @@ namespace BMW.Verification.CloudRayTracing
 
                 trafficCars[i].GetComponent<NetworkedObject>().objectID = objectID;
 
-                objectIDs.Add(objectID);
+                DataController.Instance.networkedObjectDictionary[objectID] = trafficCars[i].GetComponent<NetworkedObject>();
+
+                networkObjects.Add(trafficCars[i].GetComponent<NetworkedObject>());
             }
 
-            Timing.RunCoroutine(ClientController.Instance.SpawnCarsOnServer(objectIDs));
+            return networkObjects;
         }
 
-        public void SpawnCarServer(int objectID)
+        public void SpawnCarServer(int objectID, bool active)
         {
             GameObject newCar = Instantiate(carPrefab, transform);
 
             newCar.transform.position = new Vector3(Random.Range(-100f, 200f), 2f, Random.Range(-200f, 200f));
 
             newCar.GetComponent<NetworkedObject>().objectID = objectID;
+            newCar.GetComponent<NetworkedObject>().active = active;
+            newCar.GetComponent<NetworkedObject>().ServerStart();
+
+            newCar.SetActive(active);
+
+            DataController.Instance.networkedObjectDictionary[objectID] = newCar.GetComponent<NetworkedObject>();
 
             trafficCars.Add(newCar);
         }

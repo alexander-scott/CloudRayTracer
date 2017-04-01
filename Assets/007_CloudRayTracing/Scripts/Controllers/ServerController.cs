@@ -49,21 +49,54 @@ namespace BMW.Verification.CloudRayTracing
         {
             server.StartServer(7777);
 
+            foreach (NetworkedObject netObj in DataController.Instance.networkedObjectDictionary.Values)
+            {
+                netObj.ServerStart();
+            }
+
             MenuController.Instance.UpdateSubTitleText("You are the SERVER");
         }
 
-        public void UpdateObjectPosition(int key, Vector3 position, Vector3 rotation, Vector3 localScale)
+        public void UpdateObjectPosition(int objectID, Vector3 position, Vector3 rotation, Vector3 localScale)
         {
-            if (DataController.Instance.networkedObjectDictionary.ContainsKey(key))
+            if (DataController.Instance.networkedObjectDictionary.ContainsKey(objectID))
             {
-                GameObject go = DataController.Instance.networkedObjectDictionary[key];
+                GameObject go = DataController.Instance.networkedObjectDictionary[objectID].gameObject;
                 go.transform.position = position;
                 go.transform.eulerAngles = rotation;
                 go.transform.localScale = localScale;
             }
             else
             {
-                Debug.Log("KEY NOT FOUND");
+                Debug.Log("Object with ID " + objectID + " not found in UpdateObjectPosition");
+            }
+        }
+
+        public void UpdateObjectState(int objectID, bool active)
+        {
+            if (DataController.Instance.networkedObjectDictionary.ContainsKey(objectID))
+            {
+                DataController.Instance.networkedObjectDictionary[objectID].gameObject.SetActive(active);
+            }
+            else
+            {
+                Debug.Log("Object with ID " + objectID + " not found in UpdateObjectState");
+            }
+        }
+
+        public void UpdateObjectStateAndPosition(int objectID, bool active, Vector3 position, Vector3 rotation, Vector3 localScale)
+        {
+            if (DataController.Instance.networkedObjectDictionary.ContainsKey(objectID))
+            {
+                GameObject go = DataController.Instance.networkedObjectDictionary[objectID].gameObject;
+                go.SetActive(active);
+                go.transform.position = position;
+                go.transform.eulerAngles = rotation;
+                go.transform.localScale = localScale;
+            }
+            else
+            {
+                Debug.Log("Object with ID " + objectID + " not found in UpdateObjectStateAndPosition");
             }
         }
 
@@ -109,6 +142,10 @@ namespace BMW.Verification.CloudRayTracing
                         DataController.Instance.networkedObjectSendRate = parseVals1;
                     }
                     break;
+
+                case DataController.PacketType.FinishedSyncing:
+                    Debug.Log(DataController.Instance.networkedObjectDictionary.Count + " objects synced");
+                    break;
             }
         }
 
@@ -137,7 +174,7 @@ namespace BMW.Verification.CloudRayTracing
 
         public IEnumerator<float> SendPerformanceData()
         {
-            yield return Timing.WaitForSeconds(1f); 
+            yield return Timing.WaitForSeconds(3f); 
 
             while (server.NumberOfPeers > 0)
             {

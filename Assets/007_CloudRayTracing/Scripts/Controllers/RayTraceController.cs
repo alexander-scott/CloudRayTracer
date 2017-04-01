@@ -59,7 +59,7 @@ namespace BMW.Verification.CloudRayTracing
 
         public void RecieveMesh(int number, int total, Mesh mesh)
         {
-            if (!rayTracing && DataController.Instance.applicationType != DataController.ApplicationType.Client)
+            if (!rayTracing && DataController.Instance.applicationState != DataController.ApplicationState.Client)
                 return;
 
             if ((number + 1) > pointCloudMeshses.Count) // If we have been given more meshes than we have in the list create a new one
@@ -118,7 +118,7 @@ namespace BMW.Verification.CloudRayTracing
 
         private void SendData(List<Mesh> meshList)
         {
-            if (DataController.Instance.applicationType == DataController.ApplicationType.Server)
+            if (DataController.Instance.applicationState == DataController.ApplicationState.Server)
             {
                 // Loop through each mesh and send it back
                 for (int i = 0; i < meshTotal; i++)

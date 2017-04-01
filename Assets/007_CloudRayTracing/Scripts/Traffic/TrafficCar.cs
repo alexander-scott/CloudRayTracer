@@ -58,7 +58,7 @@ namespace BMW.Verification.CloudRayTracing
 
         void Update()
         {
-            if (DataController.Instance.applicationType == DataController.ApplicationType.Server)
+            if (DataController.Instance.applicationState == DataController.ApplicationState.Server)
             {
                 Destroy(backLeftWheel.GetComponent<SphereCollider>());
                 Destroy(frontLeftWheel.GetComponent<SphereCollider>());
@@ -69,7 +69,7 @@ namespace BMW.Verification.CloudRayTracing
                 Destroy(this);
             }
 
-            if (DataController.Instance.applicationType != DataController.ApplicationType.Undefined)
+            if (DataController.Instance.applicationState != DataController.ApplicationState.Undefined)
             {
                 DrivingCalculations();
 
@@ -177,7 +177,7 @@ namespace BMW.Verification.CloudRayTracing
                     case CarState.Reversing:
                         if (WheelsOnFloor() > 3)
                         {
-                            if (DataController.Instance.applicationType != DataController.ApplicationType.Undefined && speed > -maxSpeed)
+                            if (DataController.Instance.applicationState != DataController.ApplicationState.Undefined && speed > -maxSpeed)
                             {
                                 speed -= acceleration;
                             }

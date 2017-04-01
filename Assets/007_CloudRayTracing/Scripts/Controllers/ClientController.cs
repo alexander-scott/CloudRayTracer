@@ -47,6 +47,53 @@ namespace BMW.Verification.CloudRayTracing
             client.Connection.OnTransmissionPreparation += Connection_OnTransmissionPreparation;
         }
 
+        private void Update()
+        {
+            if (DataController.Instance.applicationState == DataController.ApplicationState.Client)
+            {
+                foreach (NetworkedObject netObj in DataController.Instance.networkedObjectDictionary.Values)
+                {
+                    netObj.ClientUpdate();
+                }
+            }
+        }
+
+        #region Connection
+
+        public void ConnectToServer()
+        {
+            client.Connect(DataController.Instance.ipAddress, 7777);
+        }
+
+        private void Client_OnConnectFailed()
+        {
+            MenuController.Instance.UpdateSubTitleText("Failed to connect to the server");
+        }
+
+        private void Client_OnDisconnected(byte disconnectMsg)
+        {
+            MenuController.Instance.UpdateSubTitleText("Disconnected from the server");
+            DataController.Instance.aiMovement = false;
+        }
+
+        private void Client_OnConnected()
+        {
+            MenuController.Instance.UpdateSubTitleText("Synchronizing objects");
+            DataController.Instance.applicationState = DataController.ApplicationState.ClientSynchronising;
+            Timing.RunCoroutine(SyncObjects(), "SynchronizingObjects");
+        }
+
+        private void OnFinishedSync()
+        {
+            Debug.Log(DataController.Instance.networkedObjectDictionary.Count + " objects synced");
+            SendPacket(DataController.PacketType.FinishedSyncing, "");
+            MenuController.Instance.OnClientConnected();
+        }
+
+        #endregion
+
+        #region Raytracing
+
         private void Connection_OnTransmissionPreparation(int meshCount)
         {
             meshTotal = meshCount;
@@ -55,37 +102,6 @@ namespace BMW.Verification.CloudRayTracing
         private void Connection_OnFrameChanged()
         {
             //throw new NotImplementedException();
-        }
-
-        public void ConnectToServer()
-        {
-            client.Connect(DataController.Instance.ipAddress, 7777);
-        }
-
-        public void UpdateObjectPositionOnServer(int key, Vector3 position, Vector3 rotation, Vector3 localScale)
-        {
-            if (client.IsConnected)
-            {
-                client.Connection.UpdateObjectPosition(key, position, rotation, localScale);
-            }
-        }
-
-        public void SendPacket(DataController.PacketType packetType, string contents)
-        {
-            client.Connection.SendPacket((int)packetType, contents);
-        }
-
-        public void PacketRecieved(DataController.PacketType packetType, string contents)
-        {
-
-        }
-
-        public void OnApplicationQuit()
-        {
-            if (client.IsConnected)
-            {
-                client.Disconnect();
-            }
         }
 
         private void Connection_OnDataCompletelyReceived(int transmissionID, int meshCount, byte[] mesh)
@@ -109,39 +125,89 @@ namespace BMW.Verification.CloudRayTracing
             SendPacket(DataController.PacketType.StopRayTracer, true.ToString());
         }
 
-        public IEnumerator<float> SpawnCarsOnServer(List<int> objectIDs)
+        #endregion
+
+        #region Sync
+
+        public void UpdateObjectPositionOnServer(int objectID, Vector3 position, Vector3 rotation, Vector3 localScale)
         {
-            //for (int i = 0; i < objectIDs.Count; i++)
-            //{
-            //    client.Connection.SpawnCarOnServer(objectIDs[i]);
-            //}
-
-            //yield return 0f;
-
-            int count = 0;
-            while (count < objectIDs.Count)
+            if (client.IsConnected)
             {
-                client.Connection.SpawnCarOnServer(objectIDs[count]);
-                count++;
-
-                yield return Timing.WaitForSeconds(0.05f);
+                client.Connection.UpdateObjectPosition(objectID, position, rotation, localScale);
             }
         }
 
-        private void Client_OnConnectFailed()
+        public void UpdateObjectState(int objectID, bool active)
         {
-            MenuController.Instance.UpdateSubTitleText("Failed to connect to the server");
+            if (client.IsConnected)
+            {
+                client.Connection.UpdateObjectState(objectID, active);
+            }
         }
 
-        private void Client_OnDisconnected(byte disconnectMsg)
+        public void UpdateObjectStateAndPosition(int objectID, bool active, Vector3 position, Vector3 rotation, Vector3 localScale)
         {
-            MenuController.Instance.UpdateSubTitleText("Disconnected from the server");
-            DataController.Instance.aiMovement = false;
+            if (client.IsConnected)
+            {
+                client.Connection.UpdateObjectState(objectID, active, position, rotation, localScale);
+            }
         }
 
-        private void Client_OnConnected()
+        private IEnumerator<float> SyncObjects()
         {
-            MenuController.Instance.OnClientConnected();
+            foreach (NetworkedObject netObj in DataController.Instance.networkedObjectDictionary.Values)
+            {
+                if (Vector3.Distance(netObj.transform.position, DataController.Instance.centralCar.transform.position) < DataController.Instance.updateDistance)
+                {
+                    netObj.active = true;
+
+                    // SET ACTIVE ON SERVER
+                    client.Connection.UpdateObjectState(netObj.objectID, true);
+                }
+
+                yield return Timing.WaitForSeconds(0.05f);
+            }
+
+            Timing.RunCoroutine(SpawnCarsOnServer(), "SpawnCarsOnServer");
         }
+
+        public IEnumerator<float> SpawnCarsOnServer()
+        {
+            List<NetworkedObject> objectIDs = TrafficController.Instance.SpawnCarsClient();
+
+            for (int i = 0; i < objectIDs.Count; i++)
+            {
+                if (Vector3.Distance(objectIDs[i].transform.position, DataController.Instance.centralCar.transform.position) < DataController.Instance.updateDistance)
+                {
+                    objectIDs[i].active = true;
+                }
+
+                client.Connection.SpawnCarOnServer(objectIDs[i].objectID, objectIDs[i].active);
+
+                yield return Timing.WaitForSeconds(0.05f);
+            }
+
+            OnFinishedSync();
+        }
+
+        #endregion  
+
+        public void SendPacket(DataController.PacketType packetType, string contents)
+        {
+            client.Connection.SendPacket((int)packetType, contents);
+        }
+
+        public void PacketRecieved(DataController.PacketType packetType, string contents)
+        {
+
+        }
+
+        public void OnApplicationQuit()
+        {
+            if (client.IsConnected)
+            {
+                client.Disconnect();
+            }
+        }  
     }
 }

@@ -68,10 +68,29 @@ namespace BMW.Verification.CloudRayTracing
 				_netSender.PrepareAndSendWriter(writer);
 			}
 			
-			public void RecieveObjectPosition(Int32 oldKey, Vector3 position, Vector3 rotation, Vector3 localScale)
+			public void RecieveObjectPosition(Int32 objectID, Vector3 position, Vector3 rotation, Vector3 localScale)
 			{
 				NetworkWriter writer = _netSender.CreateWriter(-1684256861);
-				writer.Write(oldKey);
+				writer.Write(objectID);
+				writer.Write(position);
+				writer.Write(rotation);
+				writer.Write(localScale);
+				_netSender.PrepareAndSendWriter(writer);
+			}
+			
+			public void RecieveObjectState(Int32 objectID, Boolean active)
+			{
+				NetworkWriter writer = _netSender.CreateWriter(214054999);
+				writer.Write(objectID);
+				writer.Write(active);
+				_netSender.PrepareAndSendWriter(writer);
+			}
+			
+			public void RecieveObjectStateAndPosition(Int32 objectID, Boolean active, Vector3 position, Vector3 rotation, Vector3 localScale)
+			{
+				NetworkWriter writer = _netSender.CreateWriter(542266185);
+				writer.Write(objectID);
+				writer.Write(active);
 				writer.Write(position);
 				writer.Write(rotation);
 				writer.Write(localScale);
@@ -90,6 +109,22 @@ namespace BMW.Verification.CloudRayTracing
 			{
 				NetworkWriter writer = _netSender.CreateWriter(1571950386);
 				writer.Write(objectID);
+				_netSender.PrepareAndSendWriter(writer);
+			}
+			
+			public void RecieveNewarSpawn(Int32 objectID, Boolean active)
+			{
+				NetworkWriter writer = _netSender.CreateWriter(-1507013691);
+				writer.Write(objectID);
+				writer.Write(active);
+				_netSender.PrepareAndSendWriter(writer);
+			}
+			
+			public void RecieveNewCarSpawn(Int32 objectID, Boolean active)
+			{
+				NetworkWriter writer = _netSender.CreateWriter(-1558999668);
+				writer.Write(objectID);
+				writer.Write(active);
 				_netSender.PrepareAndSendWriter(writer);
 			}
 			

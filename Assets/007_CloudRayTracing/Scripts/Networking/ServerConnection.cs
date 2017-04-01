@@ -60,9 +60,21 @@ namespace BMW.Verification.CloudRayTracing
         #region Recieve from clients
 
         [Signal]
-        public void RecieveObjectPosition(int oldKey, Vector3 position, Vector3 rotation, Vector3 localScale)
+        public void RecieveObjectPosition(int objectID, Vector3 position, Vector3 rotation, Vector3 localScale)
         {
-            ServerController.Instance.UpdateObjectPosition(oldKey, position, rotation, localScale);
+            ServerController.Instance.UpdateObjectPosition(objectID, position, rotation, localScale);
+        }
+
+        [Signal]
+        public void RecieveObjectState(int objectID, bool active)
+        {
+            ServerController.Instance.UpdateObjectState(objectID, active);
+        }
+
+        [Signal]
+        public void RecieveObjectStateAndPosition(int objectID, bool active, Vector3 position, Vector3 rotation, Vector3 localScale)
+        {
+            ServerController.Instance.UpdateObjectStateAndPosition(objectID, active, position, rotation, localScale);
         }
 
         [Signal]
@@ -72,9 +84,21 @@ namespace BMW.Verification.CloudRayTracing
         }
 
         [Signal]
-        public void RecieveNewObjectSpawnID(int objectID)
+        public void RecieveNewObjectSpawnID(int objectID) // OBSOLETE
         {
-            TrafficController.Instance.SpawnCarServer(objectID);
+
+        }
+
+        [Signal]
+        public void RecieveNewarSpawn(int objectID, bool active) //OBSOLETE
+        {
+
+        }
+
+        [Signal]
+        public void RecieveNewCarSpawn(int objectID, bool active)
+        {
+            TrafficController.Instance.SpawnCarServer(objectID, active);
         }
 
         #endregion

@@ -18,11 +18,28 @@ namespace BMW.Verification.CloudRayTracing
 		
 		public void Receive_RecieveObjectPosition(NetworkReader reader)
 		{
-			Int32 oldKey = reader.ReadInt32();
+			Int32 objectID = reader.ReadInt32();
 			Vector3 position = reader.ReadVector3();
 			Vector3 rotation = reader.ReadVector3();
 			Vector3 localScale = reader.ReadVector3();
-			RecieveObjectPosition(oldKey, position, rotation, localScale);
+			RecieveObjectPosition(objectID, position, rotation, localScale);
+		}
+		
+		public void Receive_RecieveObjectState(NetworkReader reader)
+		{
+			Int32 objectID = reader.ReadInt32();
+			Boolean active = reader.ReadBoolean();
+			RecieveObjectState(objectID, active);
+		}
+		
+		public void Receive_RecieveObjectStateAndPosition(NetworkReader reader)
+		{
+			Int32 objectID = reader.ReadInt32();
+			Boolean active = reader.ReadBoolean();
+			Vector3 position = reader.ReadVector3();
+			Vector3 rotation = reader.ReadVector3();
+			Vector3 localScale = reader.ReadVector3();
+			RecieveObjectStateAndPosition(objectID, active, position, rotation, localScale);
 		}
 		
 		public void Receive_RecievePacket(NetworkReader reader)
@@ -36,6 +53,20 @@ namespace BMW.Verification.CloudRayTracing
 		{
 			Int32 objectID = reader.ReadInt32();
 			RecieveNewObjectSpawnID(objectID);
+		}
+		
+		public void Receive_RecieveNewarSpawn(NetworkReader reader)
+		{
+			Int32 objectID = reader.ReadInt32();
+			Boolean active = reader.ReadBoolean();
+			RecieveNewarSpawn(objectID, active);
+		}
+		
+		public void Receive_RecieveNewCarSpawn(NetworkReader reader)
+		{
+			Int32 objectID = reader.ReadInt32();
+			Boolean active = reader.ReadBoolean();
+			RecieveNewCarSpawn(objectID, active);
 		}
 		
 		public RemoteClientConnection SendToPeer(BMW.Verification.CloudRayTracing.Peer targetPeer)

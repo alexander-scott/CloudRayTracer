@@ -65,7 +65,7 @@ namespace BMW.Verification.CloudRayTracing
 
                 ServerController.Instance.StartServer();
 
-                DataController.Instance.applicationType = DataController.ApplicationType.Server;
+                DataController.Instance.applicationState = DataController.ApplicationState.Server;
             }
         }
 
@@ -89,9 +89,7 @@ namespace BMW.Verification.CloudRayTracing
 
             clientCanvas.gameObject.SetActive(true); configCanvas.gameObject.SetActive(false);
 
-            TrafficController.Instance.SpawnCarsClient();
-
-            DataController.Instance.applicationType = DataController.ApplicationType.Client;
+            DataController.Instance.applicationState = DataController.ApplicationState.Client;
         }
 
         private void StartServerClicked()
@@ -103,7 +101,7 @@ namespace BMW.Verification.CloudRayTracing
 
             clientCanvas.gameObject.SetActive(false); configCanvas.gameObject.SetActive(false);
 
-            DataController.Instance.applicationType = DataController.ApplicationType.Server;
+            DataController.Instance.applicationState = DataController.ApplicationState.Server;
         }
 
         private void ConnectToServer()
@@ -123,7 +121,7 @@ namespace BMW.Verification.CloudRayTracing
 
             TrafficController.Instance.SpawnCarsHost();
 
-            DataController.Instance.applicationType = DataController.ApplicationType.Host;
+            DataController.Instance.applicationState = DataController.ApplicationState.Host;
         }
 
         private IEnumerator FadeCanvasGroupIn(CanvasGroup canvasGroup, float duration)
