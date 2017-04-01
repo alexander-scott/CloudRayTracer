@@ -35,7 +35,7 @@ namespace BMW.Verification.CloudRayTracing
         public float rayTracerGap = 0.02f; // The gap between each ray fired in the sensor bounds
         public float updateDistance = 5f;
         public Dictionary<SensorType, bool> activeSensors = new Dictionary<SensorType, bool>();
-        public bool carControl = false;
+        public bool aiMovement = false;
 
         public Dictionary<int, GameObject> networkedObjectDictionary = new Dictionary<int, GameObject>();
 

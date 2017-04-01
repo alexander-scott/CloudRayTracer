@@ -7,7 +7,7 @@ namespace BMW.Verification.CloudRayTracing
     {
         protected override void DrivingCalculations()
         {
-            if (DataController.Instance.carControl)
+            if (!DataController.Instance.aiMovement)
             {
                 if (Input.GetKey(KeyCode.Space))
                 {
@@ -40,6 +40,11 @@ namespace BMW.Verification.CloudRayTracing
             {
                 base.DrivingCalculations();
             }
+        }
+
+        protected override void RandomAttributes()
+        {
+            //base.RandomAttributes();
         }
     }
 }

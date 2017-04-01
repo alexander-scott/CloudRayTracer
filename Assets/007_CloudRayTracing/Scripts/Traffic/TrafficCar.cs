@@ -53,8 +53,7 @@ namespace BMW.Verification.CloudRayTracing
 
             currentWayPointIndex = closestIndex;
 
-            maxSpeed = Random.Range(0.2f, 0.6f);
-            rotationStep = Random.Range(1f, 2f);
+            RandomAttributes();
         }
 
         void Update()
@@ -110,99 +109,112 @@ namespace BMW.Verification.CloudRayTracing
                 Vector3.Dot(v1, v2)) * Mathf.Rad2Deg;
         }
 
+        protected virtual void RandomAttributes()
+        {
+            maxSpeed = Random.Range(0.2f, 0.6f);
+            rotationStep = Random.Range(1f, 2f);
+        }
+
         protected virtual void DrivingCalculations()
         {
-            Vector3 targetDir = (TrafficController.Instance.wayPoints[currentWayPointIndex].position - transform.position).normalized;
-            float angleToWaypoint = AngleSigned(transform.forward, targetDir, transform.up);
-
-            switch (carState)
+            if (DataController.Instance.aiMovement)
             {
-                case CarState.DrivingToWayPoint:
-                    if (WheelsOnFloor() > 3)
-                    {
-                        if (speed < maxSpeed)
-                        {
-                            speed += acceleration;
-                        }
+                Vector3 targetDir = (TrafficController.Instance.wayPoints[currentWayPointIndex].position - transform.position).normalized;
+                float angleToWaypoint = AngleSigned(transform.forward, targetDir, transform.up);
 
-                        if (Mathf.Abs(angleToWaypoint - 1f) > 1f)
+                switch (carState)
+                {
+                    case CarState.DrivingToWayPoint:
+                        if (WheelsOnFloor() > 3)
                         {
-                            if (angleToWaypoint < 0f)
+                            if (speed < maxSpeed)
                             {
-                                if (turningLeft)
+                                speed += acceleration;
+                            }
+
+                            if (Mathf.Abs(angleToWaypoint - 1f) > 1f)
+                            {
+                                if (angleToWaypoint < 0f)
                                 {
-                                    turningLeft = false;
-                                    sameDirectionTimer = 0f;
+                                    if (turningLeft)
+                                    {
+                                        turningLeft = false;
+                                        sameDirectionTimer = 0f;
+                                    }
+                                    transform.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y - rotationStep * (speed / maxSpeed), transform.eulerAngles.z);
                                 }
-                                transform.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y - rotationStep * (speed / maxSpeed), transform.eulerAngles.z);
+                                else
+                                {
+                                    if (!turningLeft)
+                                    {
+                                        turningLeft = true;
+                                        sameDirectionTimer = 0f;
+                                    }
+                                    transform.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y + rotationStep * (speed / maxSpeed), transform.eulerAngles.z);
+                                }
+
+                                sameDirectionTimer += Time.deltaTime;
                             }
                             else
                             {
-                                if (!turningLeft)
-                                {
-                                    turningLeft = true;
-                                    sameDirectionTimer = 0f;
-                                }
-                                transform.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y + rotationStep * (speed / maxSpeed), transform.eulerAngles.z);
+                                sameDirectionTimer = 0f;
                             }
 
-                            sameDirectionTimer += Time.deltaTime;
-                        }
-
-                        if (sameDirectionTimer > 3f)
-                        {
-                            carState = CarState.Reversing;
-                        }
-                    }
-
-                    if ((transform.up.y < 0f))
-                    {
-                        carState = CarState.Flipping;
-                        
-                    }
-
-                    break;
-
-                case CarState.Reversing:
-                    if (WheelsOnFloor() > 3)
-                    {
-                        if (DataController.Instance.applicationType != DataController.ApplicationType.Undefined && speed > -maxSpeed)
-                        {
-                            speed -= acceleration;
-                        }
-
-                        if (Mathf.Abs(angleToWaypoint - 1f) > 1f)
-                        {
-                            if (angleToWaypoint < 0f)
+                            if (sameDirectionTimer > 3f)
                             {
-                                transform.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y + rotationStep * (speed / maxSpeed), transform.eulerAngles.z);
+                                carState = CarState.Reversing;
+                            }
+                        }
+
+                        if ((transform.up.y < 0f))
+                        {
+                            carState = CarState.Flipping;
+
+                        }
+
+                        break;
+
+                    case CarState.Reversing:
+                        if (WheelsOnFloor() > 3)
+                        {
+                            if (DataController.Instance.applicationType != DataController.ApplicationType.Undefined && speed > -maxSpeed)
+                            {
+                                speed -= acceleration;
+                            }
+
+                            if (Mathf.Abs(angleToWaypoint - 1f) > 1f)
+                            {
+                                if (angleToWaypoint < 0f)
+                                {
+                                    transform.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y + rotationStep * (speed / maxSpeed), transform.eulerAngles.z);
+                                }
+                                else
+                                {
+                                    transform.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y - rotationStep * (speed / maxSpeed), transform.eulerAngles.z);
+                                }
                             }
                             else
                             {
-                                transform.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y - rotationStep * (speed / maxSpeed), transform.eulerAngles.z);
+                                carState = CarState.DrivingToWayPoint;
+                                sameDirectionTimer = 0f;
                             }
                         }
-                        else
+
+                        break;
+
+                    case CarState.Flipping:
+                        if (speed < 0.01f && speed > -0.01f)
                         {
-                            carState = CarState.DrivingToWayPoint;
-                            sameDirectionTimer = 0f;
+                            transform.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + (300f * Time.deltaTime));
+
+                            if (transform.up.y > 0.5f && WheelsOnFloor() > 3)
+                            {
+                                carState = CarState.DrivingToWayPoint;
+                            }
                         }
-                    }
 
-                    break;
-
-                case CarState.Flipping:
-                    if (speed < 0.1f && speed > -0.1f)
-                    {
-                        transform.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + (300f * Time.deltaTime));
-
-                        if (transform.up.y > 0.9f && WheelsOnFloor() > 3)
-                        {
-                            carState = CarState.DrivingToWayPoint;
-                        }
-                    }
-
-                    break;
+                        break;
+                }
             }
         }
 

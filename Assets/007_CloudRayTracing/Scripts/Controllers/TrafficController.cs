@@ -42,7 +42,7 @@ namespace BMW.Verification.CloudRayTracing
             {
                 trafficCars.Add(Instantiate(carPrefab, transform));
 
-                trafficCars[i].transform.position = new Vector3(Random.Range(-100f, 200f), 2f, Random.Range(-200f, 200f));
+                trafficCars[i].transform.position = new Vector3(Random.Range(-100f, 200f), 0, Random.Range(-200f, 200f));
 
                 trafficCars[i].GetComponent<NetworkedObject>().objectID = Random.Range(1, 10000000);
             }

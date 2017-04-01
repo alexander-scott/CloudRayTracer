@@ -54,12 +54,17 @@ namespace BMW.Verification.CloudRayTracing
 
         public void UpdateObjectPosition(int key, Vector3 position, Vector3 rotation, Vector3 localScale)
         {
-            GameObject go = DataController.Instance.networkedObjectDictionary[key];
-            go.transform.position = position;
-            go.transform.eulerAngles = rotation;
-            go.transform.localScale = localScale;
-
-            //ObjectManager.Instance.UpdateKey(oldKey);
+            if (DataController.Instance.networkedObjectDictionary.ContainsKey(key))
+            {
+                GameObject go = DataController.Instance.networkedObjectDictionary[key];
+                go.transform.position = position;
+                go.transform.eulerAngles = rotation;
+                go.transform.localScale = localScale;
+            }
+            else
+            {
+                Debug.Log("KEY NOT FOUND");
+            }
         }
 
         public void SendPacket(DataController.PacketType packetType, string contents)

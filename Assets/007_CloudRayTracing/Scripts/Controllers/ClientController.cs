@@ -111,6 +111,13 @@ namespace BMW.Verification.CloudRayTracing
 
         public IEnumerator<float> SpawnCarsOnServer(List<int> objectIDs)
         {
+            //for (int i = 0; i < objectIDs.Count; i++)
+            //{
+            //    client.Connection.SpawnCarOnServer(objectIDs[i]);
+            //}
+
+            //yield return 0f;
+
             int count = 0;
             while (count < objectIDs.Count)
             {
@@ -129,6 +136,7 @@ namespace BMW.Verification.CloudRayTracing
         private void Client_OnDisconnected(byte disconnectMsg)
         {
             MenuController.Instance.UpdateSubTitleText("Disconnected from the server");
+            DataController.Instance.aiMovement = false;
         }
 
         private void Client_OnConnected()

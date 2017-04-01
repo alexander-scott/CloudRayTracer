@@ -9,7 +9,7 @@ namespace BMW.Verification.CloudRayTracing
     public class ClientCanvasControlsController : MonoBehaviour
     {
         public Toggle rayTracerToggle;
-        public Toggle carControlToggle;
+        public Toggle aiMovementToggle;
         public InputField networkSendRateInput;
         public InputField rayTracerGapSizeInput;
         public InputField networkedObjectSendRateInput;
@@ -18,8 +18,11 @@ namespace BMW.Verification.CloudRayTracing
         void Start()
         {
             rayTracerToggle.onValueChanged.AddListener(RayTracerChanged);
-            carControlToggle.onValueChanged.AddListener(CarControlChanged);
-            networkedObjectSendRateInput.onValueChanged.AddListener(NetworkedObjectSendRateInput);
+            aiMovementToggle.onValueChanged.AddListener(AIMovementChanged);
+
+            networkedObjectSendRateInput.onEndEdit.AddListener(NetworkedObjectSendRateInput);
+            rayTracerGapSizeInput.onEndEdit.AddListener(RayTracerGapSizeChanged);
+            networkSendRateInput.onEndEdit.AddListener(NetworkSendRateChanged);
 
             DataController.Instance.meshSendRate = PlayerPrefs.GetFloat("MeshSendRate", DataController.Instance.meshSendRate);
             DataController.Instance.rayTracerGap = PlayerPrefs.GetFloat("RayTracerGap", DataController.Instance.rayTracerGap);
@@ -30,7 +33,7 @@ namespace BMW.Verification.CloudRayTracing
             networkedObjectSendRateInput.text = DataController.Instance.networkedObjectSendRate.ToString();
         }
 
-        public void MeshSendRateChanged(string newVal)
+        public void NetworkSendRateChanged(string newVal)
         {
             float parsedVal;
             if(float.TryParse(newVal, out parsedVal))
@@ -75,9 +78,9 @@ namespace BMW.Verification.CloudRayTracing
             }
         }
 
-        private void CarControlChanged(bool arg0)
+        private void AIMovementChanged(bool arg0)
         {
-            DataController.Instance.carControl = arg0;
+            DataController.Instance.aiMovement = arg0;
         }
 
         private void NetworkedObjectSendRateInput(string newVal)
