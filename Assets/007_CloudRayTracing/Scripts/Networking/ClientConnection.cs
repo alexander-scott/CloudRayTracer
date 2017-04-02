@@ -19,13 +19,6 @@ namespace BMW.Verification.CloudRayTracing
 
         private int currentFrameCount; 
 
-        //protected override void OnEnterScope()
-        //{
-        //    //SendToServer.Authenticate("sour", "testpw");
-        //    Debug.Log("Scope entered");
-        //    base.OnEnterScope();
-        //}
-
         #region Send to server
 
         public void SendPacket(int packetNum, string contents)
@@ -37,7 +30,6 @@ namespace BMW.Verification.CloudRayTracing
         {
             SendToServer.RecieveObjectPosition(objectID, position, rotation, localScale);
         }
-
 
         public void UpdateObjectState(int objectID, bool active)
         {

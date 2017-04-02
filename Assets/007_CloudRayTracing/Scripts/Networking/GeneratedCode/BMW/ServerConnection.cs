@@ -49,19 +49,6 @@ namespace BMW.Verification.CloudRayTracing
 			RecievePacket(packetNum, contents);
 		}
 		
-		public void Receive_RecieveNewObjectSpawnID(NetworkReader reader)
-		{
-			Int32 objectID = reader.ReadInt32();
-			RecieveNewObjectSpawnID(objectID);
-		}
-		
-		public void Receive_RecieveNewarSpawn(NetworkReader reader)
-		{
-			Int32 objectID = reader.ReadInt32();
-			Boolean active = reader.ReadBoolean();
-			RecieveNewarSpawn(objectID, active);
-		}
-		
 		public void Receive_RecieveNewCarSpawn(NetworkReader reader)
 		{
 			Int32 objectID = reader.ReadInt32();

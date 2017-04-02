@@ -84,18 +84,6 @@ namespace BMW.Verification.CloudRayTracing
         }
 
         [Signal]
-        public void RecieveNewObjectSpawnID(int objectID) // OBSOLETE
-        {
-
-        }
-
-        [Signal]
-        public void RecieveNewarSpawn(int objectID, bool active) //OBSOLETE
-        {
-
-        }
-
-        [Signal]
         public void RecieveNewCarSpawn(int objectID, bool active)
         {
             TrafficController.Instance.SpawnCarServer(objectID, active);

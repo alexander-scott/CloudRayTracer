@@ -203,9 +203,18 @@ namespace BMW.Verification.CloudRayTracing
                         break;
 
                     case CarState.Flipping:
-                        if (speed < 0.01f && speed > -0.01f)
+                        if (speed < 0.1f && speed > -0.1f)
                         {
-                            transform.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + (300f * Time.deltaTime));
+                            float angleToUp = AngleSigned(transform.up, Vector3.up, transform.forward);
+
+                            if (angleToUp > 0f)
+                            {
+                                transform.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + (300f * Time.deltaTime));
+                            }
+                            else
+                            {
+                                transform.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z - (300f * Time.deltaTime));
+                            }
 
                             if (transform.up.y > 0.5f && WheelsOnFloor() > 3)
                             {

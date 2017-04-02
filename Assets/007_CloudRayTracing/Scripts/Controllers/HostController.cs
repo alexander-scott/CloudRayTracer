@@ -28,18 +28,6 @@ namespace BMW.Verification.CloudRayTracing
 
         #endregion
 
-
-        public void HostSelected()
-        {
-            MenuController.Instance.clientCanvas.gameObject.SetActive(true);
-            MenuController.Instance.UpdateSubTitleText("You are the HOST");
-        }
-
-        public void RenderMesh(List<Mesh> meshes)
-        {
-            
-        }
-
         public void StartRayTracer()
         {
             Debug.Log("Raytrace start");

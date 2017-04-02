@@ -105,21 +105,6 @@ namespace BMW.Verification.CloudRayTracing
 				_netSender.PrepareAndSendWriter(writer);
 			}
 			
-			public void RecieveNewObjectSpawnID(Int32 objectID)
-			{
-				NetworkWriter writer = _netSender.CreateWriter(1571950386);
-				writer.Write(objectID);
-				_netSender.PrepareAndSendWriter(writer);
-			}
-			
-			public void RecieveNewarSpawn(Int32 objectID, Boolean active)
-			{
-				NetworkWriter writer = _netSender.CreateWriter(-1507013691);
-				writer.Write(objectID);
-				writer.Write(active);
-				_netSender.PrepareAndSendWriter(writer);
-			}
-			
 			public void RecieveNewCarSpawn(Int32 objectID, Boolean active)
 			{
 				NetworkWriter writer = _netSender.CreateWriter(-1558999668);

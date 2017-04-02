@@ -24,32 +24,13 @@ namespace BMW.Verification.CloudRayTracing
             rayTracerGapSizeInput.onEndEdit.AddListener(RayTracerGapSizeChanged);
             networkSendRateInput.onEndEdit.AddListener(NetworkSendRateChanged);
 
-            DataController.Instance.meshSendRate = PlayerPrefs.GetFloat("MeshSendRate", DataController.Instance.meshSendRate);
+            DataController.Instance.meshSendRate = PlayerPrefs.GetFloat("NetworkSendRate", DataController.Instance.meshSendRate);
             DataController.Instance.rayTracerGap = PlayerPrefs.GetFloat("RayTracerGap", DataController.Instance.rayTracerGap);
             DataController.Instance.networkedObjectSendRate = PlayerPrefs.GetFloat("NetworkedObjectSendRate", DataController.Instance.networkedObjectSendRate);
 
             networkSendRateInput.text = DataController.Instance.meshSendRate.ToString();
             rayTracerGapSizeInput.text = DataController.Instance.rayTracerGap.ToString();
             networkedObjectSendRateInput.text = DataController.Instance.networkedObjectSendRate.ToString();
-        }
-
-        public void NetworkSendRateChanged(string newVal)
-        {
-            float parsedVal;
-            if(float.TryParse(newVal, out parsedVal))
-            {
-                DataController.Instance.meshSendRate = parsedVal;
-                PlayerPrefs.SetFloat("NetworkSendRate", parsedVal);
-                PlayerPrefs.Save();
-                if (DataController.Instance.applicationState == DataController.ApplicationState.Client)
-                {
-                    ClientController.Instance.SendPacket(DataController.PacketType.UpdateNetworkSendRate, newVal);
-                }
-            }
-            else
-            {
-                networkSendRateInput.text = DataController.Instance.meshSendRate.ToString();
-            }
         }
 
         private void RayTracerChanged(bool arg0)
@@ -81,6 +62,26 @@ namespace BMW.Verification.CloudRayTracing
         private void AIMovementChanged(bool arg0)
         {
             DataController.Instance.aiMovement = arg0;
+        }
+
+
+        public void NetworkSendRateChanged(string newVal)
+        {
+            float parsedVal;
+            if (float.TryParse(newVal, out parsedVal))
+            {
+                DataController.Instance.meshSendRate = parsedVal;
+                PlayerPrefs.SetFloat("NetworkSendRate", parsedVal);
+                PlayerPrefs.Save();
+                if (DataController.Instance.applicationState == DataController.ApplicationState.Client)
+                {
+                    ClientController.Instance.SendPacket(DataController.PacketType.UpdateNetworkSendRate, newVal);
+                }
+            }
+            else
+            {
+                networkSendRateInput.text = DataController.Instance.meshSendRate.ToString();
+            }
         }
 
         private void NetworkedObjectSendRateInput(string newVal)

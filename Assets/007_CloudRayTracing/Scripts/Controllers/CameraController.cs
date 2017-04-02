@@ -80,13 +80,6 @@ namespace BMW.Verification.CloudRayTracing
 
                 distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel") * 5, distanceMin, distanceMax);
 
-                // Don't need this as there won't be anything blocking our view of the car
-                //RaycastHit hit;
-                //if (Physics.Linecast(car.transform.position, cameraDefault.transform.position, out hit))
-                //{
-                //    distance -= hit.distance;
-                //}
-
                 Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
                 Vector3 position = rotation * negDistance + car.transform.position;
 

@@ -44,6 +44,7 @@ namespace BMW.Verification.CloudRayTracing
 
         protected override void RandomAttributes()
         {
+            // We don't want random attributes
             //base.RandomAttributes();
         }
     }

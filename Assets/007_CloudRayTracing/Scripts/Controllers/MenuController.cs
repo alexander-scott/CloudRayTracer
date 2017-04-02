@@ -88,8 +88,6 @@ namespace BMW.Verification.CloudRayTracing
             Destroy(ServerController.Instance); Destroy(HostController.Instance);
 
             clientCanvas.gameObject.SetActive(true); configCanvas.gameObject.SetActive(false);
-
-            DataController.Instance.applicationState = DataController.ApplicationState.Client;
         }
 
         private void StartServerClicked()
@@ -117,7 +115,7 @@ namespace BMW.Verification.CloudRayTracing
 
             clientCanvas.gameObject.SetActive(true); configCanvas.gameObject.SetActive(false);
 
-            HostController.Instance.HostSelected();
+            UpdateSubTitleText("You are the HOST");
 
             TrafficController.Instance.SpawnCarsHost();
 
