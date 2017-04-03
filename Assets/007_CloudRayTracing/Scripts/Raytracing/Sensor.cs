@@ -75,7 +75,7 @@ namespace BMW.Verification.CloudRayTracing
                     if (Physics.Raycast(transform.position, dir, out hit, sensorDepth, sensorManager.toDetect.value))
                     {
                         // If it intersects with an object, add that point to the list of hit positions
-                        sensorManager.hitPositions.Add(RayTraceController.Instance.pointCloudParent.transform.InverseTransformPoint(hit.point)); 
+                        sensorManager.hitPositions.Add(hit.point); 
                     }
                 }
             }

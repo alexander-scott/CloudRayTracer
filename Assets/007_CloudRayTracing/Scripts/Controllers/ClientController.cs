@@ -114,7 +114,7 @@ namespace BMW.Verification.CloudRayTracing
             // Deserialize data back to a mesh
             Mesh newMesh = MeshSerializer.ReadMesh(mesh, true);
 
-            RayTraceController.Instance.RecieveMesh(meshCount, meshTotal, newMesh); 
+            //RayTraceController.Instance.RecieveMesh(meshCount, meshTotal, newMesh); 
         }
 
         public void StartRayTracer() // Called from MenuController when the start raytracing toggle is clicked
