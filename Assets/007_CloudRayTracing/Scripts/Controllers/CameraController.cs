@@ -31,6 +31,7 @@ namespace BMW.Verification.CloudRayTracing
 
         [Space(10)]
         [Header("Cameras")]
+        public GameObject cameraParent;
         public GameObject cameraDefault;
         public GameObject cameraEverything;
         public GameObject cameraPCOnly;
@@ -64,29 +65,38 @@ namespace BMW.Verification.CloudRayTracing
         {
             if (DataController.Instance.applicationState != DataController.ApplicationState.Undefined)
             {
-                if (Input.GetMouseButton(0))
+                if (!DataController.Instance.firstPerson)
                 {
-                    velocityX += xSpeed * Input.GetAxis("Mouse X") * distance * 0.02f;
-                    velocityY += ySpeed * Input.GetAxis("Mouse Y") * 0.02f;
+                    if (Input.GetMouseButton(0))
+                    {
+                        velocityX += xSpeed * Input.GetAxis("Mouse X") * distance * 0.02f;
+                        velocityY += ySpeed * Input.GetAxis("Mouse Y") * 0.02f;
+                    }
+
+                    rotationYAxis += velocityX;
+                    rotationXAxis -= velocityY;
+                    rotationXAxis = ClampAngle(rotationXAxis, yMinLimit, yMaxLimit);
+
+                    //Quaternion fromRotation = Quaternion.Euler(cameraDefault.transform.rotation.eulerAngles.x, cameraDefault.transform.rotation.eulerAngles.y, 0);
+                    //Quaternion toRotation = Quaternion.Euler(rotationXAxis, rotationYAxis, 0);
+                    Quaternion rotation = Quaternion.Euler(rotationXAxis, rotationYAxis, 0);
+
+                    distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel") * 5, distanceMin, distanceMax);
+
+                    Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
+                    Vector3 position = rotation * negDistance + car.transform.position;
+
+                    cameraParent.transform.position = position;
+                    cameraParent.transform.rotation = rotation;
+
+                    velocityX = Mathf.Lerp(velocityX, 0, Time.deltaTime * smoothTime);
+                    velocityY = Mathf.Lerp(velocityY, 0, Time.deltaTime * smoothTime);
                 }
-
-                rotationYAxis += velocityX;
-                rotationXAxis -= velocityY;
-                rotationXAxis = ClampAngle(rotationXAxis, yMinLimit, yMaxLimit);
-
-                //Quaternion fromRotation = Quaternion.Euler(cameraDefault.transform.rotation.eulerAngles.x, cameraDefault.transform.rotation.eulerAngles.y, 0);
-                //Quaternion toRotation = Quaternion.Euler(rotationXAxis, rotationYAxis, 0);
-                Quaternion rotation = Quaternion.Euler(rotationXAxis, rotationYAxis, 0);
-
-                distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel") * 5, distanceMin, distanceMax);
-
-                Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
-                Vector3 position = rotation * negDistance + car.transform.position;
-
-                UpdateCameras(rotation, position);
-
-                velocityX = Mathf.Lerp(velocityX, 0, Time.deltaTime * smoothTime);
-                velocityY = Mathf.Lerp(velocityY, 0, Time.deltaTime * smoothTime);
+                else
+                {
+                    cameraParent.transform.position = car.transform.position;
+                    cameraParent.transform.rotation = car.transform.rotation;
+                }
             }
         }
 
@@ -99,21 +109,6 @@ namespace BMW.Verification.CloudRayTracing
                 angle -= 360F;
 
             return Mathf.Clamp(angle, min, max);
-        }
-
-        private void UpdateCameras(Quaternion rotation, Vector3 position)
-        {
-            cameraDefault.transform.rotation = rotation;
-            cameraDefault.transform.position = position;
-
-            cameraWireFrame.transform.rotation = rotation;
-            cameraWireFrame.transform.position = position;
-
-            cameraPCOnly.transform.rotation = rotation;
-            cameraPCOnly.transform.position = position;
-
-            cameraEverything.transform.rotation = rotation;
-            cameraEverything.transform.position = position;
         }
 
         public IEnumerator<float> ResizeCamera(Camera camera, float xPos, float yPos, float width, float height, float duration, bool instaMove)

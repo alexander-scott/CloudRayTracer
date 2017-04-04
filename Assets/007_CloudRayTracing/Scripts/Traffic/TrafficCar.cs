@@ -207,11 +207,11 @@ namespace BMW.Verification.CloudRayTracing
                         {
                             float angleToUp = AngleSigned(transform.up, Vector3.up, transform.forward);
 
-                            if (angleToUp > 0f)
+                            if (angleToUp > 10f)
                             {
                                 transform.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z + (300f * Time.deltaTime));
                             }
-                            else
+                            else if (angleToUp < -10f)
                             {
                                 transform.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z - (300f * Time.deltaTime));
                             }

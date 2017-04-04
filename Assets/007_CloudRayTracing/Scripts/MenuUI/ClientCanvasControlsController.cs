@@ -10,6 +10,7 @@ namespace BMW.Verification.CloudRayTracing
     {
         public Toggle rayTracerToggle;
         public Toggle aiMovementToggle;
+        public Toggle firstPersonToggle;
         public InputField networkSendRateInput;
         public InputField rayTracerGapSizeInput;
         public InputField networkedObjectSendRateInput;
@@ -19,6 +20,7 @@ namespace BMW.Verification.CloudRayTracing
         {
             rayTracerToggle.onValueChanged.AddListener(RayTracerChanged);
             aiMovementToggle.onValueChanged.AddListener(AIMovementChanged);
+            firstPersonToggle.onValueChanged.AddListener(FirstPersonChanged);
 
             networkedObjectSendRateInput.onEndEdit.AddListener(NetworkedObjectSendRateInput);
             rayTracerGapSizeInput.onEndEdit.AddListener(RayTracerGapSizeChanged);
@@ -64,6 +66,10 @@ namespace BMW.Verification.CloudRayTracing
             DataController.Instance.aiMovement = arg0;
         }
 
+        private void FirstPersonChanged(bool arg0)
+        {
+            DataController.Instance.firstPerson = arg0;
+        }
 
         public void NetworkSendRateChanged(string newVal)
         {

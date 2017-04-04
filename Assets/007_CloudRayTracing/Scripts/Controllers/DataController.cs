@@ -36,6 +36,7 @@ namespace BMW.Verification.CloudRayTracing
         public float updateDistance = 5f;
         public Dictionary<SensorType, bool> activeSensors = new Dictionary<SensorType, bool>();
         public bool aiMovement = false;
+        public bool firstPerson = false;
 
         public Dictionary<int, NetworkedObject> networkedObjectDictionary = new Dictionary<int, NetworkedObject>();
 
