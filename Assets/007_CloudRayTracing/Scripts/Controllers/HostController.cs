@@ -31,6 +31,7 @@ namespace BMW.Verification.CloudRayTracing
         public void StartRayTracer()
         {
             Debug.Log("Raytrace start");
+            PointCloudController.Instance.StartRendering();
             RayTraceController.Instance.StartRayTracing();
         }
 
@@ -38,6 +39,7 @@ namespace BMW.Verification.CloudRayTracing
         {
             Debug.Log("Raytrace stop");
             RayTraceController.Instance.StopRayTracing();
+            PointCloudController.Instance.StopRendering();
         }
     }
 }

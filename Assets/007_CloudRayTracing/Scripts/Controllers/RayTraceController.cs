@@ -30,14 +30,10 @@ namespace BMW.Verification.CloudRayTracing
         public SensorManager sensorManager;
 
         private bool rayTracing = false;
-        private int transmissionID = 0;
-        private int frameNumber = 0;
 
         public void StartRayTracing()
         {
             rayTracing = true;
-
-            PointCloudController.Instance.StartRendering();
 
             StartCoroutine(RayTracerCoroutine());
         }
@@ -67,20 +63,19 @@ namespace BMW.Verification.CloudRayTracing
 
                 // How long should we wait before doing it all again? Bear in mind the data might not have fully reached the client yet.
                 yield return new WaitForSeconds(DataController.Instance.meshSendRate);
-
-                frameNumber++;
             }
-
-            PointCloudController.Instance.StopRendering();
         }
 
         private void SendData(List<Vector3> hitPositions)
         {
+            if (!rayTracing)
+                return;
+
             Vector3[] arrayData = hitPositions.ToArray();
 
             if (DataController.Instance.applicationState == DataController.ApplicationState.Server)
             {
-
+                ServerController.Instance.SendHitPositionsToClient(arrayData);
             }
             else
             {

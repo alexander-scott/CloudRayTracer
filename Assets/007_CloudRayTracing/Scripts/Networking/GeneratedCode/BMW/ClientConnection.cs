@@ -36,20 +36,17 @@ namespace BMW.Verification.CloudRayTracing
 		{
 			Int32 transmissionId = reader.ReadInt32();
 			Int32 expectedSize = reader.ReadInt32();
-			Int32 frameCount = reader.ReadInt32();
-			Int32 meshTotal = reader.ReadInt32();
-			ClientPrepareToRecieveTransmission(transmissionId, expectedSize, frameCount, meshTotal);
+			ClientPrepareToRecieveTransmission(transmissionId, expectedSize);
 		}
 		
 		public void Receive_ClientRecieveTransmission(NetworkReader reader)
 		{
 			Int32 transmissionId = reader.ReadInt32();
-			Int32 meshCount = reader.ReadInt32();
 			Int32 recBuffer_count = reader.ReadInt32();
 			System.Byte[] recBuffer = new System.Byte[recBuffer_count];
 			for (int recBuffer_index = 0; recBuffer_index < recBuffer_count; recBuffer_index++)
 			recBuffer[recBuffer_index] = reader.ReadByte();
-			ClientRecieveTransmission(transmissionId, meshCount, recBuffer);
+			ClientRecieveTransmission(transmissionId, recBuffer);
 		}
 		
 		public class RemoteServerConnection

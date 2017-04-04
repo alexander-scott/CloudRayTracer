@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using UnityEngine.Profiling;
 using UnityEngine.UI;
@@ -36,6 +38,8 @@ namespace BMW.Verification.CloudRayTracing
 
         private float minFPS = 60f;
         private float maxFPS = 60f;
+
+        private int transmissionID = 0;
 
         // Use this for initialization
         void Start()
@@ -149,17 +153,47 @@ namespace BMW.Verification.CloudRayTracing
             }
         }
 
-        public void SendSeralisedMeshToClient(int transmissionID, int meshIndex, int meshTotal, int frameNumber, byte[] mesh)
+        public void SendHitPositionsToClient(Vector3[] hitPostions)
         {
             if (server.NumberOfPeers > 0)
             {
-                // SPLIT UP ARRAY
-                StartCoroutine(server.Connection.SendBytesToClientsRoutine(transmissionID, frameNumber, meshIndex, meshTotal, mesh));
+                byte[] result = VectorsToBytes(hitPostions);
+                StartCoroutine(server.Connection.SendBytesToClientsRoutine(transmissionID, result));
+
+                transmissionID++;
             }
             else
             {
                 RayTraceController.Instance.StopRayTracing();
             }
+        }
+
+        //byte[] SerializeObject<_T>(_T objectToSerialize)
+        ////same as above, but should technically work anyway
+        //{
+        //    BinaryFormatter bf = new BinaryFormatter();
+        //    MemoryStream memStr = new MemoryStream();
+        //    bf.Serialize(memStr, objectToSerialize);
+        //    memStr.Position = 0;
+        //    return memStr.ToArray();
+        //}
+
+        private byte[] VectorsToBytes(Vector3[] hitPositions)
+        {
+            byte[] buff = new byte[(sizeof(float) * 3) * hitPositions.Length];
+            int buffIndex = 0;
+
+            for (int i = 0; i < hitPositions.Length; i++)
+            {
+                Buffer.BlockCopy(BitConverter.GetBytes(hitPositions[i].x), 0, buff, buffIndex * sizeof(float), sizeof(float));
+                buffIndex++;
+                Buffer.BlockCopy(BitConverter.GetBytes(hitPositions[i].y), 0, buff, buffIndex * sizeof(float), sizeof(float));
+                buffIndex++;
+                Buffer.BlockCopy(BitConverter.GetBytes(hitPositions[i].z), 0, buff, buffIndex * sizeof(float), sizeof(float));
+                buffIndex++;
+            }
+
+            return buff;
         }
 
         public void Server_OnPeerConnected(Peer obj)

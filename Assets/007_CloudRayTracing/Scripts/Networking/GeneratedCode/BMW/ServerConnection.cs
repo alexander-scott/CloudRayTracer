@@ -104,21 +104,18 @@ namespace BMW.Verification.CloudRayTracing
 				_netSender.PrepareAndSendWriter(writer);
 			}
 			
-			public void ClientPrepareToRecieveTransmission(Int32 transmissionId, Int32 expectedSize, Int32 frameCount, Int32 meshTotal)
+			public void ClientPrepareToRecieveTransmission(Int32 transmissionId, Int32 expectedSize)
 			{
 				NetworkWriter writer = _netSender.CreateWriter(-2015836376);
 				writer.Write(transmissionId);
 				writer.Write(expectedSize);
-				writer.Write(frameCount);
-				writer.Write(meshTotal);
 				_netSender.PrepareAndSendWriter(writer);
 			}
 			
-			public void ClientRecieveTransmission(Int32 transmissionId, Int32 meshCount, Byte[] recBuffer)
+			public void ClientRecieveTransmission(Int32 transmissionId, Byte[] recBuffer)
 			{
 				NetworkWriter writer = _netSender.CreateWriter(-1696830220);
 				writer.Write(transmissionId);
-				writer.Write(meshCount);
 				writer.Write(recBuffer.Length);
 				for (int _arrCounter = 0; _arrCounter < recBuffer.Length; _arrCounter++)
 				writer.Write(recBuffer[_arrCounter]);

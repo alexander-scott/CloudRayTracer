@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -30,8 +34,6 @@ namespace BMW.Verification.CloudRayTracing
 
         public Client client;
 
-        private int meshTotal;
-
         // Use this for initialization
         void Start()
         {
@@ -43,7 +45,6 @@ namespace BMW.Verification.CloudRayTracing
             client.OnConnectFailed += Client_OnConnectFailed;
 
             client.Connection.OnDataCompletelyReceived += Connection_OnDataCompletelyReceived;
-            client.Connection.OnFrameChanged += Connection_OnFrameChanged;
             client.Connection.OnTransmissionPreparation += Connection_OnTransmissionPreparation;
         }
 
@@ -99,22 +100,15 @@ namespace BMW.Verification.CloudRayTracing
 
         #region Raytracing
 
-        private void Connection_OnTransmissionPreparation(int meshCount) // Called when we are told to prepare to recieve a new mesh
+        private void Connection_OnTransmissionPreparation() // Called when we are told to prepare to recieve a new mesh
         {
-            meshTotal = meshCount;
+            
         }
 
-        private void Connection_OnFrameChanged()
+        private void Connection_OnDataCompletelyReceived(int transmissionID, byte[] data) // Called when we have recieved the entire mesh
         {
-            //throw new NotImplementedException();
-        }
-
-        private void Connection_OnDataCompletelyReceived(int transmissionID, int meshCount, byte[] mesh) // Called when we have recieved the entire mesh
-        {
-            // Deserialize data back to a mesh
-            Mesh newMesh = MeshSerializer.ReadMesh(mesh, true);
-
-            //RayTraceController.Instance.RecieveMesh(meshCount, meshTotal, newMesh); 
+            Vector3[] hitPositions = DeserializeObject<Vector3[]>(data);
+            PointCloudController.Instance.UpdatePositions(hitPositions);
         }
 
         public void StartRayTracer() // Called from MenuController when the start raytracing toggle is clicked
@@ -123,11 +117,14 @@ namespace BMW.Verification.CloudRayTracing
             SendPacket(DataController.PacketType.UpdateRayTracerGap, DataController.Instance.rayTracerGap.ToString());
             SendPacket(DataController.PacketType.UpdateNetworkSendRate, DataController.Instance.networkedObjectSendRate.ToString());
             SendPacket(DataController.PacketType.StartRayTracer, true.ToString());
+
+            PointCloudController.Instance.StartRendering();
         }
 
         public void StopRayTracer() // Called from MenuController when the stop raytracing toggle is clicked
         {
             SendPacket(DataController.PacketType.StopRayTracer, true.ToString());
+            PointCloudController.Instance.StopRendering();
         }
 
         #endregion
@@ -213,6 +210,39 @@ namespace BMW.Verification.CloudRayTracing
             {
                 client.Disconnect();
             }
-        }  
+        }
+
+        _T DeserializeObject<_T>(byte[] dataStream)
+        {
+            MemoryStream memStr = new MemoryStream(dataStream);
+            memStr.Position = 0;
+            BinaryFormatter bf = new BinaryFormatter();
+            bf.Binder = new VersionFixer();
+            return (_T)bf.Deserialize(memStr);
+        }
+    }
+
+    sealed class VersionFixer : SerializationBinder
+    {
+        public override Type BindToType(string assemblyName, string typeName)
+        {
+            Type typeToDeserialize = null;
+
+            // For each assemblyName/typeName that you want to deserialize to
+            // a different type, set typeToDeserialize to the desired type.
+            String assemVer1 = Assembly.GetExecutingAssembly().FullName;
+            if (assemblyName != assemVer1)
+            {
+                // To use a type from a different assembly version, 
+                // change the version number.
+                // To do this, uncomment the following line of code.
+                assemblyName = assemVer1;
+                // To use a different type from the same assembly, 
+                // change the type name.
+            }
+            // The following line of code returns the type.
+            typeToDeserialize = Type.GetType(String.Format("{0}, {1}", typeName, assemblyName));
+            return typeToDeserialize;
+        }
     }
 }
