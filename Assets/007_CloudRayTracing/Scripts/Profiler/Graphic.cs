@@ -13,36 +13,36 @@ namespace BMW.Verification.CloudRayTracing
 
         public Graphic(int width, int height, Color32 color)
         {
-            this._width = Mathf.Max(width, 1);
+            _width = Mathf.Max(width, 1);
             height = Mathf.Max(height, 1);
-            Texture2D textured1 = new Texture2D(this._width, height) {
+            Texture2D textured1 = new Texture2D(_width, height) {
                 filterMode = FilterMode.Point,
                 wrapMode = TextureWrapMode.Clamp,
                 anisoLevel = 0
             };
-            this._texture = textured1;
-            this._size = this._width * height;
-            this._background = new Color32[this._size];
-            this._data = new Color32[this._size];
-            this.Clear(color, true);
+            _texture = textured1;
+            _size = _width * height;
+            _background = new Color32[_size];
+            _data = new Color32[_size];
+            Clear(color, true);
         }
 
         public void Apply()
         {
-            this._texture.SetPixels32(this._data);
-            this._texture.Apply();
+            _texture.SetPixels32(_data);
+            _texture.Apply();
         }
 
         public void Clear(Color32 color, bool apply)
         {
-            if (!Color32Equal(color, this._background[0]))
+            if (!Color32Equal(color, _background[0]))
             {
-                this.SetBackgroundColor(color);
+                SetBackgroundColor(color);
             }
-            Array.Copy(this._background, this._data, this._size);
+            Array.Copy(_background, _data, _size);
             if (apply)
             {
-                this.Apply();
+                Apply();
             }
         }
 
@@ -53,7 +53,7 @@ namespace BMW.Verification.CloudRayTracing
 
         public void Destroy()
         {
-            UnityEngine.Object.DestroyImmediate(this._texture);
+            UnityEngine.Object.DestroyImmediate(_texture);
         }
 
         public void DrawRect(int x, int y, int with, int height, Color32 color, int average, Color32 averageColor)
@@ -63,18 +63,18 @@ namespace BMW.Verification.CloudRayTracing
             {
                 for (int i = y; i < height; i++)
                 {
-                    this._data[(i * this._width) + x] = color;
+                    _data[(i * _width) + x] = color;
                 }
-                this._data[(average * this._width) + x] = averageColor;
+                _data[(average * _width) + x] = averageColor;
                 x++;
             }
         }
 
         public void SetBackgroundColor(Color32 color)
         {
-            for (int i = 0; i < this._size; i++)
+            for (int i = 0; i < _size; i++)
             {
-                this._background[i] = color;
+                _background[i] = color;
             }
         }
 

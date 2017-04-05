@@ -7,7 +7,7 @@ namespace BMW.Verification.CloudRayTracing
     {
         public override float Value
         {
-            get { return ((float)GC.GetTotalMemory(false)); }
+            get { return GC.GetTotalMemory(false); }
         }
     }
 }

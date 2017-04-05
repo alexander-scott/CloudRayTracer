@@ -5,24 +5,24 @@ namespace BMW.Verification.CloudRayTracing
 {
     public static class Texture2DUtil
     {
-        private static Color32[] _background;
+        private static Color32[] background;
 
         public static void Clear(Texture2D texture, Color32 color)
         {
             if (texture != null)
             {
                 int num = texture.width * texture.height;
-                if ((_background == null) || (_background.Length != num))
+                if ((background == null) || (background.Length != num))
                 {
-                    _background = new Color32[num];
+                    background = new Color32[num];
                 }
                 if (num != 0)
                 {
-                    for (int i = 0; i < _background.Length; i++)
+                    for (int i = 0; i < background.Length; i++)
                     {
-                        _background[i] = color;
+                        background[i] = color;
                     }
-                    texture.SetPixels32(_background);
+                    texture.SetPixels32(background);
                     texture.Apply();
                 }
             }

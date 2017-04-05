@@ -6,6 +6,12 @@ namespace BMW.Verification.CloudRayTracing
 {
     public class CustomProfiler : MonoBehaviour
     {
+        public bool ColorizeText = true;
+        public static Vector2 DefaultSize = new Vector2(200f, 64f);
+        public Image Image;
+        public float ReadInterval = 0.1f;
+        public Text Text;
+
         private readonly Color32 averageValueColor = new Color32(0xc9, 0xea, 0xfb, 0xff);
         private float avgValue;
         private readonly Color32 backgroundColor = new Color32(0x2c, 0x3e, 80, 0xff);
@@ -31,15 +37,8 @@ namespace BMW.Verification.CloudRayTracing
         private const int BlockSize = 5;
         private const string ColorizedStartTextLine = " <color=#F44647FF>▼";
         private const string ColorizedTextLineFormat = "{0}</color> <color=#C9EAFBFF>■{1}</color> <color=#F79832FF>▲{2}</color>";
-        [Tooltip("Whether the text should be colorized or not")]
-        public bool ColorizeText = true;
         private const int Count = 40;
-        public static Vector2 DefaultSize = new Vector2(200f, 64f);
-        public Image Image;
-        [Tooltip("Interval in seconds to wait to read the watched variable.")]
-        public float ReadInterval = 0.1f;
         private const string StartTextLine = " ▼";
-        public Text Text;
         private const string TextLineFormat = "{0} ■{1} ▲{2}";
         private const int TextureHeight = 0x40;
         private const int TextureWidth = 200;

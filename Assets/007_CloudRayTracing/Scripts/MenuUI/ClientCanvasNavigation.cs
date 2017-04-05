@@ -45,10 +45,6 @@ namespace BMW.Verification.CloudRayTracing
                     case DataController.ClientCanvasButtonType.Sensors:
                         clientCanvasButtons[i].Button.onClick.AddListener(() => ButtonClicked(DataController.ClientCanvasButtonType.Sensors));
                         break;
-
-                    case DataController.ClientCanvasButtonType.ClientPerformance:
-                        clientCanvasButtons[i].Button.onClick.AddListener(() => ButtonClicked(DataController.ClientCanvasButtonType.ClientPerformance));
-                        break;
                 }
             }
 
