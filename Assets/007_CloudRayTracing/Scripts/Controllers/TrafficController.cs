@@ -44,6 +44,12 @@ namespace BMW.Verification.CloudRayTracing
 
                 trafficCars[i].transform.position = new Vector3(Random.Range(-100f, 200f), 0, Random.Range(-200f, 200f));
             }
+
+            DataController.Instance.centralCar = trafficCars[0];
+            trafficCars[0].GetComponent<CarController>().isFocusCar = true;
+
+            SensorManager.Instance.transform.parent = trafficCars[0].transform;
+            SensorManager.Instance.transform.localPosition = Vector3.zero;
         }
 
         public List<NetworkedObject> SpawnCarsClient()

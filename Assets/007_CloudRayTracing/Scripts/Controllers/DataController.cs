@@ -75,6 +75,47 @@ namespace BMW.Verification.CloudRayTracing
             }
         }
 
+        private void Update()
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                Ray ray = new Ray();
+                RaycastHit hit;
+
+                if (CameraController.Instance.CameraDefault.pixelRect.Contains(Input.mousePosition))
+                {
+                    ray = CameraController.Instance.CameraDefault.ScreenPointToRay(Input.mousePosition);
+                }
+                else if (CameraController.Instance.CameraEverything.pixelRect.Contains(Input.mousePosition))
+                {
+                    ray = CameraController.Instance.CameraEverything.ScreenPointToRay(Input.mousePosition);
+                }
+                else if (CameraController.Instance.CameraPCOnly.pixelRect.Contains(Input.mousePosition))
+                {
+                    ray = CameraController.Instance.CameraPCOnly.ScreenPointToRay(Input.mousePosition);
+                }
+                else if (CameraController.Instance.CameraWireframe.pixelRect.Contains(Input.mousePosition))
+                {
+                    ray = CameraController.Instance.CameraWireframe.ScreenPointToRay(Input.mousePosition);
+                }
+
+                if (Physics.Raycast(ray, out hit))
+                {
+                    if (hit.transform.tag == "Car")
+                    {
+                        centralCar.GetComponent<CarController>().isFocusCar = false;
+
+                        centralCar = hit.transform.gameObject;
+                        centralCar.GetComponent<CarController>().isFocusCar = true;
+
+                        SensorManager.Instance.transform.parent = centralCar.transform;
+                        SensorManager.Instance.transform.localPosition = Vector3.zero;
+                        SensorManager.Instance.transform.localEulerAngles = Vector3.zero;
+                    }
+                }
+            }
+        }
+
         public string LocalIPAddress()
         {
 #if UNITY_EDITOR_OSX

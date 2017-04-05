@@ -36,7 +36,7 @@ namespace BMW.Verification.CloudRayTracing
             wireframeCameraToggle.onValueChanged.AddListener(WireframeCameraChanged);
             everythingCameraToggle.onValueChanged.AddListener(EverythingCameraChanged);
 
-            activeCameras.Add(CameraController.Instance.cameraDefault.GetComponent<Camera>());
+            activeCameras.Add(CameraController.Instance.CameraDefault);
             activeCameraNames.Add("Default Camera");
         }
 
@@ -44,7 +44,7 @@ namespace BMW.Verification.CloudRayTracing
         {
             if (arg0 && !autoToggle)
             {
-                AddCamera(CameraController.Instance.cameraEverything.GetComponent<Camera>(), "Everything Camera");
+                AddCamera(CameraController.Instance.CameraEverything, "Everything Camera");
             }
             else
             {
@@ -62,7 +62,7 @@ namespace BMW.Verification.CloudRayTracing
                 }
                 else
                 {
-                    RemoveCameraAndReorder(CameraController.Instance.cameraEverything.GetComponent<Camera>());
+                    RemoveCameraAndReorder(CameraController.Instance.CameraEverything);
                 }
             }
         }
@@ -71,7 +71,7 @@ namespace BMW.Verification.CloudRayTracing
         {
             if (arg0 && !autoToggle)
             {
-                AddCamera(CameraController.Instance.cameraWireFrame.GetComponent<Camera>(), "Wireframe Camera");
+                AddCamera(CameraController.Instance.CameraWireframe, "Wireframe Camera");
             }
             else
             {
@@ -89,7 +89,7 @@ namespace BMW.Verification.CloudRayTracing
                 }
                 else
                 {
-                    RemoveCameraAndReorder(CameraController.Instance.cameraWireFrame.GetComponent<Camera>());
+                    RemoveCameraAndReorder(CameraController.Instance.CameraWireframe);
                 }
             }
         }
@@ -98,7 +98,7 @@ namespace BMW.Verification.CloudRayTracing
         {
             if (arg0 && !autoToggle)
             {
-                AddCamera(CameraController.Instance.cameraPCOnly.GetComponent<Camera>(), "Point Cloud Camera");
+                AddCamera(CameraController.Instance.CameraPCOnly, "Point Cloud Camera");
             }
             else
             {
@@ -116,7 +116,7 @@ namespace BMW.Verification.CloudRayTracing
                 }
                 else
                 {
-                    RemoveCameraAndReorder(CameraController.Instance.cameraPCOnly.GetComponent<Camera>());
+                    RemoveCameraAndReorder(CameraController.Instance.CameraPCOnly);
                 }
             }
         }
@@ -125,7 +125,7 @@ namespace BMW.Verification.CloudRayTracing
         {
             if (arg0 && !autoToggle)
             {
-                AddCamera(CameraController.Instance.cameraDefault.GetComponent<Camera>(), "Default Camera");
+                AddCamera(CameraController.Instance.CameraDefault, "Default Camera");
             }
             else
             {
@@ -143,7 +143,7 @@ namespace BMW.Verification.CloudRayTracing
                 }
                 else
                 {
-                    RemoveCameraAndReorder(CameraController.Instance.cameraDefault.GetComponent<Camera>());
+                    RemoveCameraAndReorder(CameraController.Instance.CameraDefault);
                 }
             }
         }

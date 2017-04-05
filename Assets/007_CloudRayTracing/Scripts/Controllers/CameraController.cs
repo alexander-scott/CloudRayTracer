@@ -26,9 +26,6 @@ namespace BMW.Verification.CloudRayTracing
 
         #endregion
 
-        [Header("Car")]
-        public GameObject car;
-
         [Space(10)]
         [Header("Cameras")]
         public GameObject cameraParent;
@@ -36,6 +33,63 @@ namespace BMW.Verification.CloudRayTracing
         public GameObject cameraEverything;
         public GameObject cameraPCOnly;
         public GameObject cameraWireFrame;
+
+        private Camera _cameraDefault;
+        private Camera _cameraEverything;
+        private Camera _cameraPCOnly;
+        private Camera _cameraWireframe;
+
+        public Camera CameraDefault
+        {
+            get
+            {
+                if (_cameraDefault == null)
+                {
+                    _cameraDefault = cameraDefault.GetComponent<Camera>();
+                }
+
+                return _cameraDefault;
+            }
+        }
+
+        public Camera CameraEverything
+        {
+            get
+            {
+                if (_cameraEverything == null)
+                {
+                    _cameraEverything = cameraEverything.GetComponent<Camera>();
+                }
+
+                return _cameraEverything;
+            }
+        }
+
+        public Camera CameraPCOnly
+        {
+            get
+            {
+                if (_cameraPCOnly == null)
+                {
+                    _cameraPCOnly = cameraPCOnly.GetComponent<Camera>();
+                }
+
+                return _cameraPCOnly;
+            }
+        }
+
+        public Camera CameraWireframe
+        {
+            get
+            {
+                if (_cameraWireframe == null)
+                {
+                    _cameraWireframe = cameraWireFrame.GetComponent<Camera>();
+                }
+
+                return _cameraWireframe;
+            }
+        }
 
         [Space(10)]
         [Header("Camera Movement")]
@@ -84,18 +138,18 @@ namespace BMW.Verification.CloudRayTracing
                     distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel") * 5, distanceMin, distanceMax);
 
                     Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
-                    Vector3 position = rotation * negDistance + car.transform.position;
+                    Vector3 position = rotation * negDistance + DataController.Instance.centralCar.transform.position;
 
-                    cameraParent.transform.position = position;
-                    cameraParent.transform.rotation = rotation;
+                    cameraParent.transform.position = Vector3.Lerp(cameraParent.transform.position, position, 0.1f);
+                    cameraParent.transform.rotation = Quaternion.Lerp(cameraParent.transform.rotation, rotation, 0.1f);
 
                     velocityX = Mathf.Lerp(velocityX, 0, Time.deltaTime * smoothTime);
                     velocityY = Mathf.Lerp(velocityY, 0, Time.deltaTime * smoothTime);
                 }
                 else
                 {
-                    cameraParent.transform.position = car.transform.position;
-                    cameraParent.transform.rotation = car.transform.rotation;
+                    cameraParent.transform.position = DataController.Instance.centralCar.transform.position;
+                    cameraParent.transform.rotation = DataController.Instance.centralCar.transform.rotation;
                 }
             }
         }
