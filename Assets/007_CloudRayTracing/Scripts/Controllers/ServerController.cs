@@ -149,6 +149,7 @@ namespace BMW.Verification.CloudRayTracing
 
                 case DataController.PacketType.FinishedSyncing:
                     Debug.Log(DataController.Instance.networkedObjectDictionary.Count + " objects synced");
+                    Timing.RunCoroutine(SendPerformanceData(), "SendPerformanceData");
                     break;
             }
         }
@@ -200,16 +201,11 @@ namespace BMW.Verification.CloudRayTracing
         {
             Debug.Log("Peer connected!");
 
-            if (obj.isConnected)
-            {
-                Timing.RunCoroutine(SendPerformanceData(), "SendPerformanceData");
-            }
+            DataController.Instance.applicationState = DataController.ApplicationState.ServerSynchronising;
         }
 
         public IEnumerator<float> SendPerformanceData()
         {
-            yield return Timing.WaitForSeconds(3f); 
-
             while (server.NumberOfPeers > 0)
             {
                 float fpsVal = 1.0f / Time.deltaTime;

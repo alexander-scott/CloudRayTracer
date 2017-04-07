@@ -117,7 +117,8 @@ namespace BMW.Verification.CloudRayTracing
 
         void LateUpdate()
         {
-            if (DataController.Instance.applicationState != DataController.ApplicationState.Undefined)
+            if (DataController.Instance.applicationState == DataController.ApplicationState.Client ||
+                DataController.Instance.applicationState == DataController.ApplicationState.Host)
             {
                 if (!DataController.Instance.firstPerson)
                 {
@@ -148,8 +149,8 @@ namespace BMW.Verification.CloudRayTracing
                 }
                 else
                 {
-                    cameraParent.transform.position = DataController.Instance.centralCar.transform.position;
-                    cameraParent.transform.rotation = DataController.Instance.centralCar.transform.rotation;
+                    cameraParent.transform.position = Vector3.Lerp(cameraParent.transform.position, DataController.Instance.centralCar.firstPersonCam.position, 0.1f);
+                    cameraParent.transform.rotation = Quaternion.Lerp(cameraParent.transform.rotation, DataController.Instance.centralCar.transform.rotation, 0.1f); 
                 }
             }
         }

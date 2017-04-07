@@ -34,7 +34,7 @@ namespace BMW.Verification.CloudRayTracing
 
         [HideInInspector]
         public Transform[] wayPoints;
-        private List<GameObject> trafficCars = new List<GameObject>();
+        public List<GameObject> trafficCars = new List<GameObject>();
 
         public void SpawnCarsHost()
         {
@@ -45,10 +45,10 @@ namespace BMW.Verification.CloudRayTracing
                 trafficCars[i].transform.position = new Vector3(Random.Range(-100f, 200f), 0, Random.Range(-200f, 200f));
             }
 
-            DataController.Instance.centralCar = trafficCars[0];
-            trafficCars[0].GetComponent<CarController>().isFocusCar = true;
+            DataController.Instance.centralCar = trafficCars[0].GetComponent<CarController>();
+            DataController.Instance.centralCar.isFocusCar = true;
 
-            SensorManager.Instance.transform.parent = trafficCars[0].transform;
+            SensorManager.Instance.transform.parent = DataController.Instance.centralCar.transform;
             SensorManager.Instance.transform.localPosition = Vector3.zero;
         }
 

@@ -22,7 +22,7 @@ namespace BMW.Verification.CloudRayTracing
         private static DataController _instance;
         public static DataController Instance { get { return _instance; } }
 
-        public GameObject centralCar;
+        public CarController centralCar;
 
         [Space(10)]
 
@@ -41,7 +41,7 @@ namespace BMW.Verification.CloudRayTracing
         public Dictionary<int, NetworkedObject> networkedObjectDictionary = new Dictionary<int, NetworkedObject>();
 
         public enum PacketType { StartRayTracer, StopRayTracer, UpdateNetworkSendRate, UpdateRayTracerGap, UpdateNetworkedObjectSendRate, FinishedSyncing, }
-        public enum ApplicationState { Undefined, Client, ClientSynchronising, Server, Host, }
+        public enum ApplicationState { Undefined, Client, ClientSynchronising, Server, ServerSynchronising, Host, }
         public enum StatisticType { FPS, AVGFPS, MINFPS, MAXFPS, MEMTOTAL, MEMALLOC, }
         public enum ClientCanvasButtonType { Information, Controls, Viewports, Performance, Sensors, Disconnect, }
         public enum SensorType
@@ -105,8 +105,8 @@ namespace BMW.Verification.CloudRayTracing
                     {
                         centralCar.GetComponent<CarController>().isFocusCar = false;
 
-                        centralCar = hit.transform.gameObject;
-                        centralCar.GetComponent<CarController>().isFocusCar = true;
+                        centralCar = hit.transform.GetComponent<CarController>();
+                        centralCar.isFocusCar = true;
 
                         SensorManager.Instance.transform.parent = centralCar.transform;
                         SensorManager.Instance.transform.localPosition = Vector3.zero;

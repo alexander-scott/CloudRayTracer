@@ -13,6 +13,7 @@ namespace BMW.Verification.CloudRayTracing
         public Transform frontLeftWheel;
 
         public GameObject colliderParent;
+        public Transform firstPersonCam;
 
         [Space(10)]
         [Header("Options")]

@@ -75,7 +75,6 @@ namespace BMW.Verification.CloudRayTracing
         private void Client_OnDisconnected(byte disconnectMsg) // Called when client disconnected from server
         {
             MenuController.Instance.UpdateSubTitleText("Disconnected from the server");
-            DataController.Instance.aiMovement = false;
         }
 
         private void Client_OnConnected() // Called when we have a successfull connection to the server
@@ -157,25 +156,15 @@ namespace BMW.Verification.CloudRayTracing
 
         private IEnumerator<float> SyncObjects() // Syncs all objects to the server
         {
-            foreach (NetworkedObject netObj in DataController.Instance.networkedObjectDictionary.Values)
-            {
-                if (Vector3.Distance(netObj.transform.position, DataController.Instance.centralCar.transform.position) < DataController.Instance.updateDistance)
-                {
-                    netObj.active = true;
+            yield return Timing.WaitForSeconds(0.05f); // Add a slight delay
 
-                    // SET ACTIVE ON SERVER
-                    client.Connection.UpdateObjectState(netObj.objectID, true);
-                }
-
-                yield return Timing.WaitForSeconds(0.05f);
-            }
-
-            Timing.RunCoroutine(SpawnCarsOnServer(), "SpawnCarsOnServer");
-        }
-
-        public IEnumerator<float> SpawnCarsOnServer() // Spawn our cars on the server
-        {
             List<NetworkedObject> objectIDs = TrafficController.Instance.SpawnCarsClient(); // Spawn them on the client first
+
+            DataController.Instance.centralCar = TrafficController.Instance.trafficCars[0].GetComponent<CarController>();
+            DataController.Instance.centralCar.isFocusCar = true;
+
+            SensorManager.Instance.transform.parent = DataController.Instance.centralCar.transform;
+            SensorManager.Instance.transform.localPosition = Vector3.zero;
 
             for (int i = 0; i < objectIDs.Count; i++)
             {
@@ -185,6 +174,19 @@ namespace BMW.Verification.CloudRayTracing
                 }
 
                 client.Connection.SpawnCarOnServer(objectIDs[i].objectID, objectIDs[i].active);
+
+                yield return Timing.WaitForSeconds(0.05f);
+            }
+
+            foreach (NetworkedObject netObj in DataController.Instance.networkedObjectDictionary.Values)
+            {
+                if (Vector3.Distance(netObj.transform.position, DataController.Instance.centralCar.transform.position) < DataController.Instance.updateDistance)
+                {
+                    netObj.active = true;
+
+                    // SET ACTIVE ON SERVER
+                    client.Connection.UpdateObjectState(netObj.objectID, true);
+                }
 
                 yield return Timing.WaitForSeconds(0.05f);
             }
