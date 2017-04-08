@@ -599,16 +599,16 @@ namespace BMW.Verification.CloudRayTracing
             selectedLog = null;
         }
 
-        Rect screenRect;
-        Rect toolBarRect;
+        Rect screenRect = new Rect();
+        Rect toolBarRect = new Rect();
         Rect logsRect;
         Rect stackRect;
         Rect graphRect;
         Rect graphMinRect;
         Rect graphMaxRect;
-        Rect buttomRect;
+        Rect buttomRect = new Rect();
         Vector2 stackRectTopLeft;
-        Rect detailRect;
+        Rect detailRect = new Rect();
 
         Vector2 scrollPosition;
         Vector2 scrollPosition2;
@@ -703,7 +703,7 @@ namespace BMW.Verification.CloudRayTracing
             }
         }
 
-        Rect countRect;
+        Rect countRect = new Rect();
         Rect timeRect;
         Rect timeLabelRect;
         Rect sceneRect;
@@ -1908,7 +1908,9 @@ namespace BMW.Verification.CloudRayTracing
             return;
 #endif
 
+#pragma warning disable CS0162 // Unreachable code detected
             fpsText = fps.ToString("0.000");
+#pragma warning restore CS0162 // Unreachable code detected
             gcTotalMemory = (((float)System.GC.GetTotalMemory(false)) / 1024 / 1024);
             //addSample();
 
@@ -2159,7 +2161,9 @@ namespace BMW.Verification.CloudRayTracing
                 url = System.IO.Path.Combine(streamingAssetsPath, prefFile);
             }
 
+#pragma warning disable CS0618 // Type or member is obsolete
             if (Application.platform != RuntimePlatform.OSXWebPlayer && Application.platform != RuntimePlatform.WindowsWebPlayer)
+#pragma warning restore CS0618 // Type or member is obsolete
                 if (!url.Contains("://"))
                     url = "file://" + url;
 

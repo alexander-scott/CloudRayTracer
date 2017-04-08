@@ -42,7 +42,7 @@ namespace BMW.Verification.CloudRayTracing
 
         public enum PacketType { StartRayTracer, StopRayTracer, UpdateNetworkSendRate, UpdateRayTracerGap, UpdateNetworkedObjectSendRate, FinishedSyncing, }
         public enum ApplicationState { Undefined, Client, ClientSynchronising, Server, ServerSynchronising, Host, }
-        public enum StatisticType { FPS, AVGFPS, MINFPS, MAXFPS, MEMTOTAL, MEMALLOC, }
+        public enum StatisticType { FPS, MEM, }
         public enum ClientCanvasButtonType { Information, Controls, Viewports, Performance, Sensors, Disconnect, }
         public enum SensorType
         {

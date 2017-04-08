@@ -33,12 +33,6 @@ namespace BMW.Verification.CloudRayTracing
 
         private Server server;
 
-        private float count = 0f;
-        private float totalFps = 0f;
-
-        private float minFPS = 60f;
-        private float maxFPS = 60f;
-
         private int transmissionID = 0;
 
         // Use this for initialization
@@ -204,43 +198,29 @@ namespace BMW.Verification.CloudRayTracing
             DataController.Instance.applicationState = DataController.ApplicationState.ServerSynchronising;
         }
 
+        private void Server_OnPeersDisconnected()
+        {
+            Debug.Log("Peer disconnected");
+
+            for (int i = 0; i < TrafficController.Instance.trafficCars.Count; i++)
+            {
+                Destroy(TrafficController.Instance.trafficCars[i]);
+            }
+
+            TrafficController.Instance.trafficCars.Clear();
+        }
+
         public IEnumerator<float> SendPerformanceData()
         {
             while (server.NumberOfPeers > 0)
             {
-                float fpsVal = 1.0f / Time.deltaTime;
-                DataController.Instance.performanceDictionary[DataController.StatisticType.FPS] = Mathf.Floor(fpsVal);
-
-                count++;
-                totalFps += fpsVal;
-                DataController.Instance.performanceDictionary[DataController.StatisticType.AVGFPS] = Mathf.Floor(totalFps / count);
-
-                if (fpsVal < minFPS)
-                {
-                    minFPS = fpsVal;
-                }
-
-                if (fpsVal > maxFPS)
-                {
-                    maxFPS = fpsVal;
-                }
-
-                DataController.Instance.performanceDictionary[DataController.StatisticType.MINFPS] = Mathf.Floor(minFPS);
-                DataController.Instance.performanceDictionary[DataController.StatisticType.MAXFPS] = Mathf.Floor(maxFPS);
-
-                long totalMem = (Profiler.GetTotalReservedMemoryLong() / 1048576);
-                long memoryAlloc = totalMem - (Profiler.GetTotalAllocatedMemoryLong() / 1048576);
-
-                DataController.Instance.performanceDictionary[DataController.StatisticType.MEMTOTAL] = float.Parse(totalMem.ToString());
-                DataController.Instance.performanceDictionary[DataController.StatisticType.MEMALLOC] = float.Parse(memoryAlloc.ToString());
-
-                foreach (KeyValuePair<DataController.StatisticType, float> kvp in DataController.Instance.performanceDictionary)
-                {
-                    server.Connection.SendPerformanceDictionary((int)kvp.Key, kvp.Value);
-                }
+                server.Connection.SendPerformanceDictionary((int)DataController.StatisticType.FPS, Mathf.Floor(1.0f / Time.deltaTime));
+                server.Connection.SendPerformanceDictionary((int)DataController.StatisticType.MEM, GC.GetTotalMemory(false));
 
                 yield return Timing.WaitForSeconds(0.5f);
             }
+
+            Server_OnPeersDisconnected();
         }
     }
 }
