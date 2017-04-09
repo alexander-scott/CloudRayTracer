@@ -32,7 +32,7 @@ namespace BMW.Verification.CloudRayTracing
 
         #endregion
 
-        public Client client;
+        private Client client;
 
         // Use this for initialization
         void Start()
@@ -101,12 +101,12 @@ namespace BMW.Verification.CloudRayTracing
 
         private void Connection_OnTransmissionPreparation() // Called when we are told to prepare to recieve a new mesh
         {
-            
+
         }
 
         private void Connection_OnDataCompletelyReceived(int transmissionID, byte[] data) // Called when we have recieved the entire mesh
         {
-            Vector3[] hitPositions = DeserializeObject<Vector3[]>(data);
+            Vector3[] hitPositions = BytesToVectors(data);
             PointCloudController.Instance.UpdatePositions(hitPositions);
         }
 
@@ -114,7 +114,7 @@ namespace BMW.Verification.CloudRayTracing
         {
             SendPacket(DataController.PacketType.UpdateNetworkSendRate, DataController.Instance.meshSendRate.ToString());
             SendPacket(DataController.PacketType.UpdateRayTracerGap, DataController.Instance.rayTracerGap.ToString());
-            SendPacket(DataController.PacketType.UpdateNetworkSendRate, DataController.Instance.networkedObjectSendRate.ToString());
+            SendPacket(DataController.PacketType.UpdateNetworkedObjectSendRate, DataController.Instance.networkedObjectSendRate.ToString());
             SendPacket(DataController.PacketType.StartRayTracer, true.ToString());
 
             PointCloudController.Instance.StartRendering();
@@ -175,7 +175,7 @@ namespace BMW.Verification.CloudRayTracing
 
                 client.Connection.SpawnCarOnServer(objectIDs[i].objectID, objectIDs[i].active);
 
-                yield return Timing.WaitForSeconds(0.05f);
+                yield return Timing.WaitForSeconds(DataController.Instance.objectSyncDelay);
             }
 
             foreach (NetworkedObject netObj in DataController.Instance.networkedObjectDictionary.Values)
@@ -188,7 +188,7 @@ namespace BMW.Verification.CloudRayTracing
                     client.Connection.UpdateObjectState(netObj.objectID, true);
                 }
 
-                yield return Timing.WaitForSeconds(0.05f);
+                yield return Timing.WaitForSeconds(DataController.Instance.objectSyncDelay);
             }
 
             OnFinishedSync();
@@ -214,37 +214,25 @@ namespace BMW.Verification.CloudRayTracing
             }
         }
 
-        _T DeserializeObject<_T>(byte[] dataStream)
+        private Vector3[] BytesToVectors(byte[] bytes)
         {
-            MemoryStream memStr = new MemoryStream(dataStream);
-            memStr.Position = 0;
-            BinaryFormatter bf = new BinaryFormatter();
-            bf.Binder = new VersionFixer();
-            return (_T)bf.Deserialize(memStr);
-        }
-    }
+            Vector3[] hitPositions = new Vector3[bytes.Length / (sizeof(float) * 3)];
 
-    sealed class VersionFixer : SerializationBinder
-    {
-        public override Type BindToType(string assemblyName, string typeName)
-        {
-            Type typeToDeserialize = null;
+            int buffIndex = 0;
 
-            // For each assemblyName/typeName that you want to deserialize to
-            // a different type, set typeToDeserialize to the desired type.
-            String assemVer1 = Assembly.GetExecutingAssembly().FullName;
-            if (assemblyName != assemVer1)
+            for (int i = 0; i < bytes.Length / (sizeof(float) * 3); i++)
             {
-                // To use a type from a different assembly version, 
-                // change the version number.
-                // To do this, uncomment the following line of code.
-                assemblyName = assemVer1;
-                // To use a different type from the same assembly, 
-                // change the type name.
+                float x = BitConverter.ToSingle(bytes, buffIndex);
+                buffIndex += sizeof(float);
+                float y = BitConverter.ToSingle(bytes, buffIndex);
+                buffIndex += sizeof(float);
+                float z = BitConverter.ToSingle(bytes, buffIndex);
+                buffIndex += sizeof(float);
+
+                hitPositions[i] = new Vector3(x, y, z);
             }
-            // The following line of code returns the type.
-            typeToDeserialize = Type.GetType(String.Format("{0}, {1}", typeName, assemblyName));
-            return typeToDeserialize;
+
+            return hitPositions;
         }
     }
 }

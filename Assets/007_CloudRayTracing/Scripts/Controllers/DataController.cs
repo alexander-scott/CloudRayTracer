@@ -22,22 +22,30 @@ namespace BMW.Verification.CloudRayTracing
         private static DataController _instance;
         public static DataController Instance { get { return _instance; } }
 
+        [HideInInspector]
         public CarController centralCar;
+        [HideInInspector]
+        public ApplicationState applicationState = ApplicationState.Undefined;
+        [HideInInspector]
+        public bool aiMovement = false;
+        [HideInInspector]
+        public bool firstPerson = false;
+        [HideInInspector]
+        public float meshSendRate = 1f;
+        [HideInInspector]
+        public float networkedObjectSendRate = 0.3f;
+        [HideInInspector]
+        public float rayTracerGap = 0.02f; // The gap between each ray fired in the sensor bounds
 
-        [Space(10)]
+        [Header("Config")]
 
         public string ipAddress;
         public int defaultBufferSize = 1300; // Max ethernet MTU is ~1400
-        public ApplicationState applicationState = ApplicationState.Undefined;
-        public float pointsPerMesh = 500f;
-        public float meshSendRate = 1f;
-        public float networkedObjectSendRate = 0.3f;
-        public float rayTracerGap = 0.02f; // The gap between each ray fired in the sensor bounds
         public float updateDistance = 5f;
-        public Dictionary<SensorType, bool> activeSensors = new Dictionary<SensorType, bool>();
-        public bool aiMovement = false;
-        public bool firstPerson = false;
+        public float objectSyncDelay = 0.01f;
 
+        public Dictionary<SensorType, bool> activeSensors = new Dictionary<SensorType, bool>();
+        
         public Dictionary<int, NetworkedObject> networkedObjectDictionary = new Dictionary<int, NetworkedObject>();
 
         public enum PacketType { StartRayTracer, StopRayTracer, UpdateNetworkSendRate, UpdateRayTracerGap, UpdateNetworkedObjectSendRate, FinishedSyncing, }

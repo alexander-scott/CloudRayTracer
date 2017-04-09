@@ -118,13 +118,14 @@ namespace BMW.Verification.CloudRayTracing
                 Vector3.Dot(v1, v2)) * Mathf.Rad2Deg;
         }
 
-        protected virtual void RandomAttributes()
+        private void RandomAttributes()
         {
             maxSpeed = Random.Range(0.2f, 0.6f);
             rotationStep = Random.Range(1f, 2f);
+            transform.eulerAngles = new Vector3(0, Random.Range(0, 360), 0);
         }
 
-        protected virtual void DrivingCalculations()
+        private void DrivingCalculations()
         {
             if (DataController.Instance.aiMovement)
             {

@@ -144,6 +144,7 @@ namespace BMW.Verification.CloudRayTracing
                 case DataController.PacketType.FinishedSyncing:
                     Debug.Log(DataController.Instance.networkedObjectDictionary.Count + " objects synced");
                     Timing.RunCoroutine(SendPerformanceData(), "SendPerformanceData");
+                    DataController.Instance.applicationState = DataController.ApplicationState.Server;
                     break;
             }
         }
