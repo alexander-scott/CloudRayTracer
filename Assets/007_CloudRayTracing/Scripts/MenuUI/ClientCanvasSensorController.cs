@@ -31,13 +31,24 @@ namespace BMW.Verification.CloudRayTracing
         // This might be the most inefficient way to do anything ever
         private void ToggleChanged(bool arg0)
         {
-            if (Time.timeSinceLevelLoad > 1f) // What a hack
+            if (Time.timeSinceLevelLoad > 1f) // What a hack. Stops this being called when we initially set up the sensors
             {
                 for (int i = 0; i < sensorToggles.Length; i++)
                 {
                     if (sensorToggles[i].Toggle.isOn != DataController.Instance.activeSensors[sensorToggles[i].sensorType])
                     {
                         DataController.Instance.SaveSensorState(sensorToggles[i].sensorType, arg0);
+                        if (DataController.Instance.applicationState == DataController.ApplicationState.Client)
+                        {
+                            if (arg0)
+                            {
+                                ClientController.Instance.SendPacket(DataController.PacketType.SetSensorEnabled, i.ToString());
+                            }
+                            else
+                            {
+                                ClientController.Instance.SendPacket(DataController.PacketType.SetSensorDisabled, i.ToString());
+                            }
+                        }
                         break;
                     }
                 }

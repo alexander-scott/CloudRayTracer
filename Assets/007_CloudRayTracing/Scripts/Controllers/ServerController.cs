@@ -117,27 +117,30 @@ namespace BMW.Verification.CloudRayTracing
                     RayTraceController.Instance.StopRayTracing();
                     break;
 
-                case DataController.PacketType.UpdateNetworkSendRate:
-                    float parseVal;
-                    if (float.TryParse(contents, out parseVal))
+                case DataController.PacketType.UpdateHitPositionsSendRate:
+                    float parseHitPositionsSendRate;
+                    if (float.TryParse(contents, out parseHitPositionsSendRate))
                     {
-                        DataController.Instance.meshSendRate = parseVal;
+                        Debug.Log("Hit positions send rate set to " + parseHitPositionsSendRate);
+                        DataController.Instance.hitPositionsSendRate = parseHitPositionsSendRate;
                     }
                     break;
 
                 case DataController.PacketType.UpdateRayTracerGap:
-                    float parseVals;
-                    if (float.TryParse(contents, out parseVals))
+                    float parseRayTracerGap;
+                    if (float.TryParse(contents, out parseRayTracerGap))
                     {
-                        DataController.Instance.rayTracerGap = parseVals;
+                        Debug.Log("Ray tracer gap set to " + parseRayTracerGap);
+                        DataController.Instance.rayTracerGap = parseRayTracerGap;
                     }
                     break;
 
                 case DataController.PacketType.UpdateNetworkedObjectSendRate:
-                    float parseVals1;
-                    if (float.TryParse(contents, out parseVals1))
+                    float parseNetworkObjectSendRate;
+                    if (float.TryParse(contents, out parseNetworkObjectSendRate))
                     {
-                        DataController.Instance.networkedObjectSendRate = parseVals1;
+                        Debug.Log("Networked Object send rate set to " + parseNetworkObjectSendRate);
+                        DataController.Instance.networkedObjectSendRate = parseNetworkObjectSendRate;
                     }
                     break;
 
@@ -151,12 +154,33 @@ namespace BMW.Verification.CloudRayTracing
                     int parseObjID;
                     if (int.TryParse(contents, out parseObjID))
                     {
+                        Debug.Log("Central car set to network object with ID of " + parseObjID);
                         DataController.Instance.centralCar = DataController.Instance.networkedObjectDictionary[parseObjID].GetComponent<CarController>();
                         SensorManager.Instance.transform.parent = DataController.Instance.centralCar.transform;
                         SensorManager.Instance.transform.localPosition = Vector3.zero;
                         SensorManager.Instance.transform.localEulerAngles = Vector3.zero;
                     }
                         
+                    break;
+
+                case DataController.PacketType.SetSensorDisabled:
+                    int parseSensorID;
+                    if (int.TryParse(contents, out parseSensorID))
+                    {
+                        Debug.Log("Sensor " + parseSensorID + " set to disabled");
+                        DataController.Instance.activeSensors[(DataController.SensorType)parseSensorID] = false;
+                        SensorManager.Instance.ToggleSensor((DataController.SensorType)parseSensorID, false);
+                    }
+                    break;
+
+                case DataController.PacketType.SetSensorEnabled:
+                    int parseSensorID2;
+                    if (int.TryParse(contents, out parseSensorID2))
+                    {
+                        Debug.Log("Sensor " + parseSensorID2 + " set to enabled");
+                        DataController.Instance.activeSensors[(DataController.SensorType)parseSensorID2] = true;
+                        SensorManager.Instance.ToggleSensor((DataController.SensorType)parseSensorID2, true);
+                    }
                     break;
             }
         }

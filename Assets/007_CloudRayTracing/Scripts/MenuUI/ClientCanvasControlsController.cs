@@ -11,7 +11,7 @@ namespace BMW.Verification.CloudRayTracing
         public Toggle rayTracerToggle;
         public Toggle aiMovementToggle;
         public Toggle firstPersonToggle;
-        public InputField networkSendRateInput;
+        public InputField hitPositionsSendRateInput;
         public InputField rayTracerGapSizeInput;
         public InputField networkedObjectSendRateInput;
 
@@ -24,13 +24,9 @@ namespace BMW.Verification.CloudRayTracing
 
             networkedObjectSendRateInput.onEndEdit.AddListener(NetworkedObjectSendRateInput);
             rayTracerGapSizeInput.onEndEdit.AddListener(RayTracerGapSizeChanged);
-            networkSendRateInput.onEndEdit.AddListener(NetworkSendRateChanged);
+            hitPositionsSendRateInput.onEndEdit.AddListener(HitPositionsSendRateChanged);
 
-            DataController.Instance.meshSendRate = PlayerPrefs.GetFloat("NetworkSendRate", DataController.Instance.meshSendRate);
-            DataController.Instance.rayTracerGap = PlayerPrefs.GetFloat("RayTracerGap", DataController.Instance.rayTracerGap);
-            DataController.Instance.networkedObjectSendRate = PlayerPrefs.GetFloat("NetworkedObjectSendRate", DataController.Instance.networkedObjectSendRate);
-
-            networkSendRateInput.text = DataController.Instance.meshSendRate.ToString();
+            hitPositionsSendRateInput.text = DataController.Instance.hitPositionsSendRate.ToString();
             rayTracerGapSizeInput.text = DataController.Instance.rayTracerGap.ToString();
             networkedObjectSendRateInput.text = DataController.Instance.networkedObjectSendRate.ToString();
         }
@@ -71,22 +67,22 @@ namespace BMW.Verification.CloudRayTracing
             DataController.Instance.firstPerson = arg0;
         }
 
-        public void NetworkSendRateChanged(string newVal)
+        public void HitPositionsSendRateChanged(string newVal)
         {
             float parsedVal;
             if (float.TryParse(newVal, out parsedVal))
             {
-                DataController.Instance.meshSendRate = parsedVal;
+                DataController.Instance.hitPositionsSendRate = parsedVal;
                 PlayerPrefs.SetFloat("NetworkSendRate", parsedVal);
                 PlayerPrefs.Save();
                 if (DataController.Instance.applicationState == DataController.ApplicationState.Client)
                 {
-                    ClientController.Instance.SendPacket(DataController.PacketType.UpdateNetworkSendRate, newVal);
+                    ClientController.Instance.SendPacket(DataController.PacketType.UpdateHitPositionsSendRate, newVal);
                 }
             }
             else
             {
-                networkSendRateInput.text = DataController.Instance.meshSendRate.ToString();
+                hitPositionsSendRateInput.text = DataController.Instance.hitPositionsSendRate.ToString();
             }
         }
 
@@ -105,7 +101,7 @@ namespace BMW.Verification.CloudRayTracing
             }
             else
             {
-                networkSendRateInput.text = DataController.Instance.meshSendRate.ToString();
+                hitPositionsSendRateInput.text = DataController.Instance.hitPositionsSendRate.ToString();
             }
         }
 
@@ -119,7 +115,7 @@ namespace BMW.Verification.CloudRayTracing
                 PlayerPrefs.Save();
                 if (DataController.Instance.applicationState == DataController.ApplicationState.Client)
                 {
-                    ClientController.Instance.SendPacket(DataController.PacketType.UpdateNetworkSendRate, newVal);
+                    ClientController.Instance.SendPacket(DataController.PacketType.UpdateRayTracerGap, newVal);
                 }
             }
             else

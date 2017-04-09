@@ -22,19 +22,12 @@ namespace BMW.Verification.CloudRayTracing
         private static DataController _instance;
         public static DataController Instance { get { return _instance; } }
 
-        [HideInInspector]
         public CarController centralCar;
-        [HideInInspector]
         public ApplicationState applicationState = ApplicationState.Undefined;
-        [HideInInspector]
         public bool aiMovement = false;
-        [HideInInspector]
         public bool firstPerson = false;
-        [HideInInspector]
-        public float meshSendRate = 1f;
-        [HideInInspector]
+        public float hitPositionsSendRate = 1f;
         public float networkedObjectSendRate = 0.3f;
-        [HideInInspector]
         public float rayTracerGap = 0.02f; // The gap between each ray fired in the sensor bounds
 
         [Header("Config")]
@@ -48,7 +41,7 @@ namespace BMW.Verification.CloudRayTracing
         
         public Dictionary<int, NetworkedObject> networkedObjectDictionary = new Dictionary<int, NetworkedObject>();
 
-        public enum PacketType { StartRayTracer, StopRayTracer, UpdateNetworkSendRate, UpdateRayTracerGap, UpdateNetworkedObjectSendRate, FinishedSyncing, UpdateCentralCar, }
+        public enum PacketType { StartRayTracer, StopRayTracer, UpdateHitPositionsSendRate, UpdateRayTracerGap, UpdateNetworkedObjectSendRate, FinishedSyncing, UpdateCentralCar, SetSensorEnabled, SetSensorDisabled, }
         public enum ApplicationState { Undefined, Client, ClientSynchronising, Server, ServerSynchronising, Host, }
         public enum StatisticType { FPS, MEM, }
         public enum ClientCanvasButtonType { Information, Controls, Viewports, Performance, Sensors, Disconnect, }
@@ -78,14 +71,34 @@ namespace BMW.Verification.CloudRayTracing
             }
             else
             {
-                GetPlayerPrefs();
+                ApplicationConfig();
                 _instance = this;
+            }
+        }
+
+        private void ApplicationConfig()
+        {
+            Application.targetFrameRate = 60;
+
+            ipAddress = PlayerPrefs.GetString("IPAddress", "127.0.0.1");
+
+            hitPositionsSendRate = PlayerPrefs.GetFloat("NetworkSendRate", hitPositionsSendRate);
+            rayTracerGap = PlayerPrefs.GetFloat("RayTracerGap", rayTracerGap);
+            networkedObjectSendRate = PlayerPrefs.GetFloat("NetworkedObjectSendRate", networkedObjectSendRate);
+
+            int numOfSensorTypes = Enum.GetNames(typeof(SensorType)).Length;
+
+            for (int i = 0; i < numOfSensorTypes; i++)
+            {
+                string key = "SensorState" + ((SensorType)i).ToString();
+                bool active = bool.Parse(PlayerPrefs.GetString(key, "true"));
+                activeSensors[(SensorType)i] = active;
             }
         }
 
         private void Update()
         {
-            if (Input.GetMouseButtonDown(0) && applicationState == ApplicationState.Client)
+            if (Input.GetMouseButtonDown(0) && (applicationState == ApplicationState.Client || applicationState == ApplicationState.Host))
             {
                 Ray ray = new Ray();
                 RaycastHit hit;
@@ -120,7 +133,8 @@ namespace BMW.Verification.CloudRayTracing
                         SensorManager.Instance.transform.localPosition = Vector3.zero;
                         SensorManager.Instance.transform.localEulerAngles = Vector3.zero;
 
-                        ClientController.Instance.SendPacket(DataController.PacketType.UpdateCentralCar, DataController.Instance.centralCar.GetComponent<NetworkedObject>().objectID.ToString());
+                        if (applicationState == ApplicationState.Client)
+                            ClientController.Instance.SendPacket(PacketType.UpdateCentralCar, centralCar.GetComponent<NetworkedObject>().objectID.ToString());
                     }
                 }
             }
@@ -145,20 +159,6 @@ namespace BMW.Verification.CloudRayTracing
             }
             return localIP;
 #endif
-        }
-
-        public void GetPlayerPrefs()
-        {
-            ipAddress = PlayerPrefs.GetString("IPAddress", "127.0.0.1");
-
-            int numOfSensorTypes = Enum.GetNames(typeof(SensorType)).Length;
-
-            for (int i = 0; i < numOfSensorTypes; i++)
-            {
-                string key = "SensorState" + ((SensorType)i).ToString();
-                bool active = bool.Parse(PlayerPrefs.GetString(key, "true"));
-                activeSensors[(SensorType)i] = active;
-            }
         }
 
         public void SaveSensorState(SensorType sensorType, bool state)

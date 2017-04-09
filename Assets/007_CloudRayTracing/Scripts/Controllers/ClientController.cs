@@ -95,6 +95,21 @@ namespace BMW.Verification.CloudRayTracing
             MenuController.Instance.OnClientConnected();
 
             SendPacket(DataController.PacketType.UpdateCentralCar, DataController.Instance.centralCar.GetComponent<NetworkedObject>().objectID.ToString());
+            SendPacket(DataController.PacketType.UpdateHitPositionsSendRate, DataController.Instance.hitPositionsSendRate.ToString());
+            SendPacket(DataController.PacketType.UpdateRayTracerGap, DataController.Instance.rayTracerGap.ToString());
+            SendPacket(DataController.PacketType.UpdateNetworkedObjectSendRate, DataController.Instance.networkedObjectSendRate.ToString());
+
+            for (int i = 0; i < Enum.GetNames(typeof(DataController.SensorType)).Length; i++)
+            {
+                if (DataController.Instance.activeSensors[(DataController.SensorType)i])
+                {
+                    SendPacket(DataController.PacketType.SetSensorEnabled, (i).ToString());
+                }
+                else
+                {
+                    SendPacket(DataController.PacketType.SetSensorDisabled, (i).ToString());
+                }
+            }
         }
 
         #endregion
@@ -114,9 +129,6 @@ namespace BMW.Verification.CloudRayTracing
 
         public void StartRayTracer() // Called from MenuController when the start raytracing toggle is clicked
         {
-            SendPacket(DataController.PacketType.UpdateNetworkSendRate, DataController.Instance.meshSendRate.ToString());
-            SendPacket(DataController.PacketType.UpdateRayTracerGap, DataController.Instance.rayTracerGap.ToString());
-            SendPacket(DataController.PacketType.UpdateNetworkedObjectSendRate, DataController.Instance.networkedObjectSendRate.ToString());
             SendPacket(DataController.PacketType.StartRayTracer, true.ToString());
 
             PointCloudController.Instance.StartRendering();
