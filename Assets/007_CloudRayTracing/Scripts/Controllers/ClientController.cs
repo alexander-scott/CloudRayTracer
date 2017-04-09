@@ -93,6 +93,8 @@ namespace BMW.Verification.CloudRayTracing
             DataController.Instance.applicationState = DataController.ApplicationState.Client;
 
             MenuController.Instance.OnClientConnected();
+
+            SendPacket(DataController.PacketType.UpdateCentralCar, DataController.Instance.centralCar.GetComponent<NetworkedObject>().objectID.ToString());
         }
 
         #endregion

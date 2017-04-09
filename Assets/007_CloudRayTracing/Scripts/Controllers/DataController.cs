@@ -48,7 +48,7 @@ namespace BMW.Verification.CloudRayTracing
         
         public Dictionary<int, NetworkedObject> networkedObjectDictionary = new Dictionary<int, NetworkedObject>();
 
-        public enum PacketType { StartRayTracer, StopRayTracer, UpdateNetworkSendRate, UpdateRayTracerGap, UpdateNetworkedObjectSendRate, FinishedSyncing, }
+        public enum PacketType { StartRayTracer, StopRayTracer, UpdateNetworkSendRate, UpdateRayTracerGap, UpdateNetworkedObjectSendRate, FinishedSyncing, UpdateCentralCar, }
         public enum ApplicationState { Undefined, Client, ClientSynchronising, Server, ServerSynchronising, Host, }
         public enum StatisticType { FPS, MEM, }
         public enum ClientCanvasButtonType { Information, Controls, Viewports, Performance, Sensors, Disconnect, }
@@ -85,7 +85,7 @@ namespace BMW.Verification.CloudRayTracing
 
         private void Update()
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && applicationState == ApplicationState.Client)
             {
                 Ray ray = new Ray();
                 RaycastHit hit;
@@ -119,6 +119,8 @@ namespace BMW.Verification.CloudRayTracing
                         SensorManager.Instance.transform.parent = centralCar.transform;
                         SensorManager.Instance.transform.localPosition = Vector3.zero;
                         SensorManager.Instance.transform.localEulerAngles = Vector3.zero;
+
+                        ClientController.Instance.SendPacket(DataController.PacketType.UpdateCentralCar, DataController.Instance.centralCar.GetComponent<NetworkedObject>().objectID.ToString());
                     }
                 }
             }

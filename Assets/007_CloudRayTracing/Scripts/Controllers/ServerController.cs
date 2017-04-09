@@ -146,6 +146,18 @@ namespace BMW.Verification.CloudRayTracing
                     Timing.RunCoroutine(SendPerformanceData(), "SendPerformanceData");
                     DataController.Instance.applicationState = DataController.ApplicationState.Server;
                     break;
+
+                case DataController.PacketType.UpdateCentralCar:
+                    int parseObjID;
+                    if (int.TryParse(contents, out parseObjID))
+                    {
+                        DataController.Instance.centralCar = DataController.Instance.networkedObjectDictionary[parseObjID].GetComponent<CarController>();
+                        SensorManager.Instance.transform.parent = DataController.Instance.centralCar.transform;
+                        SensorManager.Instance.transform.localPosition = Vector3.zero;
+                        SensorManager.Instance.transform.localEulerAngles = Vector3.zero;
+                    }
+                        
+                    break;
             }
         }
 
