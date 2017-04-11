@@ -90,7 +90,7 @@ namespace BMW.Verification.CloudRayTracing
             Collider col = GetComponent<Collider>();
             if (col != null)
             {
-                Destroy(col);
+                col.isTrigger = true;
             }
 
             //Destroy(this);

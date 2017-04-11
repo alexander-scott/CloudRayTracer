@@ -170,7 +170,7 @@ namespace BMW.Verification.CloudRayTracing
 
         private IEnumerator<float> SyncObjects() // Syncs all objects to the server
         {
-            yield return Timing.WaitForSeconds(0.05f); // Add a slight delay
+            yield return Timing.WaitForSeconds(0.1f); // Add a slight delay
 
             List<NetworkedObject> objectIDs = TrafficController.Instance.SpawnCarsClient(); // Spawn them on the client first
 

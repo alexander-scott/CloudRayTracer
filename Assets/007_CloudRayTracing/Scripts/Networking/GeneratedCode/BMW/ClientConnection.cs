@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using NetworkScopes;
 using UnityEngine.Networking;
 using System;
 using UnityEngine;
@@ -55,14 +54,6 @@ namespace BMW.Verification.CloudRayTracing
 			public RemoteServerConnection(INetworkSender netSender)
 			{
 				_netSender = netSender;
-			}
-			
-			public void Authenticate(String userName, String passwordHash)
-			{
-				NetworkWriter writer = _netSender.CreateWriter(1885436661);
-				writer.Write(userName);
-				writer.Write(passwordHash);
-				_netSender.PrepareAndSendWriter(writer);
 			}
 			
 			public void RecieveObjectPosition(Int32 objectID, Vector3 position, Vector3 rotation, Vector3 localScale)

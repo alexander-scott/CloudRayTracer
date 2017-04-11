@@ -1,5 +1,4 @@
 ﻿
-using NetworkScopes;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -22,27 +21,27 @@ namespace BMW.Verification.CloudRayTracing
 
         public void SendPacket(int packetNum, string contents)
         {
-            SendToServer.RecievePacket(packetNum, contents);
+            //SendToServer.RecievePacket(packetNum, contents);
         }
 
         public void UpdateObjectPosition(int objectID, Vector3 position, Vector3 rotation, Vector3 localScale)
         {
-            SendToServer.RecieveObjectPosition(objectID, position, rotation, localScale);
+            //SendToServer.RecieveObjectPosition(objectID, position, rotation, localScale);
         }
 
         public void UpdateObjectState(int objectID, bool active)
         {
-            SendToServer.RecieveObjectState(objectID, active);
+            //SendToServer.RecieveObjectState(objectID, active);
         }
 
         public void UpdateObjectState(int objectID, bool active, Vector3 position, Vector3 rotation, Vector3 localScale)
         {
-            SendToServer.RecieveObjectStateAndPosition(objectID, active, position, rotation, localScale);
+            //SendToServer.RecieveObjectStateAndPosition(objectID, active, position, rotation, localScale);
         }
 
         public void SpawnCarOnServer(int objectID, bool active)
         {
-            SendToServer.RecieveNewCarSpawn(objectID, active);
+            //SendToServer.RecieveNewCarSpawn(objectID, active);
         }
 
         #endregion

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using NetworkScopes;
 using UnityEngine.Networking;
 using System;
 using UnityEngine;
@@ -9,13 +8,6 @@ namespace BMW.Verification.CloudRayTracing
 	public partial class ServerConnection
 	{
 		private RemoteClientConnection _Remote;
-		public void Receive_Authenticate(NetworkReader reader)
-		{
-			String userName = reader.ReadString();
-			String passwordHash = reader.ReadString();
-			Authenticate(userName, passwordHash);
-		}
-		
 		public void Receive_RecieveObjectPosition(NetworkReader reader)
 		{
 			Int32 objectID = reader.ReadInt32();

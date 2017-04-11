@@ -1,6 +1,5 @@
 ﻿
 using System;
-using NetworkScopes;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
@@ -16,38 +15,18 @@ namespace BMW.Verification.CloudRayTracing
         public event UnityAction<int, byte[]> OnDataComepletelySent;
         public event UnityAction<int, byte[]> OnDataFragmentSent;
 
-        [Signal]
-        public void Authenticate(string userName, string passwordHash)
-        {
-            // process the user's credentials - for now we're just checking for null/empty string to keep it simple for this example
-            if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(passwordHash))
-            {
-                // user authenticated successfully - assign player name within this peer's ExamplePeer instance
-                SenderPeer.SetAuthenticated(userName);
-
-                // ..then send peer to the Lobby scope
-                //HandoverPeer(SenderPeer, ExampleServer.Lobby);
-            }
-            // if they couldn't be authenticated, we might as well disconnect them
-            else
-            {
-                // TODO: we might want to send a disconnection reason rather than just closing the connection
-                SenderPeer.Disconnect();
-            }
-        }
-
         #region Send to client
 
         public void SendPacket(int packetNum, string contents)
         {
-            SendToPeer(SenderPeer).RecievePacket(packetNum, contents);
+            //SendToPeer(SenderPeer).RecievePacket(packetNum, contents);
         }
 
         public void SendPerformanceDictionary(int performanceType, float performanceVal)
         {
             if (SenderPeer != null)
             {
-                SendToPeer(SenderPeer).RecieveServerPerformanceDictionary(performanceType, performanceVal);
+                //SendToPeer(SenderPeer).RecieveServerPerformanceDictionary(performanceType, performanceVal);
             }
             else
             {
@@ -99,7 +78,7 @@ namespace BMW.Verification.CloudRayTracing
             Debug.Log("SendBytesToClients processId=" + transmissionId + " | datasize=" + data.Length);
 
             // Tell client that he is going to receive some data and tell him how much it will be.
-            SendToPeer(SenderPeer).ClientPrepareToRecieveTransmission(transmissionId, data.Length);
+            //SendToPeer(SenderPeer).ClientPrepareToRecieveTransmission(transmissionId, data.Length);
             yield return null;
 
             // Begin transmission of data. send chunks of 'bufferSize' until completely transmitted.
@@ -119,7 +98,7 @@ namespace BMW.Verification.CloudRayTracing
                 System.Array.Copy(dataToTransmit.data, dataToTransmit.curDataIndex, buffer, 0, bufferSize);
 
                 // Send the chunk
-                SendToPeer(SenderPeer).ClientRecieveTransmission(transmissionId, buffer);
+                //SendToPeer(SenderPeer).ClientRecieveTransmission(transmissionId, buffer);
                 dataToTransmit.curDataIndex += bufferSize;
 
                 yield return null;

@@ -1,6 +1,4 @@
 ﻿
-using NetworkScopes;
-
 namespace BMW.Verification.CloudRayTracing
 {
     public class Server : MasterServer<Peer>
