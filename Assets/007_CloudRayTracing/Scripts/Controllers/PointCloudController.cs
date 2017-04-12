@@ -49,9 +49,7 @@ namespace BMW.Verification.CloudRayTracing
                 UpdateBuffers();
 
             // Render
-            //  instanceMaterial.SetBuffer("positionBuffer", positionBuffer);
             Graphics.DrawMeshInstancedIndirect(instanceMesh, 0, instanceMaterial, new Bounds(Vector3.zero, new Vector3(1000.0f, 1000.0f, 1000.0f)), argsBuffer, 0, null, UnityEngine.Rendering.ShadowCastingMode.Off, false, 9);
-            //Graphics.DrawMeshInstancedIndirect(instanceMesh, 0, instanceMaterial, new Bounds(Vector3.zero, new Vector3(1000.0f, 1000.0f, 1000.0f)), argsBuffer);
         }
 
         public void UpdatePositions(Vector3[] positionData)
@@ -96,8 +94,11 @@ namespace BMW.Verification.CloudRayTracing
 
             for (int i = 0; i < instanceCount; i++)
             {
-                positions[i] = new Vector4(hitPositions[i].x, hitPositions[i].y, hitPositions[i].z, 0.03f);
-                colors[i] = new Vector4(Random.value, Random.value, Random.value, 1f);
+                positions[i] = new Vector4(hitPositions[i].x, hitPositions[i].y, hitPositions[i].z, 0.05f);
+
+                float distanceFromCentre = (DataController.Instance.centralCar.transform.position - (Vector3)positions[i]).sqrMagnitude;
+                Color pointColor = Color.Lerp(Color.red, Color.blue, distanceFromCentre / (DataController.Instance.updateDistance * 3f));
+                colors[i] = new Vector4(pointColor.r, pointColor.g, pointColor.b, 1f);
             }
 
             positionBuffer.SetData(positions);

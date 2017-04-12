@@ -58,17 +58,6 @@ public class NetworkScopePostProcessor
 
 			Directory.CreateDirectory(path);
 
-			// group scripts by namespaces
-			if (!string.IsNullOrEmpty(classDef.Namespace))
-			{
-				if (classDef.Namespace.Contains("."))
-					path = Path.Combine(path, classDef.Namespace.Substring(0, classDef.Namespace.IndexOf(".")));
-				else
-					path = Path.Combine(path, classDef.Namespace);
-
-				Directory.CreateDirectory(path);
-			}
-
 			path = Path.Combine(path, string.Format("{0}.cs", classDef.Name));
 
 			File.WriteAllText(path, classDef.ToString());

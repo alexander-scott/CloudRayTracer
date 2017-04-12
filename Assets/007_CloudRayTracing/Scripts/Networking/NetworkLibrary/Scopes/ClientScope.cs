@@ -73,7 +73,7 @@ namespace BMW.Verification.CloudRayTracing
 
 #if UNITY_EDITOR && SCOPE_DEBUGGING
 				// log outgoing signal
-				ScopeDebugger.AddOutgoingSignal (this, typeof(TServerScope), new NetworkReader (writer.ToArray ()));
+				ScopeDebugger.AddOutgoingSignal (this, typeof(ServerConnection), new NetworkReader (writer.ToArray ()));
 #endif
 
                 byte error;

@@ -78,7 +78,7 @@ namespace BMW.Verification.CloudRayTracing
 
             yield return new WaitUntil(() => sensors.All(b => b.finishedRayCasting));
 
-            finishedRayTracing = true;
+            finishedRayTracing = true; // Lets raytracecontroller know we have finished ray tracing
         }
     }
 }

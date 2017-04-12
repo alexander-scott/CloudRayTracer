@@ -62,7 +62,14 @@ namespace BMW.Verification.CloudRayTracing
                 sensorManager.finishedRayTracing = false;
 
                 // How long should we wait before doing it all again? Bear in mind the data might not have fully reached the client yet.
-                yield return new WaitForSeconds(DataController.Instance.hitPositionsSendRate);
+                if (DataController.Instance.hitPositionsSendRate == 0)
+                {
+                    yield return new WaitForFixedUpdate();
+                }
+                else
+                {
+                    yield return new WaitForSeconds(DataController.Instance.hitPositionsSendRate);
+                }
             }
         }
 

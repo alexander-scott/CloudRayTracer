@@ -19,14 +19,14 @@ namespace BMW.Verification.CloudRayTracing
 
         public void SendPacket(int packetNum, string contents)
         {
-            //SendToPeer(SenderPeer).RecievePacket(packetNum, contents);
+            SendToPeer(SenderPeer).RecievePacket(packetNum, contents);
         }
 
         public void SendPerformanceDictionary(int performanceType, float performanceVal)
         {
             if (SenderPeer != null)
             {
-                //SendToPeer(SenderPeer).RecieveServerPerformanceDictionary(performanceType, performanceVal);
+                SendToPeer(SenderPeer).RecieveServerPerformanceDictionary(performanceType, performanceVal);
             }
             else
             {
@@ -78,7 +78,7 @@ namespace BMW.Verification.CloudRayTracing
             Debug.Log("SendBytesToClients processId=" + transmissionId + " | datasize=" + data.Length);
 
             // Tell client that he is going to receive some data and tell him how much it will be.
-            //SendToPeer(SenderPeer).ClientPrepareToRecieveTransmission(transmissionId, data.Length);
+            SendToPeer(SenderPeer).ClientPrepareToRecieveTransmission(transmissionId, data.Length);
             yield return null;
 
             // Begin transmission of data. send chunks of 'bufferSize' until completely transmitted.
@@ -98,7 +98,7 @@ namespace BMW.Verification.CloudRayTracing
                 System.Array.Copy(dataToTransmit.data, dataToTransmit.curDataIndex, buffer, 0, bufferSize);
 
                 // Send the chunk
-                //SendToPeer(SenderPeer).ClientRecieveTransmission(transmissionId, buffer);
+                SendToPeer(SenderPeer).ClientRecieveTransmission(transmissionId, buffer);
                 dataToTransmit.curDataIndex += bufferSize;
 
                 yield return null;

@@ -22,7 +22,7 @@ namespace BMW.Verification.CloudRayTracing
 
 #if UNITY_EDITOR && SCOPE_DEBUGGING
 			// log outgoing signal
-			ScopeDebugger.AddOutgoingSignal (this, typeof(TClientScope), new NetworkReader (writer));
+			ScopeDebugger.AddOutgoingSignal (this, typeof(ClientConnection), new NetworkReader (writer));
 #endif
 
             if (!IsTargetGroup)
