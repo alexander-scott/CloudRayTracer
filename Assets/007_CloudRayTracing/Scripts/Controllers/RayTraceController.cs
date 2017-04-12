@@ -34,6 +34,7 @@ namespace BMW.Verification.CloudRayTracing
         public void StartRayTracing()
         {
             rayTracing = true;
+            sensorManager.hitPositions = new PointOctree(0.1f, DataController.Instance.centralCar.transform.position, 0.1f);
 
             StartCoroutine(RayTracerCoroutine());
         }
@@ -55,9 +56,9 @@ namespace BMW.Verification.CloudRayTracing
                 Debug.Log(sensorManager.hitPositions.Count + " HIT POSITIONS");
 
                 if (sensorManager.hitPositions.Count > 0)
-                    SendData(sensorManager.hitPositions);
+                    SendData(sensorManager.hitPositions.GetAllPositions());
 
-                sensorManager.hitPositions.Clear();
+                sensorManager.hitPositions = new PointOctree(0.05f, DataController.Instance.centralCar.transform.position, 0.05f);
 
                 sensorManager.finishedRayTracing = false;
 
@@ -78,15 +79,13 @@ namespace BMW.Verification.CloudRayTracing
             if (!rayTracing)
                 return;
 
-            Vector3[] arrayData = hitPositions.ToArray();
-
             if (DataController.Instance.applicationState == DataController.ApplicationState.Server)
             {
-                ServerController.Instance.SendHitPositionsToClient(arrayData);
+                ServerController.Instance.SendHitPositionsToClient(hitPositions);
             }
             else
             {
-                PointCloudController.Instance.UpdatePositions(arrayData);
+                PointCloudController.Instance.UpdatePositions(hitPositions);
             }
         }
     }

@@ -32,7 +32,7 @@ namespace BMW.Verification.CloudRayTracing
         public bool enableSensorGizmos = false;
 
         [HideInInspector]
-        public List<Vector3> hitPositions = new List<Vector3>();
+        public PointOctree hitPositions;
         [HideInInspector]
         public bool finishedRayTracing = false;
 
@@ -71,13 +71,13 @@ namespace BMW.Verification.CloudRayTracing
             if (hitPositions.Count == 0)
                 return false;
 
-            for (int i = 0; i < hitPositions.Count; i++)
-            {
-                if ((hitPositions[i] - pos).sqrMagnitude < (DataController.Instance.pointMeshSize / 2f))
-                {
-                    return true;
-                }
-            }
+            //for (int i = 0; i < hitPositions.Count; i++)
+            //{
+            //    if ((hitPositions[i] - pos).sqrMagnitude < (DataController.Instance.pointMeshSize / 2f))
+            //    {
+            //        return true;
+            //    }
+            //}
 
             return false;
         }

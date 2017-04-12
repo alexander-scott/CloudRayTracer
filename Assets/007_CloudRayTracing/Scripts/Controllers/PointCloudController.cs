@@ -30,7 +30,6 @@ namespace BMW.Verification.CloudRayTracing
         public Material instanceMaterial;
 
         private int instanceCount = -1;
-        private int cachedInstanceCount = -1;
         private ComputeBuffer positionBuffer;
         private ComputeBuffer argsBuffer;
         private ComputeBuffer colorBuffer;
@@ -41,15 +40,18 @@ namespace BMW.Verification.CloudRayTracing
 
         void Update()
         {
-            if (instanceCount <= 0)
+            if (instanceCount <= 0 || argsBuffer == null)
                 return;
-
-            // Update starting position buffer
-            if (cachedInstanceCount != instanceCount)
-                UpdateBuffers();
 
             // Render
             Graphics.DrawMeshInstancedIndirect(instanceMesh, 0, instanceMaterial, new Bounds(Vector3.zero, new Vector3(1000.0f, 1000.0f, 1000.0f)), argsBuffer, 0, null, UnityEngine.Rendering.ShadowCastingMode.Off, false, 9);
+        }
+
+        public void UpdatePositions(List<Vector3> positionData)
+        {
+            hitPositions = positionData.ToArray();
+            instanceCount = hitPositions.Length;
+            UpdateBuffers();
         }
 
         public void UpdatePositions(Vector3[] positionData)
@@ -80,7 +82,8 @@ namespace BMW.Verification.CloudRayTracing
 
         void UpdateBuffers()
         {
-            if (instanceCount < 1) instanceCount = 1;
+            if (instanceCount < 1 || argsBuffer == null)
+                return;
 
             // Positions & Colors
             if (positionBuffer != null) positionBuffer.Release();
@@ -97,7 +100,7 @@ namespace BMW.Verification.CloudRayTracing
                 positions[i] = new Vector4(hitPositions[i].x, hitPositions[i].y, hitPositions[i].z, DataController.Instance.pointMeshSize);
 
                 float distanceFromCentre = (DataController.Instance.centralCar.transform.position - (Vector3)positions[i]).sqrMagnitude;
-                Color pointColor = Color.Lerp(Color.red, Color.blue, distanceFromCentre / (DataController.Instance.updateDistance * 3f));
+                Color pointColor = Color.Lerp(Color.red, Color.blue, distanceFromCentre / (DataController.Instance.updateDistance * 5f));
                 colors[i] = new Vector4(pointColor.r, pointColor.g, pointColor.b, 1f);
             }
 
@@ -112,8 +115,6 @@ namespace BMW.Verification.CloudRayTracing
             args[0] = numIndices;
             args[1] = (uint)instanceCount;
             argsBuffer.SetData(args);
-
-            cachedInstanceCount = instanceCount;
         }
 
         void OnDisable()

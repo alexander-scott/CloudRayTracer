@@ -5,7 +5,7 @@ using UnityEngine;
 // Copyright 2014 Nition, BSD licence (see LICENCE file). http://nition.co
 namespace BMW.Verification.CloudRayTracing
 {
-    public class PointOctreeNode<T> where T : class
+    public class PointOctreeNode
     {
         // Centre of this node
         public Vector3 Center { get; private set; }
@@ -17,9 +17,9 @@ namespace BMW.Verification.CloudRayTracing
         // Bounding box that represents this node
         Bounds bounds = default(Bounds);
         // Objects in this node
-        readonly List<OctreeObject> objects = new List<OctreeObject>();
+        public List<Vector3> objects = new List<Vector3>();
         // Child nodes, if any
-        PointOctreeNode<T>[] children = null;
+        public PointOctreeNode[] children = null;
         // bounds of potential children to this node. These are actual size (with looseness taken into account), not base size
         Bounds[] childBounds;
         // If there are already numObjectsAllowed in a node, we split it into children
@@ -27,13 +27,6 @@ namespace BMW.Verification.CloudRayTracing
         const int NUM_OBJECTS_ALLOWED = 8;
         // For reverting the bounds size after temporary changes
         Vector3 actualBoundsSize;
-
-        // An object in the octree
-        class OctreeObject
-        {
-            public T Obj;
-            public Vector3 Pos;
-        }
 
         /// <summary>
         /// Constructor.
@@ -54,13 +47,13 @@ namespace BMW.Verification.CloudRayTracing
         /// <param name="obj">Object to add.</param>
         /// <param name="objPos">Position of the object.</param>
         /// <returns></returns>
-        public bool Add(T obj, Vector3 objPos)
+        public bool Add(Vector3 objPos)
         {
             if (!Encapsulates(bounds, objPos))
             {
                 return false;
             }
-            SubAdd(obj, objPos);
+            SubAdd(objPos);
             return true;
         }
 
@@ -69,13 +62,13 @@ namespace BMW.Verification.CloudRayTracing
         /// </summary>
         /// <param name="obj">Object to remove.</param>
         /// <returns>True if the object was removed successfully.</returns>
-        public bool Remove(T obj)
+        public bool Remove(Vector3 objPos)
         {
             bool removed = false;
 
             for (int i = 0; i < objects.Count; i++)
             {
-                if (objects[i].Obj.Equals(obj))
+                if (objects[i].Equals(objPos))
                 {
                     removed = objects.Remove(objects[i]);
                     break;
@@ -86,7 +79,7 @@ namespace BMW.Verification.CloudRayTracing
             {
                 for (int i = 0; i < 8; i++)
                 {
-                    removed = children[i].Remove(obj);
+                    removed = children[i].Remove(objPos);
                     if (removed) break;
                 }
             }
@@ -110,7 +103,7 @@ namespace BMW.Verification.CloudRayTracing
         /// <param name="maxDistance">Maximum distance from the ray to consider.</param>
         /// <param name="result">List result.</param>
         /// <returns>Objects within range.</returns>
-        public void GetNearby(ref Ray ray, ref float maxDistance, List<T> result)
+        public void GetNearby(ref Ray ray, ref float maxDistance, List<Vector3> result)
         {
             // Does the ray hit this node at all?
             // Note: Expanding the bounds is not exactly the same as a real distance check, but it's fast.
@@ -126,9 +119,9 @@ namespace BMW.Verification.CloudRayTracing
             // Check against any objects in this node
             for (int i = 0; i < objects.Count; i++)
             {
-                if (DistanceToRay(ray, objects[i].Pos) <= maxDistance)
+                if (DistanceToRay(ray, objects[i]) <= maxDistance)
                 {
-                    result.Add(objects[i].Obj);
+                    result.Add(objects[i]);
                 }
             }
 
@@ -142,11 +135,49 @@ namespace BMW.Verification.CloudRayTracing
             }
         }
 
+        public bool CheckNearby(ref bool result, ref Vector3 pos, ref float maxDistance)
+        {
+            if (result)
+                return result;
+
+            // Does the point exist within this node?
+            // Note: Expanding the bounds is not exactly the same as a real distance check, but it's fast.
+            bounds.Expand(new Vector3(maxDistance * 2, maxDistance * 2, maxDistance * 2));
+            bool intersected = bounds.Contains(pos);
+            bounds.size = actualBoundsSize;
+
+            if (!intersected)
+            {
+                return false;
+            }
+
+            // Check against any objects in this node
+            for (int i = 0; i < objects.Count; i++)
+            {
+                if ((pos - objects[i]).sqrMagnitude <= maxDistance)
+                {
+                    result = true;
+                    return true;
+                }
+            }
+
+            // Check children
+            if (children != null)
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    children[i].CheckNearby(ref result, ref pos, ref maxDistance);
+                }
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// Set the 8 children of this octree.
         /// </summary>
         /// <param name="childOctrees">The 8 new child nodes.</param>
-        public void SetChildren(PointOctreeNode<T>[] childOctrees)
+        public void SetChildren(PointOctreeNode[] childOctrees)
         {
             if (childOctrees.Length != 8)
             {
@@ -155,6 +186,32 @@ namespace BMW.Verification.CloudRayTracing
             }
 
             children = childOctrees;
+        }
+
+        public void GetPositionsIncludingChildren(ref List<Vector3> positions)
+        {
+            positions.AddRange(objects);
+
+            if (children == null)
+                return;
+
+            foreach (PointOctreeNode node in children)
+            {
+                node.GetPositionsIncludingChildren(ref positions);
+            }
+        }
+
+        public void ClearAll()
+        {
+            objects.Clear();
+
+            if (children == null)
+                return;
+
+            foreach (PointOctreeNode node in children)
+            {
+                node.ClearAll();
+            }
         }
 
         /// <summary>
@@ -191,9 +248,9 @@ namespace BMW.Verification.CloudRayTracing
             float tintVal = SideLength / 20;
             Gizmos.color = new Color(0, 1.0f - tintVal, tintVal, 0.25f);
 
-            foreach (OctreeObject obj in objects)
+            foreach (Vector3 obj in objects)
             {
-                Gizmos.DrawIcon(obj.Pos, "marker.tif", true);
+                Gizmos.DrawIcon(obj, "marker.tif", true);
             }
 
             if (children != null)
@@ -216,7 +273,7 @@ namespace BMW.Verification.CloudRayTracing
         /// </summary>
         /// <param name="minLength">Minimum dimensions of a node in this octree.</param>
         /// <returns>The new root, or the existing one if we didn't shrink.</returns>
-        public PointOctreeNode<T> ShrinkIfPossible(float minLength)
+        public PointOctreeNode ShrinkIfPossible(float minLength)
         {
             if (SideLength < (2 * minLength))
             {
@@ -231,8 +288,8 @@ namespace BMW.Verification.CloudRayTracing
             int bestFit = -1;
             for (int i = 0; i < objects.Count; i++)
             {
-                OctreeObject curObj = objects[i];
-                int newBestFit = BestFitChild(curObj.Pos);
+                Vector3 curObj = objects[i];
+                int newBestFit = BestFitChild(curObj);
                 if (i == 0 || newBestFit == bestFit)
                 {
                     if (bestFit < 0)
@@ -335,13 +392,13 @@ namespace BMW.Verification.CloudRayTracing
         /// </summary>
         /// <param name="obj">Object to add.</param>
         /// <param name="objPos">Position of the object.</param>
-        void SubAdd(T obj, Vector3 objPos)
+        void SubAdd(Vector3 objPos)
         {
             // We know it fits at this level if we've got this far
             // Just add if few objects are here, or children would be below min size
             if (objects.Count < NUM_OBJECTS_ALLOWED || (SideLength / 2) < minSize)
             {
-                OctreeObject newObj = new OctreeObject { Obj = obj, Pos = objPos };
+                Vector3 newObj = new Vector3(objPos.x, objPos.y, objPos.z);
                 //Debug.Log("ADD " + obj.name + " to depth " + depth);
                 objects.Add(newObj);
             }
@@ -361,18 +418,18 @@ namespace BMW.Verification.CloudRayTracing
                     // Now that we have the new children, see if this node's existing objects would fit there
                     for (int i = objects.Count - 1; i >= 0; i--)
                     {
-                        OctreeObject existingObj = objects[i];
+                        Vector3 existingObj = objects[i];
                         // Find which child the object is closest to based on where the
                         // object's center is located in relation to the octree's center.
-                        bestFitChild = BestFitChild(existingObj.Pos);
-                        children[bestFitChild].SubAdd(existingObj.Obj, existingObj.Pos); // Go a level deeper					
+                        bestFitChild = BestFitChild(existingObj);
+                        children[bestFitChild].SubAdd(existingObj); // Go a level deeper					
                         objects.Remove(existingObj); // Remove from here
                     }
                 }
 
                 // Now handle the new object we're adding now
                 bestFitChild = BestFitChild(objPos);
-                children[bestFitChild].SubAdd(obj, objPos);
+                children[bestFitChild].SubAdd(objPos);
             }
         }
 
@@ -383,15 +440,15 @@ namespace BMW.Verification.CloudRayTracing
         {
             float quarter = SideLength / 4f;
             float newLength = SideLength / 2;
-            children = new PointOctreeNode<T>[8];
-            children[0] = new PointOctreeNode<T>(newLength, minSize, Center + new Vector3(-quarter, quarter, -quarter));
-            children[1] = new PointOctreeNode<T>(newLength, minSize, Center + new Vector3(quarter, quarter, -quarter));
-            children[2] = new PointOctreeNode<T>(newLength, minSize, Center + new Vector3(-quarter, quarter, quarter));
-            children[3] = new PointOctreeNode<T>(newLength, minSize, Center + new Vector3(quarter, quarter, quarter));
-            children[4] = new PointOctreeNode<T>(newLength, minSize, Center + new Vector3(-quarter, -quarter, -quarter));
-            children[5] = new PointOctreeNode<T>(newLength, minSize, Center + new Vector3(quarter, -quarter, -quarter));
-            children[6] = new PointOctreeNode<T>(newLength, minSize, Center + new Vector3(-quarter, -quarter, quarter));
-            children[7] = new PointOctreeNode<T>(newLength, minSize, Center + new Vector3(quarter, -quarter, quarter));
+            children = new PointOctreeNode[8];
+            children[0] = new PointOctreeNode(newLength, minSize, Center + new Vector3(-quarter, quarter, -quarter));
+            children[1] = new PointOctreeNode(newLength, minSize, Center + new Vector3(quarter, quarter, -quarter));
+            children[2] = new PointOctreeNode(newLength, minSize, Center + new Vector3(-quarter, quarter, quarter));
+            children[3] = new PointOctreeNode(newLength, minSize, Center + new Vector3(quarter, quarter, quarter));
+            children[4] = new PointOctreeNode(newLength, minSize, Center + new Vector3(-quarter, -quarter, -quarter));
+            children[5] = new PointOctreeNode(newLength, minSize, Center + new Vector3(quarter, -quarter, -quarter));
+            children[6] = new PointOctreeNode(newLength, minSize, Center + new Vector3(-quarter, -quarter, quarter));
+            children[7] = new PointOctreeNode(newLength, minSize, Center + new Vector3(quarter, -quarter, quarter));
         }
 
         /// <summary>
@@ -404,11 +461,11 @@ namespace BMW.Verification.CloudRayTracing
             // Note: We know children != null or we wouldn't be merging
             for (int i = 0; i < 8; i++)
             {
-                PointOctreeNode<T> curChild = children[i];
+                PointOctreeNode curChild = children[i];
                 int numObjects = curChild.objects.Count;
                 for (int j = numObjects - 1; j >= 0; j--)
                 {
-                    OctreeObject curObj = curChild.objects[j];
+                    Vector3 curObj = curChild.objects[j];
                     objects.Add(curObj);
                 }
             }
@@ -446,7 +503,7 @@ namespace BMW.Verification.CloudRayTracing
             int totalObjects = objects.Count;
             if (children != null)
             {
-                foreach (PointOctreeNode<T> child in children)
+                foreach (PointOctreeNode child in children)
                 {
                     if (child.children != null)
                     {

@@ -185,7 +185,7 @@ namespace BMW.Verification.CloudRayTracing
             }
         }
 
-        public void SendHitPositionsToClient(Vector3[] hitPostions)
+        public void SendHitPositionsToClient(List<Vector3> hitPostions)
         {
             if (server.NumberOfPeers > 0)
             {
@@ -210,12 +210,12 @@ namespace BMW.Verification.CloudRayTracing
         //    return memStr.ToArray();
         //}
 
-        private byte[] VectorsToBytes(Vector3[] hitPositions)
+        private byte[] VectorsToBytes(List<Vector3> hitPositions)
         {
-            byte[] buff = new byte[(sizeof(float) * 3) * hitPositions.Length];
+            byte[] buff = new byte[(sizeof(float) * 3) * hitPositions.Count];
             int buffIndex = 0;
 
-            for (int i = 0; i < hitPositions.Length; i++)
+            for (int i = 0; i < hitPositions.Count; i++)
             {
                 Buffer.BlockCopy(BitConverter.GetBytes(hitPositions[i].x), 0, buff, buffIndex * sizeof(float), sizeof(float));
                 buffIndex++;

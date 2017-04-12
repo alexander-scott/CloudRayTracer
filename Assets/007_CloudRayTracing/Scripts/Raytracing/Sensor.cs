@@ -74,9 +74,15 @@ namespace BMW.Verification.CloudRayTracing
                     // Fire a ray from the sensor to the current point in the bounds
                     if (Physics.Raycast(transform.position, dir, out hit, sensorDepth, sensorManager.toDetect.value))
                     {
-                        if (!SensorManager.Instance.CheckIfDuplicate(hit.point))
+                        if (DataController.Instance.applicationState == DataController.ApplicationState.Server)
                         {
-                            // If it intersects with an object, add that point to the list of hit positions
+                            if (!sensorManager.hitPositions.CheckNearby(hit.point, (DataController.Instance.pointMeshSize)))
+                            {
+                                sensorManager.hitPositions.Add(hit.point);
+                            }
+                        }
+                        else
+                        {
                             sensorManager.hitPositions.Add(hit.point);
                         }
                     }

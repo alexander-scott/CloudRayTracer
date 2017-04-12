@@ -16,13 +16,13 @@ using UnityEngine;
 // Unity-based, but could be adapted to work in pure C#
 namespace BMW.Verification.CloudRayTracing
 {
-    public class PointOctree<T> where T : class
+    public class PointOctree
     {
         // The total amount of objects currently in the tree
         public int Count { get; private set; }
 
         // Root node of the octree
-        PointOctreeNode<T> rootNode;
+        PointOctreeNode rootNode;
         // Size that the octree was on creation
         readonly float initialSize;
         // Minimum side length that a node can be - essentially an alternative to having a max depth
@@ -44,7 +44,7 @@ namespace BMW.Verification.CloudRayTracing
             Count = 0;
             initialSize = initialWorldSize;
             minSize = minNodeSize;
-            rootNode = new PointOctreeNode<T>(initialSize, minSize, initialWorldPos);
+            rootNode = new PointOctreeNode(initialSize, minSize, initialWorldPos);
         }
 
         // #### PUBLIC METHODS ####
@@ -54,11 +54,11 @@ namespace BMW.Verification.CloudRayTracing
         /// </summary>
         /// <param name="obj">Object to add.</param>
         /// <param name="objPos">Position of the object.</param>
-        public void Add(T obj, Vector3 objPos)
+        public void Add(Vector3 objPos)
         {
             // Add object or expand the octree until it can be added
             int count = 0; // Safety check against infinite/excessive growth
-            while (!rootNode.Add(obj, objPos))
+            while (!rootNode.Add(objPos))
             {
                 Grow(objPos - rootNode.Center);
                 if (++count > 20)
@@ -70,14 +70,26 @@ namespace BMW.Verification.CloudRayTracing
             Count++;
         }
 
+        public List<Vector3> GetAllPositions()
+        {
+            List<Vector3> returnList = new List<Vector3>();
+            rootNode.GetPositionsIncludingChildren(ref returnList);
+            return returnList;
+        }
+
+        public void ClearAll()
+        {
+            rootNode.ClearAll();
+        }
+
         /// <summary>
         /// Remove an object. Makes the assumption that the object only exists once in the tree.
         /// </summary>
         /// <param name="obj">Object to remove.</param>
         /// <returns>True if the object was removed successfully.</returns>
-        public bool Remove(T obj)
+        public bool Remove(Vector3 objPos)
         {
-            bool removed = rootNode.Remove(obj);
+            bool removed = rootNode.Remove(objPos);
 
             // See if we can shrink the octree down now that we've removed the item
             if (removed)
@@ -96,11 +108,18 @@ namespace BMW.Verification.CloudRayTracing
         /// <param name="ray">The ray. Passing as ref to improve performance since it won't have to be copied.</param>
         /// <param name="maxDistance">Maximum distance from the ray to consider.</param>
         /// <returns>Objects within range.</returns>
-        public T[] GetNearby(Ray ray, float maxDistance)
+        public Vector3[] GetNearby(Ray ray, float maxDistance)
         {
-            List<T> collidingWith = new List<T>();
+            List<Vector3> collidingWith = new List<Vector3>();
             rootNode.GetNearby(ref ray, ref maxDistance, collidingWith);
             return collidingWith.ToArray();
+        }
+
+        public bool CheckNearby(Vector3 point, float maxDistance)
+        {
+            bool result = false;
+            rootNode.CheckNearby(ref result, ref point, ref maxDistance);
+            return result;
         }
 
         /// <summary>
@@ -132,17 +151,17 @@ namespace BMW.Verification.CloudRayTracing
             int xDirection = direction.x >= 0 ? 1 : -1;
             int yDirection = direction.y >= 0 ? 1 : -1;
             int zDirection = direction.z >= 0 ? 1 : -1;
-            PointOctreeNode<T> oldRoot = rootNode;
+            PointOctreeNode oldRoot = rootNode;
             float half = rootNode.SideLength / 2;
             float newLength = rootNode.SideLength * 2;
             Vector3 newCenter = rootNode.Center + new Vector3(xDirection * half, yDirection * half, zDirection * half);
 
             // Create a new, bigger octree root node
-            rootNode = new PointOctreeNode<T>(newLength, minSize, newCenter);
+            rootNode = new PointOctreeNode(newLength, minSize, newCenter);
 
             // Create 7 new octree children to go with the old root as children of the new root
             int rootPos = GetRootPosIndex(xDirection, yDirection, zDirection);
-            PointOctreeNode<T>[] children = new PointOctreeNode<T>[8];
+            PointOctreeNode[] children = new PointOctreeNode[8];
             for (int i = 0; i < 8; i++)
             {
                 if (i == rootPos)
@@ -154,7 +173,7 @@ namespace BMW.Verification.CloudRayTracing
                     xDirection = i % 2 == 0 ? -1 : 1;
                     yDirection = i > 3 ? -1 : 1;
                     zDirection = (i < 2 || (i > 3 && i < 6)) ? -1 : 1;
-                    children[i] = new PointOctreeNode<T>(rootNode.SideLength, minSize, newCenter + new Vector3(xDirection * half, yDirection * half, zDirection * half));
+                    children[i] = new PointOctreeNode(rootNode.SideLength, minSize, newCenter + new Vector3(xDirection * half, yDirection * half, zDirection * half));
                 }
             }
 

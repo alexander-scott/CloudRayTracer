@@ -74,8 +74,6 @@ namespace BMW.Verification.CloudRayTracing
                 Destroy(frontRightWheel.GetComponent<SphereCollider>());
                 Destroy(backRightWheel.GetComponent<SphereCollider>());
                 Destroy(colliderParent);
-
-                Destroy(this);
             }
 
             if (DataController.Instance.applicationState != DataController.ApplicationState.Undefined)
