@@ -29,6 +29,7 @@ namespace BMW.Verification.CloudRayTracing
         public float hitPositionsSendRate = 1f;
         public float networkedObjectSendRate = 0.3f;
         public float rayTracerGap = 0.02f; // The gap between each ray fired in the sensor bounds
+        public float pointMeshSize = 0.05f;
 
         [Header("Config")]
 

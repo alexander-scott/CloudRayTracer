@@ -66,6 +66,22 @@ namespace BMW.Verification.CloudRayTracing
             }
         }
 
+        public bool CheckIfDuplicate(Vector3 pos)
+        {
+            if (hitPositions.Count == 0)
+                return false;
+
+            for (int i = 0; i < hitPositions.Count; i++)
+            {
+                if ((hitPositions[i] - pos).sqrMagnitude < (DataController.Instance.pointMeshSize / 2f))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private IEnumerator FireRays()
         {
             for (int i = 0; i < sensors.Length; i++)

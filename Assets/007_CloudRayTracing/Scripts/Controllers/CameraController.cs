@@ -115,7 +115,7 @@ namespace BMW.Verification.CloudRayTracing
             rotationXAxis = angles.x;
         }
 
-        void LateUpdate()
+        void Update()
         {
             if (DataController.Instance.applicationState == DataController.ApplicationState.Client ||
                 DataController.Instance.applicationState == DataController.ApplicationState.Host)
