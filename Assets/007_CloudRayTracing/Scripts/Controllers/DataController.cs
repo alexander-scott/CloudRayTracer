@@ -22,27 +22,34 @@ namespace BMW.Verification.CloudRayTracing
         private static DataController _instance;
         public static DataController Instance { get { return _instance; } }
 
+        [Header("References")]
         public CarController centralCar;
+        public GameObject groundTrack;
+
+        [Space(10)]
+        [Header("Values")]
+
         public ApplicationState applicationState = ApplicationState.Undefined;
         public bool aiMovement = false;
         public bool firstPerson = false;
         public float hitPositionsSendRate = 1f;
         public float networkedObjectSendRate = 0.3f;
         public float rayTracerGap = 0.02f; // The gap between each ray fired in the sensor bounds
-        public float pointMeshSize = 0.05f;
+        public float pointCloudPointSize = 0.05f;
 
+        [Space(10)]
         [Header("Config")]
 
         public string ipAddress;
         public int defaultBufferSize = 1300; // Max ethernet MTU is ~1400
-        public float updateDistance = 5f;
-        public float objectSyncDelay = 0.01f;
+        public float updateDistance = 5f; // The is the distance that an object must be from the central for it to be active on the server
+        public float objectSyncDelay = 0.01f; // Used in object synchronisation. How long show we wait before syncing the next object?
 
         public Dictionary<SensorType, bool> activeSensors = new Dictionary<SensorType, bool>();
         
         public Dictionary<int, NetworkedObject> networkedObjectDictionary = new Dictionary<int, NetworkedObject>();
 
-        public enum PacketType { StartRayTracer, StopRayTracer, UpdateHitPositionsSendRate, UpdateRayTracerGap, UpdateNetworkedObjectSendRate, FinishedSyncing, UpdateCentralCar, SetSensorEnabled, SetSensorDisabled, }
+        public enum PacketType { StartRayTracer, StopRayTracer, UpdateHitPositionsSendRate, UpdateRayTracerGap, UpdateNetworkedObjectSendRate, UpdatePointCloudPointSize, FinishedSyncing, UpdateCentralCar, SetSensorEnabled, SetSensorDisabled, }
         public enum ApplicationState { Undefined, Client, ClientSynchronising, Server, ServerSynchronising, Host, }
         public enum StatisticType { FPS, MEM, }
         public enum ClientCanvasButtonType { Information, Controls, Viewports, Performance, Sensors, Disconnect, }
@@ -60,6 +67,7 @@ namespace BMW.Verification.CloudRayTracing
             RightShort,
             LeftLong,
             LeftShort,
+            Radial,
         }
 
         public Dictionary<StatisticType, float> performanceDictionary = new Dictionary<DataController.StatisticType, float>();
@@ -86,6 +94,7 @@ namespace BMW.Verification.CloudRayTracing
             hitPositionsSendRate = PlayerPrefs.GetFloat("NetworkSendRate", hitPositionsSendRate);
             rayTracerGap = PlayerPrefs.GetFloat("RayTracerGap", rayTracerGap);
             networkedObjectSendRate = PlayerPrefs.GetFloat("NetworkedObjectSendRate", networkedObjectSendRate);
+            pointCloudPointSize = PlayerPrefs.GetFloat("PointCloudPointSize", pointCloudPointSize);
 
             int numOfSensorTypes = Enum.GetNames(typeof(SensorType)).Length;
 

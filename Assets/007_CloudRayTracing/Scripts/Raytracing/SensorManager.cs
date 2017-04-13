@@ -31,9 +31,7 @@ namespace BMW.Verification.CloudRayTracing
         public GameObject linePrefab;
         public bool enableSensorGizmos = false;
 
-        [HideInInspector]
         public PointOctree hitPositions;
-        [HideInInspector]
         public bool finishedRayTracing = false;
 
         private Sensor[] sensors;

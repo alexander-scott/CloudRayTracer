@@ -41,6 +41,7 @@ namespace BMW.Verification.CloudRayTracing
             server = new Server();
 
             server.OnPeerConnected += Server_OnPeerConnected;
+            server.OnPeerDisconnected += Server_OnPeerDisconnected;
         }
 
         public void StartServer()
@@ -144,6 +145,15 @@ namespace BMW.Verification.CloudRayTracing
                     }
                     break;
 
+                case DataController.PacketType.UpdatePointCloudPointSize:
+                    float parsePointCloudPointSize;
+                    if (float.TryParse(contents, out parsePointCloudPointSize))
+                    {
+                        Debug.Log("Point cloud point size send rate set to " + parsePointCloudPointSize);
+                        DataController.Instance.pointCloudPointSize = parsePointCloudPointSize;
+                    }
+                    break;
+
                 case DataController.PacketType.FinishedSyncing:
                     Debug.Log(DataController.Instance.networkedObjectDictionary.Count + " objects synced");
                     Timing.RunCoroutine(SendPerformanceData(), "SendPerformanceData");
@@ -235,7 +245,7 @@ namespace BMW.Verification.CloudRayTracing
             DataController.Instance.applicationState = DataController.ApplicationState.ServerSynchronising;
         }
 
-        private void Server_OnPeersDisconnected()
+        private void Server_OnPeerDisconnected()
         {
             Debug.Log("Peer disconnected");
 
@@ -245,6 +255,8 @@ namespace BMW.Verification.CloudRayTracing
             }
 
             TrafficController.Instance.trafficCars.Clear();
+
+            DataController.Instance.applicationState = DataController.ApplicationState.Undefined;
         }
 
         public IEnumerator<float> SendPerformanceData()
@@ -256,8 +268,6 @@ namespace BMW.Verification.CloudRayTracing
 
                 yield return Timing.WaitForSeconds(0.5f);
             }
-
-            Server_OnPeersDisconnected();
         }
     }
 }

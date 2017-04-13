@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-// A node in a PointOctree
-// Copyright 2014 Nition, BSD licence (see LICENCE file). http://nition.co
 namespace BMW.Verification.CloudRayTracing
 {
     public class PointOctreeNode
@@ -11,42 +9,28 @@ namespace BMW.Verification.CloudRayTracing
         public Vector3 Center { get; private set; }
         // Length of the sides of this node
         public float SideLength { get; private set; }
-
-        // Minimum size for a node in this octree
-        float minSize;
-        // Bounding box that represents this node
-        Bounds bounds = default(Bounds);
         // Objects in this node
         public List<Vector3> objects = new List<Vector3>();
         // Child nodes, if any
         public PointOctreeNode[] children = null;
+
+        // Minimum size for a node in this octree
+        private float minSize;
+        // Bounding box that represents this node
+        private Bounds bounds = default(Bounds);
         // bounds of potential children to this node. These are actual size (with looseness taken into account), not base size
-        Bounds[] childBounds;
+        private Bounds[] childBounds;
         // If there are already numObjectsAllowed in a node, we split it into children
         // A generally good number seems to be something around 8-15
-        const int NUM_OBJECTS_ALLOWED = 8;
+        private const int NUM_OBJECTS_ALLOWED = 15;
         // For reverting the bounds size after temporary changes
-        Vector3 actualBoundsSize;
+        private Vector3 actualBoundsSize;
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="baseLengthVal">Length of this node, not taking looseness into account.</param>
-        /// <param name="minSizeVal">Minimum size of nodes in this octree.</param>
-        /// <param name="centerVal">Centre position of this node.</param>
         public PointOctreeNode(float baseLengthVal, float minSizeVal, Vector3 centerVal)
         {
             SetValues(baseLengthVal, minSizeVal, centerVal);
         }
 
-        // #### PUBLIC METHODS ####
-
-        /// <summary>
-        /// Add an object.
-        /// </summary>
-        /// <param name="obj">Object to add.</param>
-        /// <param name="objPos">Position of the object.</param>
-        /// <returns></returns>
         public bool Add(Vector3 objPos)
         {
             if (!Encapsulates(bounds, objPos))
@@ -57,11 +41,6 @@ namespace BMW.Verification.CloudRayTracing
             return true;
         }
 
-        /// <summary>
-        /// Remove an object. Makes the assumption that the object only exists once in the tree.
-        /// </summary>
-        /// <param name="obj">Object to remove.</param>
-        /// <returns>True if the object was removed successfully.</returns>
         public bool Remove(Vector3 objPos)
         {
             bool removed = false;
@@ -94,45 +73,6 @@ namespace BMW.Verification.CloudRayTracing
             }
 
             return removed;
-        }
-
-        /// <summary>
-        /// Return objects that are within maxDistance of the specified ray.
-        /// </summary>
-        /// <param name="ray">The ray.</param>
-        /// <param name="maxDistance">Maximum distance from the ray to consider.</param>
-        /// <param name="result">List result.</param>
-        /// <returns>Objects within range.</returns>
-        public void GetNearby(ref Ray ray, ref float maxDistance, List<Vector3> result)
-        {
-            // Does the ray hit this node at all?
-            // Note: Expanding the bounds is not exactly the same as a real distance check, but it's fast.
-            // TODO: Does someone have a fast AND accurate formula to do this check?
-            bounds.Expand(new Vector3(maxDistance * 2, maxDistance * 2, maxDistance * 2));
-            bool intersected = bounds.IntersectRay(ray);
-            bounds.size = actualBoundsSize;
-            if (!intersected)
-            {
-                return;
-            }
-
-            // Check against any objects in this node
-            for (int i = 0; i < objects.Count; i++)
-            {
-                if (DistanceToRay(ray, objects[i]) <= maxDistance)
-                {
-                    result.Add(objects[i]);
-                }
-            }
-
-            // Check children
-            if (children != null)
-            {
-                for (int i = 0; i < 8; i++)
-                {
-                    children[i].GetNearby(ref ray, ref maxDistance, result);
-                }
-            }
         }
 
         public bool CheckNearby(ref bool result, ref Vector3 pos, ref float maxDistance)
@@ -173,10 +113,6 @@ namespace BMW.Verification.CloudRayTracing
             return false;
         }
 
-        /// <summary>
-        /// Set the 8 children of this octree.
-        /// </summary>
-        /// <param name="childOctrees">The 8 new child nodes.</param>
         public void SetChildren(PointOctreeNode[] childOctrees)
         {
             if (childOctrees.Length != 8)
@@ -214,65 +150,6 @@ namespace BMW.Verification.CloudRayTracing
             }
         }
 
-        /// <summary>
-        /// Draws node boundaries visually for debugging.
-        /// Must be called from OnDrawGizmos externally. See also: DrawAllObjects.
-        /// </summary>
-        /// <param name="depth">Used for recurcive calls to this method.</param>
-        public void DrawAllBounds(float depth = 0)
-        {
-            float tintVal = depth / 7; // Will eventually get values > 1. Color rounds to 1 automatically
-            Gizmos.color = new Color(tintVal, 0, 1.0f - tintVal);
-
-            Bounds thisBounds = new Bounds(Center, new Vector3(SideLength, SideLength, SideLength));
-            Gizmos.DrawWireCube(thisBounds.center, thisBounds.size);
-
-            if (children != null)
-            {
-                depth++;
-                for (int i = 0; i < 8; i++)
-                {
-                    children[i].DrawAllBounds(depth);
-                }
-            }
-            Gizmos.color = Color.white;
-        }
-
-        /// <summary>
-        /// Draws the bounds of all objects in the tree visually for debugging.
-        /// Must be called from OnDrawGizmos externally. See also: DrawAllBounds.
-        /// NOTE: marker.tif must be placed in your Unity /Assets/Gizmos subfolder for this to work.
-        /// </summary>
-        public void DrawAllObjects()
-        {
-            float tintVal = SideLength / 20;
-            Gizmos.color = new Color(0, 1.0f - tintVal, tintVal, 0.25f);
-
-            foreach (Vector3 obj in objects)
-            {
-                Gizmos.DrawIcon(obj, "marker.tif", true);
-            }
-
-            if (children != null)
-            {
-                for (int i = 0; i < 8; i++)
-                {
-                    children[i].DrawAllObjects();
-                }
-            }
-
-            Gizmos.color = Color.white;
-        }
-
-        /// <summary>
-        /// We can shrink the octree if:
-        /// - This node is >= double minLength in length
-        /// - All objects in the root node are within one octant
-        /// - This node doesn't have children, or does but 7/8 children are empty
-        /// We can also shrink it if there are no objects left at all!
-        /// </summary>
-        /// <param name="minLength">Minimum dimensions of a node in this octree.</param>
-        /// <returns>The new root, or the existing one if we didn't shrink.</returns>
         public PointOctreeNode ShrinkIfPossible(float minLength)
         {
             if (SideLength < (2 * minLength))
@@ -338,32 +215,7 @@ namespace BMW.Verification.CloudRayTracing
             return children[bestFit];
         }
 
-        /*
-        /// <summary>
-        /// Get the total amount of objects in this node and all its children, grandchildren etc. Useful for debugging.
-        /// </summary>
-        /// <param name="startingNum">Used by recursive calls to add to the previous total.</param>
-        /// <returns>Total objects in this node and its children, grandchildren etc.</returns>
-        public int GetTotalObjects(int startingNum = 0) {
-            int totalObjects = startingNum + objects.Count;
-            if (children != null) {
-                for (int i = 0; i < 8; i++) {
-                    totalObjects += children[i].GetTotalObjects();
-                }
-            }
-            return totalObjects;
-        }
-        */
-
-        // #### PRIVATE METHODS ####
-
-        /// <summary>
-        /// Set values for this node. 
-        /// </summary>
-        /// <param name="baseLengthVal">Length of this node, not taking looseness into account.</param>
-        /// <param name="minSizeVal">Minimum size of nodes in this octree.</param>
-        /// <param name="centerVal">Centre position of this node.</param>
-        void SetValues(float baseLengthVal, float minSizeVal, Vector3 centerVal)
+        private void SetValues(float baseLengthVal, float minSizeVal, Vector3 centerVal)
         {
             SideLength = baseLengthVal;
             minSize = minSizeVal;
@@ -387,12 +239,7 @@ namespace BMW.Verification.CloudRayTracing
             childBounds[7] = new Bounds(Center + new Vector3(quarter, -quarter, quarter), childActualSize);
         }
 
-        /// <summary>
-        /// Private counterpart to the public Add method.
-        /// </summary>
-        /// <param name="obj">Object to add.</param>
-        /// <param name="objPos">Position of the object.</param>
-        void SubAdd(Vector3 objPos)
+        private void SubAdd(Vector3 objPos)
         {
             // We know it fits at this level if we've got this far
             // Just add if few objects are here, or children would be below min size
@@ -436,7 +283,7 @@ namespace BMW.Verification.CloudRayTracing
         /// <summary>
         /// Splits the octree into eight children.
         /// </summary>
-        void Split()
+        private void Split()
         {
             float quarter = SideLength / 4f;
             float newLength = SideLength / 2;
@@ -451,12 +298,8 @@ namespace BMW.Verification.CloudRayTracing
             children[7] = new PointOctreeNode(newLength, minSize, Center + new Vector3(quarter, -quarter, quarter));
         }
 
-        /// <summary>
-        /// Merge all children into this node - the opposite of Split.
-        /// Note: We only have to check one level down since a merge will never happen if the children already have children,
-        /// since THAT won't happen unless there are already too many objects to merge.
         /// </summary>
-        void Merge()
+        private void Merge()
         {
             // Note: We know children != null or we wouldn't be merging
             for (int i = 0; i < 8; i++)
@@ -473,32 +316,17 @@ namespace BMW.Verification.CloudRayTracing
             children = null;
         }
 
-        /// <summary>
-        /// Checks if outerBounds encapsulates the given point.
-        /// </summary>
-        /// <param name="outerBounds">Outer bounds.</param>
-        /// <param name="point">Point.</param>
-        /// <returns>True if innerBounds is fully encapsulated by outerBounds.</returns>
-        static bool Encapsulates(Bounds outerBounds, Vector3 point)
+        private static bool Encapsulates(Bounds outerBounds, Vector3 point)
         {
             return outerBounds.Contains(point);
         }
 
-        /// <summary>
-        /// Find which child node this object would be most likely to fit in.
-        /// </summary>
-        /// <param name="objPos">The object's position.</param>
-        /// <returns>One of the eight child octants.</returns>
-        int BestFitChild(Vector3 objPos)
+        private int BestFitChild(Vector3 objPos)
         {
             return (objPos.x <= Center.x ? 0 : 1) + (objPos.y >= Center.y ? 0 : 4) + (objPos.z <= Center.z ? 0 : 2);
         }
 
-        /// <summary>
-        /// Checks if there are few enough objects in this node and its children that the children should all be merged into this.
-        /// </summary>
-        /// <returns>True there are less or the same abount of objects in this and its children than numObjectsAllowed.</returns>
-        bool ShouldMerge()
+        private bool ShouldMerge()
         {
             int totalObjects = objects.Count;
             if (children != null)
@@ -517,8 +345,7 @@ namespace BMW.Verification.CloudRayTracing
             return totalObjects <= NUM_OBJECTS_ALLOWED;
         }
 
-        // Returns true if this node or any of its children, grandchildren etc have something in them
-        bool HasAnyObjects()
+        private bool HasAnyObjects()
         {
             if (objects.Count > 0) return true;
 
@@ -533,12 +360,7 @@ namespace BMW.Verification.CloudRayTracing
             return false;
         }
 
-        /// <summary>
-        /// Returns the closest distance to the given ray from a point.
-        /// </summary>
-        /// <param name="ray">The ray.</param>
-        /// <param name="point">The point to check distance from the ray.</param>
-        /// <returns>Distance from the point to the closest point of the ray.</returns>
+
         public static float DistanceToRay(Ray ray, Vector3 point)
         {
             return Vector3.Cross(ray.direction, point - ray.origin).magnitude;

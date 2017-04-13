@@ -11,9 +11,11 @@ namespace BMW.Verification.CloudRayTracing
         public float sensorDepth = 14f;
         [Range(0, 20)]
         public float sensorHeight = 10f;
-        [Range(0, 180)]
+        [Range(0, 90)]
+        public float sensorAngle = 0f;
+        [Range(0, 360)]
         public float radius = 30f;
-        
+
         [Space(10)]
 
         public bool finishedRayCasting = false;
@@ -76,7 +78,7 @@ namespace BMW.Verification.CloudRayTracing
                     {
                         if (DataController.Instance.applicationState == DataController.ApplicationState.Server)
                         {
-                            if (!sensorManager.hitPositions.CheckNearby(hit.point, (DataController.Instance.pointMeshSize)))
+                            if (!sensorManager.hitPositions.CheckNearby(hit.point, (DataController.Instance.pointCloudPointSize)))
                             {
                                 sensorManager.hitPositions.Add(hit.point);
                             }
@@ -154,6 +156,7 @@ namespace BMW.Verification.CloudRayTracing
 
         private void UpdateValues()
         {
+            transform.eulerAngles = new Vector3(sensorAngle, 0f, 0f);
             centre = ((transform.position + (transform.forward * sensorDepth)) - transform.position);
 
             topRight = transform.position + (Quaternion.Euler(0, +(radius / 2), 0) * centre) + new Vector3(0f, sensorHeight / 2, 0f);

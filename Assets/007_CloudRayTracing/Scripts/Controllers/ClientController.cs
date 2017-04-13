@@ -74,7 +74,16 @@ namespace BMW.Verification.CloudRayTracing
 
         private void Client_OnDisconnected(byte disconnectMsg) // Called when client disconnected from server
         {
-            MenuController.Instance.UpdateSubTitleText("Disconnected from the server");
+            MenuController.Instance.UpdateSubTitleText("Disconnected from the server. Restarting...");
+
+            Timing.RunCoroutine(RestartDelay(3f));
+        }
+
+        private IEnumerator<float> RestartDelay(float delay)
+        {
+            yield return Timing.WaitForSeconds(delay);
+
+            UnityEngine.SceneManagement.SceneManager.LoadScene("CloudRayTracer");
         }
 
         private void Client_OnConnected() // Called when we have a successfull connection to the server
@@ -98,6 +107,7 @@ namespace BMW.Verification.CloudRayTracing
             SendPacket(DataController.PacketType.UpdateHitPositionsSendRate, DataController.Instance.hitPositionsSendRate.ToString());
             SendPacket(DataController.PacketType.UpdateRayTracerGap, DataController.Instance.rayTracerGap.ToString());
             SendPacket(DataController.PacketType.UpdateNetworkedObjectSendRate, DataController.Instance.networkedObjectSendRate.ToString());
+            SendPacket(DataController.PacketType.UpdatePointCloudPointSize, DataController.Instance.pointCloudPointSize.ToString());
 
             for (int i = 0; i < Enum.GetNames(typeof(DataController.SensorType)).Length; i++)
             {

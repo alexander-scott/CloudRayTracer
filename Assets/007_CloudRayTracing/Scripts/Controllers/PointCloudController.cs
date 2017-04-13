@@ -94,14 +94,16 @@ namespace BMW.Verification.CloudRayTracing
 
             Vector4[] positions = new Vector4[instanceCount];
             Vector4[] colors = new Vector4[instanceCount];
+            float distanceFromCentre;
+            Color pointColour;
 
             for (int i = 0; i < instanceCount; i++)
             {
-                positions[i] = new Vector4(hitPositions[i].x, hitPositions[i].y, hitPositions[i].z, DataController.Instance.pointMeshSize);
+                positions[i] = new Vector4(hitPositions[i].x, hitPositions[i].y, hitPositions[i].z, DataController.Instance.pointCloudPointSize);
 
-                float distanceFromCentre = (DataController.Instance.centralCar.transform.position - (Vector3)positions[i]).sqrMagnitude;
-                Color pointColor = Color.Lerp(Color.red, Color.blue, distanceFromCentre / (DataController.Instance.updateDistance * 5f));
-                colors[i] = new Vector4(pointColor.r, pointColor.g, pointColor.b, 1f);
+                distanceFromCentre = (DataController.Instance.centralCar.transform.position - (Vector3)positions[i]).sqrMagnitude;
+                pointColour = Color.Lerp(Color.red, Color.blue, distanceFromCentre / (DataController.Instance.updateDistance * 5f));
+                colors[i] = new Vector4(pointColour.r, pointColour.g, pointColour.b, 1f);
             }
 
             positionBuffer.SetData(positions);

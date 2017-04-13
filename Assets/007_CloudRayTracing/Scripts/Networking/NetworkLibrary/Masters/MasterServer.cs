@@ -15,7 +15,7 @@ namespace BMW.Verification.CloudRayTracing
         public int NumberOfPeers { get { return peers.Count; } }
 
         public event Action<TPeer> OnPeerConnected = delegate { };
-        //		public event Action<TPeer> OnPeerDisconnected = delegate {};
+        public event Action OnPeerDisconnected = delegate {};
 
         private const string _loopbackAddress = "127.0.0.1";
 
@@ -133,6 +133,8 @@ namespace BMW.Verification.CloudRayTracing
         void Peer_OnDisconnect(NetworkPeer netPeer)
         {
             netPeer.OnDisconnect -= Peer_OnDisconnect;
+
+            OnPeerDisconnected();
 
             // remove from collection
             if (!peers.Remove(netPeer as TPeer))

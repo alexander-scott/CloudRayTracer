@@ -18,10 +18,10 @@ namespace BMW.Verification.CloudRayTracing
         [Space(10)]
         [Header("Options")]
 
-        public float acceleration = 0.1f;
-        public float speedDecay = 0.96f;
-        public float rotationStep = 1;
-        public float maxSpeed;
+        private float acceleration = 0.01f;
+        private float speedDecay = 0.99f;
+        private float rotationStep = 1;
+        private float maxSpeed;
 
         [Space(10)]
         [Header("Variables")]
@@ -118,7 +118,7 @@ namespace BMW.Verification.CloudRayTracing
 
         private void RandomAttributes()
         {
-            maxSpeed = Random.Range(0.2f, 0.5f);
+            maxSpeed = Random.Range(0.1f, 0.3f);
             rotationStep = Random.Range(1f, 1.5f);
             transform.eulerAngles = new Vector3(0, Random.Range(0, 360), 0);
         }

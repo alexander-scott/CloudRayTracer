@@ -11,9 +11,11 @@ namespace BMW.Verification.CloudRayTracing
         public Toggle rayTracerToggle;
         public Toggle aiMovementToggle;
         public Toggle firstPersonToggle;
+        public Toggle groundDetectableToggle;
         public InputField hitPositionsSendRateInput;
         public InputField rayTracerGapSizeInput;
         public InputField networkedObjectSendRateInput;
+        public InputField pointCloudPointSizeInput;
 
         // Use this for initialization
         void Start()
@@ -21,14 +23,17 @@ namespace BMW.Verification.CloudRayTracing
             rayTracerToggle.onValueChanged.AddListener(RayTracerChanged);
             aiMovementToggle.onValueChanged.AddListener(AIMovementChanged);
             firstPersonToggle.onValueChanged.AddListener(FirstPersonChanged);
+            groundDetectableToggle.onValueChanged.AddListener(GroundDetectableChanged);
 
             networkedObjectSendRateInput.onEndEdit.AddListener(NetworkedObjectSendRateInput);
             rayTracerGapSizeInput.onEndEdit.AddListener(RayTracerGapSizeChanged);
             hitPositionsSendRateInput.onEndEdit.AddListener(HitPositionsSendRateChanged);
+            pointCloudPointSizeInput.onEndEdit.AddListener(PointCloudPointSizeChanged);
 
             hitPositionsSendRateInput.text = DataController.Instance.hitPositionsSendRate.ToString();
             rayTracerGapSizeInput.text = DataController.Instance.rayTracerGap.ToString();
             networkedObjectSendRateInput.text = DataController.Instance.networkedObjectSendRate.ToString();
+            pointCloudPointSizeInput.text = DataController.Instance.pointCloudPointSize.ToString();
         }
 
         private void RayTracerChanged(bool arg0)
@@ -65,6 +70,24 @@ namespace BMW.Verification.CloudRayTracing
         private void FirstPersonChanged(bool arg0)
         {
             DataController.Instance.firstPerson = arg0;
+        }
+
+        private void GroundDetectableChanged(bool arg0)
+        {
+            if (arg0)
+            {
+                foreach(Transform go in DataController.Instance.groundTrack.GetComponentInChildren<Transform>())
+                {
+                    go.gameObject.layer = 8;
+                }
+            }
+            else
+            {
+                foreach (Transform go in DataController.Instance.groundTrack.GetComponentInChildren<Transform>())
+                {
+                    go.gameObject.layer = 0;
+                }
+            }
         }
 
         public void HitPositionsSendRateChanged(string newVal)
@@ -123,5 +146,25 @@ namespace BMW.Verification.CloudRayTracing
                 rayTracerGapSizeInput.text = DataController.Instance.rayTracerGap.ToString();
             }
         }
+
+        private void PointCloudPointSizeChanged(string newVal)
+        {
+            float parsedVal;
+            if (float.TryParse(newVal, out parsedVal))
+            {
+                DataController.Instance.pointCloudPointSize = parsedVal;
+                PlayerPrefs.SetFloat("PointCloudPointSize", parsedVal);
+                PlayerPrefs.Save();
+                if (DataController.Instance.applicationState == DataController.ApplicationState.Client)
+                {
+                    ClientController.Instance.SendPacket(DataController.PacketType.UpdatePointCloudPointSize, newVal);
+                }
+            }
+            else
+            {
+                pointCloudPointSizeInput.text = DataController.Instance.pointCloudPointSize.ToString();
+            }
+        }
+
     }
 }
