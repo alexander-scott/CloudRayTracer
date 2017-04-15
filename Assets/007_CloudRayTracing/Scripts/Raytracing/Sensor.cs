@@ -156,7 +156,7 @@ namespace BMW.Verification.CloudRayTracing
 
         private void UpdateValues()
         {
-            transform.eulerAngles = new Vector3(sensorAngle, 0f, 0f);
+            transform.eulerAngles = new Vector3(sensorAngle, transform.eulerAngles.y, transform.eulerAngles.z);
             centre = ((transform.position + (transform.forward * sensorDepth)) - transform.position);
 
             topRight = transform.position + (Quaternion.Euler(0, +(radius / 2), 0) * centre) + new Vector3(0f, sensorHeight / 2, 0f);

@@ -102,7 +102,7 @@ namespace BMW.Verification.CloudRayTracing
                 positions[i] = new Vector4(hitPositions[i].x, hitPositions[i].y, hitPositions[i].z, DataController.Instance.pointCloudPointSize);
 
                 distanceFromCentre = (DataController.Instance.centralCar.transform.position - (Vector3)positions[i]).sqrMagnitude;
-                pointColour = Color.Lerp(Color.red, Color.blue, distanceFromCentre / (DataController.Instance.updateDistance * 5f));
+                pointColour = Color.Lerp(Color.red, Color.yellow, distanceFromCentre / (DataController.Instance.updateDistance * 5f));
                 colors[i] = new Vector4(pointColour.r, pointColour.g, pointColour.b, 1f);
             }
 

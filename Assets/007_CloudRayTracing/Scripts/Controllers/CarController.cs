@@ -118,7 +118,7 @@ namespace BMW.Verification.CloudRayTracing
 
         private void RandomAttributes()
         {
-            maxSpeed = Random.Range(0.1f, 0.3f);
+            maxSpeed = Random.Range(0.2f, 0.3f);
             rotationStep = Random.Range(1f, 1.5f);
             transform.eulerAngles = new Vector3(0, Random.Range(0, 360), 0);
         }
