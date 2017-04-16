@@ -182,7 +182,13 @@ namespace BMW.Verification.CloudRayTracing
                         SensorManager.Instance.transform.localEulerAngles = Vector3.zero;
 
                         if (applicationState == ApplicationState.Client)
+                        {
                             ClientController.Instance.SendPacket(PacketType.UpdateCentralCar, centralCar.GetComponent<NetworkedObject>().objectID.ToString());
+                        }
+                        else if (DataController.Instance.firstPerson)
+                        {
+                            CameraController.Instance.ResetCameraFirstPosVariables();
+                        }
                     }
                 }
             }

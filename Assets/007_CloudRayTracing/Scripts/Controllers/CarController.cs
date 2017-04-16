@@ -38,7 +38,6 @@ namespace BMW.Verification.CloudRayTracing
         private CarState carState = CarState.DrivingToWayPoint;
 
         private bool collidersUpdated;
-        private Rigidbody _rigidyBody;
 
         enum CarState
         {
@@ -63,8 +62,6 @@ namespace BMW.Verification.CloudRayTracing
             }
 
             currentWayPointIndex = closestIndex;
-
-            _rigidyBody = GetComponent<Rigidbody>();
 
             RandomAttributes();
         }
@@ -98,7 +95,6 @@ namespace BMW.Verification.CloudRayTracing
                 speedy = Mathf.Cos(transform.eulerAngles.y * (Mathf.PI / 180)) * speed;
 
                 transform.position += new Vector3(speedx, 0, speedy);
-                //_rigidyBody.AddForce(new Vector3(speedx, 0, speedy));
 
                 if (Vector3.Distance(transform.position, TrafficController.Instance.wayPoints[currentWayPointIndex].position) < 15f)
                 {

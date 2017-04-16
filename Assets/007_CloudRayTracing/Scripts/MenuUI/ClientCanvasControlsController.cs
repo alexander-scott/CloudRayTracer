@@ -11,7 +11,7 @@ namespace BMW.Verification.CloudRayTracing
         public Toggle rayTracerToggle;
         public Toggle aiMovementToggle;
         public Toggle firstPersonToggle;
-        public Toggle groundDetectableToggle;
+        public Toggle groundUndetectableToggle;
         public InputField hitPositionsSendRateInput;
         public InputField rayTracerGapSizeInput;
         public InputField networkedObjectSendRateInput;
@@ -23,7 +23,7 @@ namespace BMW.Verification.CloudRayTracing
             rayTracerToggle.onValueChanged.AddListener(RayTracerChanged);
             aiMovementToggle.onValueChanged.AddListener(AIMovementChanged);
             firstPersonToggle.onValueChanged.AddListener(FirstPersonChanged);
-            groundDetectableToggle.onValueChanged.AddListener(GroundDetectableChanged);
+            groundUndetectableToggle.onValueChanged.AddListener(GroundDetectableChanged);
 
             networkedObjectSendRateInput.onEndEdit.AddListener(NetworkedObjectSendRateInput);
             rayTracerGapSizeInput.onEndEdit.AddListener(RayTracerGapSizeChanged);
@@ -78,14 +78,14 @@ namespace BMW.Verification.CloudRayTracing
             {
                 foreach(Transform go in DataController.Instance.groundTrack.GetComponentInChildren<Transform>())
                 {
-                    go.gameObject.layer = 8;
+                    go.gameObject.layer = 0;
                 }
             }
             else
             {
                 foreach (Transform go in DataController.Instance.groundTrack.GetComponentInChildren<Transform>())
                 {
-                    go.gameObject.layer = 0;
+                    go.gameObject.layer = 8;
                 }
             }
 

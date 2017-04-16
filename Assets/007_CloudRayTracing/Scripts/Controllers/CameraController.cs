@@ -102,10 +102,13 @@ namespace BMW.Verification.CloudRayTracing
         public float distanceMin = .5f;
         public float distanceMax = 15f;
         public float smoothTime = 2f;
-        float rotationYAxis = 0.0f;
-        float rotationXAxis = 0.0f;
-        float velocityX = 0.0f;
-        float velocityY = 0.0f;
+        private float rotationYAxis = 0.0f;
+        private float rotationXAxis = 0.0f;
+        private float velocityX = 0.0f;
+        private float velocityY = 0.0f;
+
+        private bool movedToFirstPerson = false;
+        private bool movingToFirstPerson = false;
 
         // Use this for initialization
         void Start()
@@ -124,6 +127,12 @@ namespace BMW.Verification.CloudRayTracing
             {
                 if (!DataController.Instance.firstPerson)
                 {
+                    if (movingToFirstPerson)
+                    {
+                        Timing.KillCoroutines("MoveCameraToFirstPersonPOS");
+                        movingToFirstPerson = false;
+                    }
+
                     if (Input.GetMouseButton(0))
                     {
                         velocityX += xSpeed * Input.GetAxis("Mouse X") * distance * 0.02f;
@@ -146,13 +155,31 @@ namespace BMW.Verification.CloudRayTracing
 
                     velocityX = Mathf.Lerp(velocityX, 0, Time.deltaTime * smoothTime);
                     velocityY = Mathf.Lerp(velocityY, 0, Time.deltaTime * smoothTime);
+
+                    movedToFirstPerson = false;
                 }
                 else
                 {
-                    cameraParent.transform.position = Vector3.Lerp(cameraParent.transform.position, DataController.Instance.centralCar.firstPersonCam.position, 0.1f);
-                    cameraParent.transform.rotation = Quaternion.Lerp(cameraParent.transform.rotation, DataController.Instance.centralCar.transform.rotation, 0.1f); 
+                    if (!movedToFirstPerson)
+                    {
+                        if (!movingToFirstPerson)
+                        {
+                            Timing.RunCoroutine(MoveToFirstPersonPos(0.3f), "MoveCameraToFirstPersonPOS");
+                        }
+                    }
+                    else
+                    {
+                        cameraParent.transform.position = DataController.Instance.centralCar.firstPersonCam.position;
+                        cameraParent.transform.rotation = DataController.Instance.centralCar.transform.rotation;
+                    }
                 }
             }
+        }
+
+        public void ResetCameraFirstPosVariables()
+        {
+            movedToFirstPerson = false;
+            movingToFirstPerson = false;
         }
 
         public static float ClampAngle(float angle, float min, float max)
@@ -198,6 +225,31 @@ namespace BMW.Verification.CloudRayTracing
                 progress += increment;
                 yield return Timing.WaitForSeconds(smoothness);
             }
+        }
+
+        private IEnumerator<float> MoveToFirstPersonPos(float duration)
+        {
+            movingToFirstPerson = true;
+
+            float smoothness = 0.01f;
+            float progress = 0; // This float will serve as the 3rd parameter of the lerp function.
+            float increment = smoothness / duration; // The amount of change to apply.
+
+            Vector3 startPos = cameraParent.transform.position;
+            Quaternion startRot = cameraParent.transform.rotation;
+
+            while (progress < 1)
+            {
+                cameraParent.transform.position = Vector3.Lerp(startPos, DataController.Instance.centralCar.firstPersonCam.position, progress);
+                cameraParent.transform.rotation = Quaternion.Lerp(startRot, DataController.Instance.centralCar.transform.rotation, progress);
+
+                progress += increment;
+                yield return Timing.WaitForSeconds(smoothness);
+            }
+
+            movingToFirstPerson = false;
+
+            movedToFirstPerson = true;
         }
     }
 }

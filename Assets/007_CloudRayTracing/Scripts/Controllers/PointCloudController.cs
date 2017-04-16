@@ -34,8 +34,6 @@ namespace BMW.Verification.CloudRayTracing
         private ComputeBuffer argsBuffer;
         private ComputeBuffer colorBuffer;
 
-        private Vector3[] hitPositions;
-
         private uint[] args = new uint[5] { 0, 0, 0, 0, 0 };
 
         void Update()
@@ -49,16 +47,78 @@ namespace BMW.Verification.CloudRayTracing
 
         public void UpdatePositions(List<Vector3> positionData)
         {
-            hitPositions = positionData.ToArray();
-            instanceCount = hitPositions.Length;
-            UpdateBuffers();
+            instanceCount = positionData.Count;
+
+            // Positions & Colors
+            if (positionBuffer != null) positionBuffer.Release();
+            if (colorBuffer != null) colorBuffer.Release();
+
+            positionBuffer = new ComputeBuffer(instanceCount, 16);
+            colorBuffer = new ComputeBuffer(instanceCount, 4 * 4);
+
+            Vector4[] positions = new Vector4[instanceCount];
+            Vector4[] colors = new Vector4[instanceCount];
+            float distanceFromCentre;
+            Color pointColour;
+
+            for (int i = 0; i < instanceCount; i++)
+            {
+                positions[i] = new Vector4(positionData[i].x, positionData[i].y, positionData[i].z, DataController.Instance.pointCloudPointSize);
+
+                distanceFromCentre = (DataController.Instance.centralCar.transform.position - (Vector3)positions[i]).sqrMagnitude;
+                pointColour = Color.Lerp(Color.red, Color.yellow, distanceFromCentre / (DataController.Instance.updateDistance * 4f));
+                colors[i] = new Vector4(pointColour.r, pointColour.g, pointColour.b, 1f);
+            }
+
+            positionBuffer.SetData(positions);
+            colorBuffer.SetData(colors);
+
+            instanceMaterial.SetBuffer("positionBuffer", positionBuffer);
+            instanceMaterial.SetBuffer("colorBuffer", colorBuffer);
+
+            // indirect args
+            uint numIndices = (instanceMesh != null) ? (uint)instanceMesh.GetIndexCount(0) : 0;
+            args[0] = numIndices;
+            args[1] = (uint)instanceCount;
+            argsBuffer.SetData(args);
         }
 
         public void UpdatePositions(Vector3[] positionData)
         {
-            hitPositions = positionData;
-            instanceCount = hitPositions.Length;
-            UpdateBuffers();
+            instanceCount = positionData.Length;
+
+            // Positions & Colors
+            if (positionBuffer != null) positionBuffer.Release();
+            if (colorBuffer != null) colorBuffer.Release();
+
+            positionBuffer = new ComputeBuffer(instanceCount, 16);
+            colorBuffer = new ComputeBuffer(instanceCount, 4 * 4);
+
+            Vector4[] positions = new Vector4[instanceCount];
+            Vector4[] colors = new Vector4[instanceCount];
+            float distanceFromCentre;
+            Color pointColour;
+
+            for (int i = 0; i < instanceCount; i++)
+            {
+                positions[i] = new Vector4(positionData[i].x, positionData[i].y, positionData[i].z, DataController.Instance.pointCloudPointSize);
+
+                distanceFromCentre = (DataController.Instance.centralCar.transform.position - (Vector3)positions[i]).sqrMagnitude;
+                pointColour = Color.Lerp(Color.red, Color.yellow, distanceFromCentre / (DataController.Instance.updateDistance * 4f));
+                colors[i] = new Vector4(pointColour.r, pointColour.g, pointColour.b, 1f);
+            }
+
+            positionBuffer.SetData(positions);
+            colorBuffer.SetData(colors);
+
+            instanceMaterial.SetBuffer("positionBuffer", positionBuffer);
+            instanceMaterial.SetBuffer("colorBuffer", colorBuffer);
+
+            // indirect args
+            uint numIndices = (instanceMesh != null) ? (uint)instanceMesh.GetIndexCount(0) : 0;
+            args[0] = numIndices;
+            args[1] = (uint)instanceCount;
+            argsBuffer.SetData(args);
         }
 
         public void StartRendering()
@@ -78,45 +138,6 @@ namespace BMW.Verification.CloudRayTracing
             argsBuffer = null;
 
             instanceCount = -1;
-        }
-
-        void UpdateBuffers()
-        {
-            if (instanceCount < 1 || argsBuffer == null)
-                return;
-
-            // Positions & Colors
-            if (positionBuffer != null) positionBuffer.Release();
-            if (colorBuffer != null) colorBuffer.Release();
-
-            positionBuffer = new ComputeBuffer(instanceCount, 16);
-            colorBuffer = new ComputeBuffer(instanceCount, 4 * 4);
-
-            Vector4[] positions = new Vector4[instanceCount];
-            Vector4[] colors = new Vector4[instanceCount];
-            float distanceFromCentre;
-            Color pointColour;
-
-            for (int i = 0; i < instanceCount; i++)
-            {
-                positions[i] = new Vector4(hitPositions[i].x, hitPositions[i].y, hitPositions[i].z, DataController.Instance.pointCloudPointSize);
-
-                distanceFromCentre = (DataController.Instance.centralCar.transform.position - (Vector3)positions[i]).sqrMagnitude;
-                pointColour = Color.Lerp(Color.red, Color.yellow, distanceFromCentre / (DataController.Instance.updateDistance * 4f));
-                colors[i] = new Vector4(pointColour.r, pointColour.g, pointColour.b, 1f);
-            }
-
-            positionBuffer.SetData(positions);
-            colorBuffer.SetData(colors);
-
-            instanceMaterial.SetBuffer("positionBuffer", positionBuffer);
-            instanceMaterial.SetBuffer("colorBuffer", colorBuffer);
-
-            // indirect args
-            uint numIndices = (instanceMesh != null) ? (uint)instanceMesh.GetIndexCount(0) : 0;
-            args[0] = numIndices;
-            args[1] = (uint)instanceCount;
-            argsBuffer.SetData(args);
         }
 
         void OnDisable()

@@ -235,16 +235,6 @@ namespace BMW.Verification.CloudRayTracing
             }
         }
 
-        //byte[] SerializeObject<_T>(_T objectToSerialize)
-        ////same as above, but should technically work anyway
-        //{
-        //    BinaryFormatter bf = new BinaryFormatter();
-        //    MemoryStream memStr = new MemoryStream();
-        //    bf.Serialize(memStr, objectToSerialize);
-        //    memStr.Position = 0;
-        //    return memStr.ToArray();
-        //}
-
         private byte[] VectorsToBytes(List<Vector3> hitPositions)
         {
             byte[] buff = new byte[(sizeof(float) * 3) * hitPositions.Count];
