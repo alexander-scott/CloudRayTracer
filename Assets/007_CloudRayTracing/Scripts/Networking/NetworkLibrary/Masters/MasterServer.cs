@@ -47,6 +47,11 @@ namespace BMW.Verification.CloudRayTracing
             return default(TPeer);
         }
 
+        public int GetPeerRTT(TPeer peer)
+        {
+            return peer.GetRTT();
+        }
+
         #region Scope Registration
         private HashSet<BaseServerScope<TPeer>> registeredScopes = new HashSet<BaseServerScope<TPeer>>();
         private BaseServerScope<TPeer> defaultScope = null;

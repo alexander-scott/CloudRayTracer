@@ -88,6 +88,11 @@ namespace BMW.Verification.CloudRayTracing
                     go.gameObject.layer = 0;
                 }
             }
+
+            if (DataController.Instance.applicationState == DataController.ApplicationState.Client)
+            {
+                ClientController.Instance.SendPacket(DataController.PacketType.UpdateGroundDetectable, arg0.ToString());
+            }
         }
 
         public void HitPositionsSendRateChanged(string newVal)

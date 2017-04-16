@@ -117,8 +117,10 @@ namespace BMW.Verification.CloudRayTracing
 
         void Update()
         {
-            if (DataController.Instance.applicationState == DataController.ApplicationState.Client ||
-                DataController.Instance.applicationState == DataController.ApplicationState.Host)
+            if ((DataController.Instance.applicationState == DataController.ApplicationState.Client ||
+                DataController.Instance.applicationState == DataController.ApplicationState.Host ||
+                DataController.Instance.applicationState == DataController.ApplicationState.Server) &&
+                DataController.Instance.centralCar != null)
             {
                 if (!DataController.Instance.firstPerson)
                 {

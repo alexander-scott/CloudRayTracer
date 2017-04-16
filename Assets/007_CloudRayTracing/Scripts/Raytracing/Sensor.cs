@@ -7,7 +7,7 @@ namespace BMW.Verification.CloudRayTracing
     {
         [Header("Sensor Properties")]
         public DataController.SensorType sensorType;
-        [Range(0, 20)]
+        [Range(0, 30)]
         public float sensorDepth = 14f;
         [Range(0, 20)]
         public float sensorHeight = 10f;
@@ -78,7 +78,7 @@ namespace BMW.Verification.CloudRayTracing
                     {
                         if (DataController.Instance.applicationState == DataController.ApplicationState.Server)
                         {
-                            if (!sensorManager.hitPositions.CheckNearby(hit.point, (DataController.Instance.pointCloudPointSize)))
+                            if (!sensorManager.hitPositions.CheckNearby(hit.point, (DataController.Instance.pointCloudPointSize / 2)))
                             {
                                 sensorManager.hitPositions.Add(hit.point);
                             }

@@ -12,7 +12,6 @@ namespace BMW.Verification.CloudRayTracing
         public Transform frontRightWheel;
         public Transform frontLeftWheel;
 
-        public GameObject colliderParent;
         public Transform firstPersonCam;
 
         [Space(10)]
@@ -38,6 +37,9 @@ namespace BMW.Verification.CloudRayTracing
 
         private CarState carState = CarState.DrivingToWayPoint;
 
+        private bool collidersUpdated;
+        private Rigidbody _rigidyBody;
+
         enum CarState
         {
             DrivingToWayPoint,
@@ -62,18 +64,21 @@ namespace BMW.Verification.CloudRayTracing
 
             currentWayPointIndex = closestIndex;
 
+            _rigidyBody = GetComponent<Rigidbody>();
+
             RandomAttributes();
         }
 
         void Update()
         {
-            if (DataController.Instance.applicationState == DataController.ApplicationState.Server)
+            if (!collidersUpdated && DataController.Instance.applicationState == DataController.ApplicationState.Server)
             {
-                Destroy(backLeftWheel.GetComponent<SphereCollider>());
-                Destroy(frontLeftWheel.GetComponent<SphereCollider>());
-                Destroy(frontRightWheel.GetComponent<SphereCollider>());
-                Destroy(backRightWheel.GetComponent<SphereCollider>());
-                Destroy(colliderParent);
+                foreach (Collider c in GetComponentsInChildren<Collider>())
+                {
+                    c.isTrigger = true;
+                }
+
+                collidersUpdated = true;
             }
 
             if (DataController.Instance.applicationState != DataController.ApplicationState.Undefined)
@@ -93,7 +98,7 @@ namespace BMW.Verification.CloudRayTracing
                 speedy = Mathf.Cos(transform.eulerAngles.y * (Mathf.PI / 180)) * speed;
 
                 transform.position += new Vector3(speedx, 0, speedy);
-                //GetComponent<Rigidbody>().AddForce(new Vector3(speedx, 0, speedy));
+                //_rigidyBody.AddForce(new Vector3(speedx, 0, speedy));
 
                 if (Vector3.Distance(transform.position, TrafficController.Instance.wayPoints[currentWayPointIndex].position) < 15f)
                 {

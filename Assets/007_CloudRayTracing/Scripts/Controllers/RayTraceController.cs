@@ -60,6 +60,8 @@ namespace BMW.Verification.CloudRayTracing
 
                 sensorManager.hitPositions = new PointOctree(0.05f, DataController.Instance.centralCar.transform.position, 0.05f);
 
+                GC.Collect();
+
                 sensorManager.finishedRayTracing = false;
 
                 // How long should we wait before doing it all again? Bear in mind the data might not have fully reached the client yet.

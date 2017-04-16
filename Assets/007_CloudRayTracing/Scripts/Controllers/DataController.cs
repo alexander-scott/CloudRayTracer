@@ -49,10 +49,48 @@ namespace BMW.Verification.CloudRayTracing
         
         public Dictionary<int, NetworkedObject> networkedObjectDictionary = new Dictionary<int, NetworkedObject>();
 
-        public enum PacketType { StartRayTracer, StopRayTracer, UpdateHitPositionsSendRate, UpdateRayTracerGap, UpdateNetworkedObjectSendRate, UpdatePointCloudPointSize, FinishedSyncing, UpdateCentralCar, SetSensorEnabled, SetSensorDisabled, }
-        public enum ApplicationState { Undefined, Client, ClientSynchronising, Server, ServerSynchronising, Host, }
-        public enum StatisticType { FPS, MEM, }
-        public enum ClientCanvasButtonType { Information, Controls, Viewports, Performance, Sensors, Disconnect, }
+        public enum PacketType
+        {
+            StartRayTracer,
+            StopRayTracer,
+            UpdateHitPositionsSendRate,
+            UpdateRayTracerGap,
+            UpdateNetworkedObjectSendRate,
+            UpdatePointCloudPointSize,
+            FinishedSyncing,
+            UpdateCentralCar,
+            SetSensorEnabled,
+            SetSensorDisabled,
+            UpdateGroundDetectable,
+        }
+
+        public enum ApplicationState
+        {
+            Undefined,
+            Client,
+            ClientSynchronising,
+            Server,
+            ServerSynchronising,
+            Host,
+        }
+
+        public enum StatisticType
+        {
+            FPS,
+            MEM,
+            RTT,
+        }
+
+        public enum ClientCanvasButtonType
+        {
+            Information,
+            Controls,
+            Viewports,
+            Performance,
+            Sensors,
+            Disconnect,
+        }
+
         public enum SensorType
         {
             FrontLong,

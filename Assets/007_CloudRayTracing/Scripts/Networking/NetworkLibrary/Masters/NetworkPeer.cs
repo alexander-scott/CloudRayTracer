@@ -84,5 +84,17 @@ namespace BMW.Verification.CloudRayTracing
             // trigger early disconnection
             ForceDisconnect(false);
         }
+
+        public int GetRTT()
+        {
+            byte error;
+            int rtt = NetworkTransport.GetCurrentRTT(hostId, connectionId, out error);
+
+            NetworkError nerror = (NetworkError)error;
+            if (nerror != NetworkError.Ok)
+                UnityEngine.Debug.LogError("Network error: " + nerror);
+
+            return rtt;
+        }
     }
 }

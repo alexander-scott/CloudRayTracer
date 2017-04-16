@@ -198,8 +198,6 @@ namespace BMW.Verification.CloudRayTracing
                 }
 
                 client.Connection.SpawnCarOnServer(objectIDs[i].objectID, objectIDs[i].active);
-
-                yield return Timing.WaitForSeconds(DataController.Instance.objectSyncDelay);
             }
 
             foreach (NetworkedObject netObj in DataController.Instance.networkedObjectDictionary.Values)
@@ -211,8 +209,6 @@ namespace BMW.Verification.CloudRayTracing
                     // SET ACTIVE ON SERVER
                     client.Connection.UpdateObjectState(netObj.objectID, true);
                 }
-
-                yield return Timing.WaitForSeconds(DataController.Instance.objectSyncDelay);
             }
 
             OnFinishedSync();

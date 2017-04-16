@@ -56,6 +56,14 @@ namespace BMW.Verification.CloudRayTracing
             MenuController.Instance.UpdateSubTitleText("You are the SERVER");
         }
 
+        public void OnApplicationQuit()
+        {
+            if (server.NumberOfPeers > 0)
+            {
+                server.Peers[0].Disconnect();
+            }
+        }
+
         public void UpdateObjectPosition(int objectID, Vector3 position, Vector3 rotation, Vector3 localScale)
         {
             if (DataController.Instance.networkedObjectDictionary.ContainsKey(objectID))
@@ -173,6 +181,23 @@ namespace BMW.Verification.CloudRayTracing
                         
                     break;
 
+                case DataController.PacketType.UpdateGroundDetectable:
+                    if (bool.Parse(contents))
+                    {
+                        foreach (Transform go in DataController.Instance.groundTrack.GetComponentInChildren<Transform>())
+                        {
+                            go.gameObject.layer = 8;
+                        }
+                    }
+                    else
+                    {
+                        foreach (Transform go in DataController.Instance.groundTrack.GetComponentInChildren<Transform>())
+                        {
+                            go.gameObject.layer = 0;
+                        }
+                    }
+                    break;
+
                 case DataController.PacketType.SetSensorDisabled:
                     int parseSensorID;
                     if (int.TryParse(contents, out parseSensorID))
@@ -265,6 +290,7 @@ namespace BMW.Verification.CloudRayTracing
             {
                 server.Connection.SendPerformanceDictionary((int)DataController.StatisticType.FPS, Mathf.Floor(1.0f / Time.deltaTime));
                 server.Connection.SendPerformanceDictionary((int)DataController.StatisticType.MEM, GC.GetTotalMemory(false));
+                server.Connection.SendPerformanceDictionary((int)DataController.StatisticType.RTT, server.GetPeerRTT(server.Peers[0]));
 
                 yield return Timing.WaitForSeconds(0.5f);
             }
