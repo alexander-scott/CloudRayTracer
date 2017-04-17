@@ -36,10 +36,22 @@ namespace BMW.Verification.CloudRayTracing
 
         private uint[] args = new uint[5] { 0, 0, 0, 0, 0 };
 
+        private Vector3 oldCentralCarPos = Vector3.zero;
+
         void Update()
         {
             if (instanceCount <= 0 || argsBuffer == null)
                 return;
+
+            if (oldCentralCarPos == Vector3.zero)
+            {
+                instanceMaterial.SetVector("centralCarDifference", Vector3.zero);
+            }
+            else
+            {
+                instanceMaterial.SetVector("centralCarDifference", (oldCentralCarPos - DataController.Instance.centralCar.transform.position));
+            }
+            
 
             // Render
             Graphics.DrawMeshInstancedIndirect(instanceMesh, 0, instanceMaterial, new Bounds(Vector3.zero, new Vector3(1000.0f, 1000.0f, 1000.0f)), argsBuffer, 0, null, UnityEngine.Rendering.ShadowCastingMode.Off, false, 9);
@@ -48,6 +60,7 @@ namespace BMW.Verification.CloudRayTracing
         public void UpdatePositions(List<Vector3> positionData)
         {
             instanceCount = positionData.Count;
+            oldCentralCarPos = Vector3.zero;
 
             // Positions & Colors
             if (positionBuffer != null) positionBuffer.Release();
@@ -83,9 +96,10 @@ namespace BMW.Verification.CloudRayTracing
             argsBuffer.SetData(args);
         }
 
-        public void UpdatePositions(Vector3[] positionData)
+        public void UpdatePositions(Vector3[] positionData, Vector3 centralCarPos)
         {
             instanceCount = positionData.Length;
+            oldCentralCarPos = centralCarPos;
 
             // Positions & Colors
             if (positionBuffer != null) positionBuffer.Release();
@@ -113,6 +127,7 @@ namespace BMW.Verification.CloudRayTracing
 
             instanceMaterial.SetBuffer("positionBuffer", positionBuffer);
             instanceMaterial.SetBuffer("colorBuffer", colorBuffer);
+            instanceMaterial.SetVector("oldCentralCarPos", centralCarPos);
 
             // indirect args
             uint numIndices = (instanceMesh != null) ? (uint)instanceMesh.GetIndexCount(0) : 0;

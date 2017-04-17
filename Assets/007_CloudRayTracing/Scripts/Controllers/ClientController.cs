@@ -34,6 +34,8 @@ namespace BMW.Verification.CloudRayTracing
 
         private Client client;
 
+        private Vector3 transmissionCentralCarPos;
+
         // Use this for initialization
         void Start()
         {
@@ -126,15 +128,15 @@ namespace BMW.Verification.CloudRayTracing
 
         #region Raytracing
 
-        private void Connection_OnTransmissionPreparation() // Called when we are told to prepare to recieve a new mesh
+        private void Connection_OnTransmissionPreparation(Vector3 centralCarPos) // Called when we are told to prepare to recieve a new array
         {
-
+            transmissionCentralCarPos = centralCarPos;
         }
 
-        private void Connection_OnDataCompletelyReceived(int transmissionID, byte[] data) // Called when we have recieved the entire mesh
+        private void Connection_OnDataCompletelyReceived(int transmissionID, byte[] data) // Called when we have recieved the entire array
         {
             Vector3[] hitPositions = BytesToVectors(data);
-            PointCloudController.Instance.UpdatePositions(hitPositions);
+            PointCloudController.Instance.UpdatePositions(hitPositions, transmissionCentralCarPos);
         }
 
         public void StartRayTracer() // Called from MenuController when the start raytracing toggle is clicked

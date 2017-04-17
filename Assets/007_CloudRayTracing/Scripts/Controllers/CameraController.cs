@@ -195,7 +195,7 @@ namespace BMW.Verification.CloudRayTracing
 
         public IEnumerator<float> ResizeCamera(Camera camera, float xPos, float yPos, float width, float height, float duration, bool instaMove)
         {
-            float smoothness = 0.02f;
+            float smoothness = 0.01f;
             float progress = 0; // This float will serve as the 3rd parameter of the lerp function.
             float increment = smoothness / duration; // The amount of change to apply.
 

@@ -67,6 +67,11 @@ namespace BMW.Verification.CloudRayTracing
 
                 DataController.Instance.applicationState = DataController.ApplicationState.Server;
             }
+
+            if (clientCanvas.gameObject.activeInHierarchy)
+            {
+                clientCanvas.gameObject.SetActive(false);
+            }
         }
 
         public void IPAddressChanged(string ipaddress)

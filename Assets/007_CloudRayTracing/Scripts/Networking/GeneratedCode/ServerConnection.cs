@@ -96,11 +96,12 @@ namespace BMW.Verification.CloudRayTracing
 				_netSender.PrepareAndSendWriter(writer);
 			}
 			
-			public void ClientPrepareToRecieveTransmission(Int32 transmissionId, Int32 expectedSize)
+			public void ClientPrepareToRecieveTransmission(Int32 transmissionId, Int32 expectedSize, Vector3 centralCarPos)
 			{
 				NetworkWriter writer = _netSender.CreateWriter(-2015836376);
 				writer.Write(transmissionId);
 				writer.Write(expectedSize);
+				writer.Write(centralCarPos);
 				_netSender.PrepareAndSendWriter(writer);
 			}
 			

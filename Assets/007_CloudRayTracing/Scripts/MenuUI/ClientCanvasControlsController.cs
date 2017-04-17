@@ -23,7 +23,7 @@ namespace BMW.Verification.CloudRayTracing
             rayTracerToggle.onValueChanged.AddListener(RayTracerChanged);
             aiMovementToggle.onValueChanged.AddListener(AIMovementChanged);
             firstPersonToggle.onValueChanged.AddListener(FirstPersonChanged);
-            groundUndetectableToggle.onValueChanged.AddListener(GroundDetectableChanged);
+            groundUndetectableToggle.onValueChanged.AddListener(GroundUndetectableChanged);
 
             networkedObjectSendRateInput.onEndEdit.AddListener(NetworkedObjectSendRateInput);
             rayTracerGapSizeInput.onEndEdit.AddListener(RayTracerGapSizeChanged);
@@ -72,7 +72,7 @@ namespace BMW.Verification.CloudRayTracing
             DataController.Instance.firstPerson = arg0;
         }
 
-        private void GroundDetectableChanged(bool arg0)
+        private void GroundUndetectableChanged(bool arg0)
         {
             if (arg0)
             {
@@ -91,7 +91,7 @@ namespace BMW.Verification.CloudRayTracing
 
             if (DataController.Instance.applicationState == DataController.ApplicationState.Client)
             {
-                ClientController.Instance.SendPacket(DataController.PacketType.UpdateGroundDetectable, arg0.ToString());
+                ClientController.Instance.SendPacket(DataController.PacketType.UpdateGroundUndetectable, arg0.ToString());
             }
         }
 

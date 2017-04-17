@@ -61,7 +61,7 @@ namespace BMW.Verification.CloudRayTracing
             UpdateCentralCar,
             SetSensorEnabled,
             SetSensorDisabled,
-            UpdateGroundDetectable,
+            UpdateGroundUndetectable,
         }
 
         public enum ApplicationState

@@ -181,21 +181,23 @@ namespace BMW.Verification.CloudRayTracing
                         
                     break;
 
-                case DataController.PacketType.UpdateGroundDetectable:
+                case DataController.PacketType.UpdateGroundUndetectable:
                     if (bool.Parse(contents))
-                    {
-                        foreach (Transform go in DataController.Instance.groundTrack.GetComponentInChildren<Transform>())
-                        {
-                            go.gameObject.layer = 8;
-                        }
-                    }
-                    else
                     {
                         foreach (Transform go in DataController.Instance.groundTrack.GetComponentInChildren<Transform>())
                         {
                             go.gameObject.layer = 0;
                         }
                     }
+                    else
+                    {
+                        foreach (Transform go in DataController.Instance.groundTrack.GetComponentInChildren<Transform>())
+                        {
+                            go.gameObject.layer = 8;
+                        }
+                    }
+
+                    Debug.Log("Ground undetectable set to " + contents);
                     break;
 
                 case DataController.PacketType.SetSensorDisabled:
@@ -225,7 +227,7 @@ namespace BMW.Verification.CloudRayTracing
             if (server.NumberOfPeers > 0)
             {
                 byte[] result = VectorsToBytes(hitPostions);
-                StartCoroutine(server.Connection.SendBytesToClientsRoutine(transmissionID, result));
+                StartCoroutine(server.Connection.SendBytesToClientsRoutine(transmissionID, result, DataController.Instance.centralCar.transform.position));
 
                 transmissionID++;
             }

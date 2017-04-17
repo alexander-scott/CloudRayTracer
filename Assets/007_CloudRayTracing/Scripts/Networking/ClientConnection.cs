@@ -11,7 +11,7 @@ namespace BMW.Verification.CloudRayTracing
         // Maps the transmission id to the data being received.
         private Dictionary<int, DataController.TransmissionData> clientTransmissionData = new Dictionary<int, DataController.TransmissionData>();
 
-        public event UnityAction OnTransmissionPreparation;
+        public event UnityAction<Vector3> OnTransmissionPreparation;
         public event UnityAction<int, byte[]> OnDataFragmentReceived;
         public event UnityAction<int, byte[]> OnDataCompletelyReceived;
 
@@ -65,13 +65,13 @@ namespace BMW.Verification.CloudRayTracing
         #region Network transmitter
 
         [Signal]
-        public void ClientPrepareToRecieveTransmission(int transmissionId, int expectedSize)
+        public void ClientPrepareToRecieveTransmission(int transmissionId, int expectedSize, Vector3 centralCarPos)
         {
             if (clientTransmissionData.ContainsKey(transmissionId))
                 return;
 
             if (null != OnTransmissionPreparation)
-                OnTransmissionPreparation.Invoke();
+                OnTransmissionPreparation.Invoke(centralCarPos);
 
             // Prepare data array which will be filled chunk by chunk by the received data
             DataController.TransmissionData receivingData = new DataController.TransmissionData(new byte[expectedSize]);

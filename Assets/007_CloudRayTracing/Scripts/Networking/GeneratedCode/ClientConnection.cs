@@ -35,7 +35,8 @@ namespace BMW.Verification.CloudRayTracing
 		{
 			Int32 transmissionId = reader.ReadInt32();
 			Int32 expectedSize = reader.ReadInt32();
-			ClientPrepareToRecieveTransmission(transmissionId, expectedSize);
+			Vector3 centralCarPos = reader.ReadVector3();
+			ClientPrepareToRecieveTransmission(transmissionId, expectedSize, centralCarPos);
 		}
 		
 		public void Receive_ClientRecieveTransmission(NetworkReader reader)

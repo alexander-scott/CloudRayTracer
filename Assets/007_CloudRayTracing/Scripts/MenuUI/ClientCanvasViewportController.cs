@@ -262,7 +262,7 @@ namespace BMW.Verification.CloudRayTracing
 
         private IEnumerator<float> ChangeTextDuringFade(Text text, string newText, float duration)
         {
-            float smoothness = 0.02f;
+            float smoothness = 0.01f;
             float progress = 0; // This float will serve as the 3rd parameter of the lerp function.
             float increment = smoothness / duration; // The amount of change to apply.
 
