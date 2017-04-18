@@ -15,8 +15,6 @@ namespace BMW.Verification.CloudRayTracing
         public event UnityAction<int, byte[]> OnDataFragmentReceived;
         public event UnityAction<int, byte[]> OnDataCompletelyReceived;
 
-        private int currentFrameCount; 
-
         #region Send to server
 
         public void SendPacket(int packetNum, string contents)

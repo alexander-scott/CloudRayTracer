@@ -6,16 +6,16 @@ namespace BMW.Verification.CloudRayTracing
 {
     public class CustomProfiler : MonoBehaviour
     {
-        public bool ColorizeText = true;
+        public bool ColourizeText = true;
         public static Vector2 DefaultSize = new Vector2(200f, 64f);
         public Image Image;
         public float ReadInterval = 0.1f;
         public Text Text;
 
-        private Color32 averageValueColor = new Color32(0xc9, 0xea, 0xfb, 0xff);
-        private Color32 backgroundColor = new Color32(0x2c, 0x3e, 80, 0xff);
-        private Color32 maxValueColor = new Color32(0xf7, 0x98, 50, 0xff);
-        private Color32 minValueColor = new Color32(0xf4, 70, 0x47, 0xff);
+        public Color32 averageValueColour = new Color32(0xc9, 0xea, 0xfb, 0xff);
+        public Color32 backgroundColour = new Color32(0x2c, 0x3e, 80, 0xff);
+        public Color32 maxValueColour = new Color32(0xf7, 0x98, 50, 0xff);
+        public Color32 minValueColour = new Color32(0xf4, 70, 0x47, 0xff);
 
         private float avgValue;
         private float minValue;
@@ -25,7 +25,7 @@ namespace BMW.Verification.CloudRayTracing
         private float nextMinValue;
         private float nextValue;
 
-        private bool colorizeTextBuffer;
+        private bool colourizeTextBuffer;
         private float elapsed;
         private Graphic graphic;
         private float[] history;
@@ -39,8 +39,8 @@ namespace BMW.Verification.CloudRayTracing
         private float total;
         private AbstractValueProvider valueProvider;
         private const int BlockSize = 5;
-        private const string ColorizedStartTextLine = " <color=#F44647FF>▼";
-        private const string ColorizedTextLineFormat = "{0}</color> <color=#C9EAFBFF>■{1}</color> <color=#F79832FF>▲{2}</color>";
+        private const string ColourizedStartTextLine = " <color=#F44647FF>▼";
+        private const string ColourizedTextLineFormat = "{0}</color> <color=#C9EAFBFF>■{1}</color> <color=#F79832FF>▲{2}</color>";
         private const int Count = 40;
         private const string StartTextLine = " ▼";
         private const string TextLineFormat = "{0} ■{1} ▲{2}";
@@ -89,7 +89,7 @@ namespace BMW.Verification.CloudRayTracing
             }
             if (graphic == null)
             {
-                graphic = new Graphic(200, 0x40, backgroundColor);
+                graphic = new Graphic(200, 0x40, backgroundColour);
 
                 if (Image == null)
                 {
@@ -119,7 +119,7 @@ namespace BMW.Verification.CloudRayTracing
         private void SetValue(int index, float value, float ratio, int m, int textHeight)
         {
             AddToHistory(index, value);
-            graphic.DrawRect(200 - (index * 5), textHeight, 5, ((int) (value * ratio)) + textHeight, Color32.LerpUnclamped(minValueColor, maxValueColor, value / maxValue), m + textHeight, averageValueColor);
+            graphic.DrawRect(200 - (index * 5), textHeight, 5, ((int) (value * ratio)) + textHeight, Color32.LerpUnclamped(minValueColour, maxValueColour, value / maxValue), m + textHeight, averageValueColour);
         }
 
         private void Update()
@@ -136,7 +136,7 @@ namespace BMW.Verification.CloudRayTracing
                     float ratio = (maxValue != 0f) ? (((float) ((0x40 - textheight) - 5)) / maxValue) : 0f;
                     int m = (int) (avgValue * ratio);
 
-                    graphic.Clear(backgroundColor, false);
+                    graphic.Clear(backgroundColour, false);
 
                     for (int i = 40; i > 0; i--)
                     {
@@ -165,9 +165,9 @@ namespace BMW.Verification.CloudRayTracing
 
         private void UpdateTextLine()
         {
-            if (colorizeTextBuffer != ColorizeText)
+            if (colourizeTextBuffer != ColourizeText)
             {
-                colorizeTextBuffer = ColorizeText;
+                colourizeTextBuffer = ColourizeText;
                 textLineBuffer = null;
             }
 
@@ -175,13 +175,22 @@ namespace BMW.Verification.CloudRayTracing
             {
                 textLineBuffer = new StringBuilder();
                 textLineBuffer.Append(valueProvider.Title);
-                textLineBuffer.Append(ColorizeText ? " <color=#F44647FF>▼" : " ▼");
+                //textLineBuffer.Append(ColorizeText ? " <color=#F44647FF>▼" : " ▼");
+                //textLineLength = textLineBuffer.Length;
+                //textLineFormat = ColorizeText ? "{0}</color> <color=#C9EAFBFF>■{1}</color> <color=#F79832FF>▲{2}</color>" : "{0} ■{1} ▲{2}";
+                textLineBuffer.Append(ColourizeText ? " <color=#" + ColorToHex(minValueColour) + ">▼" : " ▼");
                 textLineLength = textLineBuffer.Length;
-                textLineFormat = ColorizeText ? "{0}</color> <color=#C9EAFBFF>■{1}</color> <color=#F79832FF>▲{2}</color>" : "{0} ■{1} ▲{2}";
+                textLineFormat = ColourizeText ? "{0}</color> <color=#" + ColorToHex(averageValueColour) + ">■{1}</color> <color=#" + ColorToHex(maxValueColour) + ">▲{2}</color>" : "{0} ■{1} ▲{2}";
             }
 
             textLineBuffer.Length = textLineLength;
             Text.text = textLineBuffer.AppendFormat(textLineFormat, minValue.ToString(valueProvider.NumberFormat), avgValue.ToString(valueProvider.NumberFormat), maxValue.ToString(valueProvider.NumberFormat)).ToString();
+        }
+
+        private string ColorToHex(Color32 color)
+        {
+            string hex = color.r.ToString("X2") + color.g.ToString("X2") + color.b.ToString("X2");
+            return hex;
         }
     }
 }

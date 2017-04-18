@@ -5,7 +5,6 @@ using UnityEngine.Networking;
 
 namespace BMW.Verification.CloudRayTracing
 {
-    [ExecuteInEditMode]
     public class NetworkedObject : MonoBehaviour
     {
         public int objectID;
@@ -15,22 +14,23 @@ namespace BMW.Verification.CloudRayTracing
         
         void Start()
         {
-            if (DataController.Instance == null)
-            {
-                if (objectID == 0)
-                {
-                    objectID = Random.Range(1, 10000000);
-                }
-
-                return;
-            }
-
             if (!DataController.Instance.networkedObjectDictionary.ContainsKey(objectID))
             {
                 DataController.Instance.networkedObjectDictionary[objectID] = this;
             }
 
             transform.hasChanged = true;
+        }
+
+        void Reset()
+        {
+            if (DataController.Instance == null)
+            {
+                if (objectID == 0)
+                {
+                    objectID = Random.Range(1, 10000000);
+                }
+            }
         }
 
         public void ClientUpdate()

@@ -155,18 +155,35 @@ namespace BMW.Verification.CloudRayTracing
             Request someRequest = new Request("get", "http://checkip.dyndns.org");
             someRequest.Send();
 
-            while (!someRequest.isDone)
+            while (!someRequest.isDone && Application.isPlaying)
             {
                 yield return 0f;
             }
 
-            string response = someRequest.response.Text;
-            string[] a = response.Split(':');
-            string a2 = a[1].Substring(1);
-            string[] a3 = a2.Split('<');
-            string a4 = a3[0];
+            if (someRequest.response == null || someRequest.response.Text == null)
+            {
+                string savedPubIPAddress = PlayerPrefs.GetString("PublicIPAddress");
+                if (string.IsNullOrEmpty(savedPubIPAddress))
+                {
+                    pubIpAddressLabel.text = "Failed to get Pub IP";
+                }
+                else
+                {
+                    pubIpAddressLabel.text = "Pub: " + savedPubIPAddress;
+                }
+            }
+            else
+            {
+                string response = someRequest.response.Text;
+                string[] a = response.Split(':');
+                string a2 = a[1].Substring(1);
+                string[] a3 = a2.Split('<');
+                string a4 = a3[0];
 
-            pubIpAddressLabel.text = "Pub: " + a4;
+                pubIpAddressLabel.text = "Pub: " + a4;
+                PlayerPrefs.SetString("PublicIPAddress", a4);
+                PlayerPrefs.Save();
+            }
         }
     }
 }

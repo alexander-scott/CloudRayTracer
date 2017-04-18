@@ -242,8 +242,8 @@ namespace BMW.Verification.CloudRayTracing
                 Console.WriteLine ("Unhandled Exception, aborting request.");
                 Console.WriteLine (e);
 #else
-                Debug.LogError("Unhandled Exception, aborting request.");
-                Debug.LogException(e);
+                Debug.Log(e);
+                //Debug.LogException(e);
 #endif
                 exception = e;
                 response = null;
