@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -194,7 +193,7 @@ namespace BMW.Verification.CloudRayTracing
             }
         }
 
-        public string LocalIPAddress()
+        public string GetLocalIP()
         {
 #if UNITY_EDITOR_OSX
             return "NULL";
@@ -213,6 +212,20 @@ namespace BMW.Verification.CloudRayTracing
             }
             return localIP;
 #endif
+        }
+
+        public string GetPublicIP()
+        {
+            string url = "http://checkip.dyndns.org";
+            System.Net.WebRequest req = System.Net.WebRequest.Create(url);
+            System.Net.WebResponse resp = req.GetResponse();
+            System.IO.StreamReader sr = new System.IO.StreamReader(resp.GetResponseStream());
+            string response = sr.ReadToEnd().Trim();
+            string[] a = response.Split(':');
+            string a2 = a[1].Substring(1);
+            string[] a3 = a2.Split('<');
+            string a4 = a3[0];
+            return a4;
         }
 
         public void SaveSensorState(SensorType sensorType, bool state)

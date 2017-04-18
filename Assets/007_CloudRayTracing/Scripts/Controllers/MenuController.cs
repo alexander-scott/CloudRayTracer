@@ -37,6 +37,7 @@ namespace BMW.Verification.CloudRayTracing
         public CanvasGroup clientCanvas;
         public Button connectToServerButton;
         public Text ipAddressLabel;
+        public Text pubIpAddressLabel;
 
         [Space(10)]
         [Header("Server objects")]
@@ -56,7 +57,8 @@ namespace BMW.Verification.CloudRayTracing
             host.onClick.AddListener(HostClicked);
 
             ipAddress.text = DataController.Instance.ipAddress;
-            ipAddressLabel.text = "@" + DataController.Instance.LocalIPAddress();
+            ipAddressLabel.text = "Loc: " + DataController.Instance.GetLocalIP();
+            Timing.RunCoroutine(GetIPAddress(), "GetPublicIPAddress");
 
             // If we are running in headless mode go straight to start server
             if (SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null)
@@ -146,6 +148,25 @@ namespace BMW.Verification.CloudRayTracing
                 progress += increment;
                 yield return new WaitForSeconds(smoothness);
             }
+        }
+
+        private IEnumerator<float> GetIPAddress()
+        {
+            Request someRequest = new Request("get", "http://checkip.dyndns.org");
+            someRequest.Send();
+
+            while (!someRequest.isDone)
+            {
+                yield return 0f;
+            }
+
+            string response = someRequest.response.Text;
+            string[] a = response.Split(':');
+            string a2 = a[1].Substring(1);
+            string[] a3 = a2.Split('<');
+            string a4 = a3[0];
+
+            pubIpAddressLabel.text = "Pub: " + a4;
         }
     }
 }
