@@ -31,7 +31,7 @@ namespace BMW.Verification.CloudRayTracing
         public GameObject linePrefab;
         public bool enableSensorGizmos = false;
 
-        public PointOctree hitPositions;
+        public Octree hitPositions;
         public bool finishedRayTracing = false;
 
         private Sensor[] sensors;
@@ -66,7 +66,7 @@ namespace BMW.Verification.CloudRayTracing
 
         public bool CheckIfDuplicate(Vector3 pos)
         {
-            if (hitPositions.Count == 0)
+            if (hitPositions.ObjectCount == 0)
                 return false;
 
             //for (int i = 0; i < hitPositions.Count; i++)

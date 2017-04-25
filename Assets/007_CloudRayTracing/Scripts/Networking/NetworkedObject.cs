@@ -14,6 +14,11 @@ namespace BMW.Verification.CloudRayTracing
         
         void Start()
         {
+            if (objectID == 0)
+            {
+                Reset();
+            }
+
             if (!DataController.Instance.networkedObjectDictionary.ContainsKey(objectID))
             {
                 DataController.Instance.networkedObjectDictionary[objectID] = this;
@@ -22,16 +27,11 @@ namespace BMW.Verification.CloudRayTracing
             transform.hasChanged = true;
         }
 
-        void Reset()
+        private void Reset()
         {
-            if (DataController.Instance == null)
-            {
-                if (objectID == 0)
-                {
-                    objectID = Random.Range(1, 10000000);
-                }
-            }
+            objectID = ClientController.GetNewObjectID();
         }
+
 
         public void ClientUpdate()
         {
@@ -55,7 +55,7 @@ namespace BMW.Verification.CloudRayTracing
                             transform.hasChanged = false;
 
                             // Update position
-                            ClientController.Instance.UpdateObjectPositionOnServer(objectID, transform.position, transform.eulerAngles, transform.localScale);
+                            ClientController.Instance.UpdateObjectPosition(objectID, transform.position, transform.eulerAngles, transform.localScale);
                         }
                     }
                 }

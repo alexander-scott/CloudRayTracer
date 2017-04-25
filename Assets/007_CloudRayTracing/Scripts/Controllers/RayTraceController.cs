@@ -34,7 +34,7 @@ namespace BMW.Verification.CloudRayTracing
         public void StartRayTracing()
         {
             rayTracing = true;
-            sensorManager.hitPositions = new PointOctree(0.1f, DataController.Instance.centralCar.transform.position, 0.1f);
+            sensorManager.hitPositions = new Octree(0.1f, DataController.Instance.centralCar.transform.position, 0.1f);
 
             StartCoroutine(RayTracerCoroutine());
         }
@@ -53,12 +53,12 @@ namespace BMW.Verification.CloudRayTracing
                 // Wait until all the sensors have finished ray tracing and built the meshes
                 yield return new WaitUntil(() => sensorManager.finishedRayTracing);
 
-                Debug.Log(sensorManager.hitPositions.Count + " HIT POSITIONS");
+                Debug.Log(sensorManager.hitPositions.ObjectCount + " HIT POSITIONS");
 
-                if (sensorManager.hitPositions.Count > 0)
+                if (sensorManager.hitPositions.ObjectCount > 0)
                     SendData(sensorManager.hitPositions.GetAllPositions());
 
-                sensorManager.hitPositions = new PointOctree(0.05f, DataController.Instance.centralCar.transform.position, 0.05f);
+                sensorManager.hitPositions = new Octree(0.05f, DataController.Instance.centralCar.transform.position, 0.05f);
 
                 GC.Collect();
 

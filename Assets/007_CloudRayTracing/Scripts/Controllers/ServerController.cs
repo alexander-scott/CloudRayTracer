@@ -118,11 +118,13 @@ namespace BMW.Verification.CloudRayTracing
             {
                 case DataController.PacketType.StartRayTracer:
                     Debug.Log("Raytrace start");
+                    DataController.Instance.rayTracing = true;
                     RayTraceController.Instance.StartRayTracing();
                     break;
 
                 case DataController.PacketType.StopRayTracer:
                     Debug.Log("Raytrace stop");
+                    DataController.Instance.rayTracing = false;
                     RayTraceController.Instance.StopRayTracing();
                     break;
 
@@ -174,6 +176,7 @@ namespace BMW.Verification.CloudRayTracing
                     {
                         Debug.Log("Central car set to network object with ID of " + parseObjID);
                         DataController.Instance.centralCar = DataController.Instance.networkedObjectDictionary[parseObjID].GetComponent<CarController>();
+                        DataController.Instance.centralCar.gameObject.SetActive(true);
                         SensorManager.Instance.transform.parent = DataController.Instance.centralCar.transform;
                         SensorManager.Instance.transform.localPosition = Vector3.zero;
                         SensorManager.Instance.transform.localEulerAngles = Vector3.zero;

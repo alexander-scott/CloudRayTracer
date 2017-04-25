@@ -31,6 +31,7 @@ namespace BMW.Verification.CloudRayTracing
         public ApplicationState applicationState = ApplicationState.Undefined;
         public bool aiMovement = false;
         public bool firstPerson = false;
+        public bool rayTracing = false;
         public float hitPositionsSendRate = 1f;
         public float networkedObjectSendRate = 0.3f;
         public float rayTracerGap = 0.02f; // The gap between each ray fired in the sensor bounds
@@ -43,6 +44,7 @@ namespace BMW.Verification.CloudRayTracing
         public int defaultBufferSize = 1300; // Max ethernet MTU is ~1400
         public float updateDistance = 5f; // The is the distance that an object must be from the central for it to be active on the server
         public float objectSyncDelay = 0.01f; // Used in object synchronisation. How long show we wait before syncing the next object?
+        public int octreeMaxObjects = 15;
 
         public Dictionary<SensorType, bool> activeSensors = new Dictionary<SensorType, bool>();
         
@@ -196,7 +198,7 @@ namespace BMW.Verification.CloudRayTracing
         public string GetLocalIP()
         {
 #if UNITY_EDITOR_OSX
-            return "NULL";
+            return Network.player.ipAddress;
 #else
             System.Net.IPHostEntry host;
             string localIP = "";
@@ -212,20 +214,6 @@ namespace BMW.Verification.CloudRayTracing
             }
             return localIP;
 #endif
-        }
-
-        public string GetPublicIP()
-        {
-            string url = "http://checkip.dyndns.org";
-            System.Net.WebRequest req = System.Net.WebRequest.Create(url);
-            System.Net.WebResponse resp = req.GetResponse();
-            System.IO.StreamReader sr = new System.IO.StreamReader(resp.GetResponseStream());
-            string response = sr.ReadToEnd().Trim();
-            string[] a = response.Split(':');
-            string a2 = a[1].Substring(1);
-            string[] a3 = a2.Split('<');
-            string a4 = a3[0];
-            return a4;
         }
 
         public void SaveSensorState(SensorType sensorType, bool state)

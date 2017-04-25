@@ -176,7 +176,7 @@ namespace BMW.Verification.CloudRayTracing
 
         void OnDrawGizmos()
         {
-            if (GetComponentInParent<SensorManager>().enableSensorGizmos)
+            if (!Application.isPlaying && GetComponentInParent<SensorManager>().enableSensorGizmos)
             {
                 UpdateValues(); // Should this be called in this function?
 

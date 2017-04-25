@@ -62,7 +62,7 @@ namespace BMW.Verification.CloudRayTracing
 
                 trafficCars[i].transform.position = new Vector3(Random.Range(-100f, 200f), 2f, Random.Range(-200f, 200f));
 
-                int objectID = Random.Range(1, 10000000);
+                int objectID = ClientController.GetNewObjectID();
 
                 trafficCars[i].GetComponent<NetworkedObject>().objectID = objectID;
 

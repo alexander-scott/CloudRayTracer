@@ -38,6 +38,8 @@ namespace BMW.Verification.CloudRayTracing
 
         private void RayTracerChanged(bool arg0)
         {
+            DataController.Instance.rayTracing = arg0;
+
             if (arg0)
             {
                 if (DataController.Instance.applicationState == DataController.ApplicationState.Client)

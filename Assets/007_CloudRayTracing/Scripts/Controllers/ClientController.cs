@@ -78,7 +78,7 @@ namespace BMW.Verification.CloudRayTracing
         {
             MenuController.Instance.UpdateSubTitleText("Disconnected from the server. Restarting...");
 
-            Timing.RunCoroutine(RestartDelay(3f));
+            Timing.RunCoroutine(RestartDelay(2f));
         }
 
         private IEnumerator<float> RestartDelay(float delay)
@@ -135,6 +135,9 @@ namespace BMW.Verification.CloudRayTracing
 
         private void Connection_OnDataCompletelyReceived(int transmissionID, byte[] data) // Called when we have recieved the entire array
         {
+            if (!DataController.Instance.rayTracing)
+                return;
+
             Vector3[] hitPositions = BytesToVectors(data);
             PointCloudController.Instance.UpdatePositions(hitPositions, transmissionCentralCarPos);
         }
@@ -156,7 +159,7 @@ namespace BMW.Verification.CloudRayTracing
 
         #region Sync objects
 
-        public void UpdateObjectPositionOnServer(int objectID, Vector3 position, Vector3 rotation, Vector3 localScale)
+        public void UpdateObjectPosition(int objectID, Vector3 position, Vector3 rotation, Vector3 localScale)
         {
             if (client.IsConnected)
             {
@@ -232,8 +235,37 @@ namespace BMW.Verification.CloudRayTracing
         {
             if (client.IsConnected)
             {
+                if (DataController.Instance.rayTracing)
+                {
+                    SendPacket(DataController.PacketType.StopRayTracer, "");
+                }
+                
                 client.Disconnect();
             }
+        }
+
+        public static int GetNewObjectID()
+        {
+            NetworkedObject[] networkedObjects = FindObjectsOfType<NetworkedObject>();
+            bool unique = false;
+            int objectID = 0;
+
+            while (!unique)
+            {
+                objectID = UnityEngine.Random.Range(1, 10000000);
+                unique = true;
+
+                for (int i = 0; i < networkedObjects.Length; i++)
+                {
+                    if (networkedObjects[i].objectID == objectID)
+                    {
+                        unique = false;
+                        break;
+                    }
+                }
+            }
+
+            return objectID;
         }
 
         private Vector3[] BytesToVectors(byte[] bytes)
