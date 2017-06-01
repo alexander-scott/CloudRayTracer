@@ -67,11 +67,12 @@ namespace BMW.Verification.CloudRayTracing
             finishedRayCasting = false;
 
             // Iterate through every point within the bounds
-            for (float i = sensorHeight / 2; i > -sensorHeight / 2; i -= DataController.Instance.rayTracerGap) // Go from top to bottom of the bounds
+            for (float i = sensorHeight / 2; i > -sensorHeight / 2; i -= DataController.Instance.rayTracerGap) 
             {
-                for (float j = -radius / 2; j < radius / 2; j += DataController.Instance.rayTracerGap) // Go from left to right of the bounds
+                for (float j = -radius / 2; j < radius / 2; j += DataController.Instance.rayTracerGap)
                 {
-                    dir = ((transform.position + (Quaternion.Euler(0, j, 0) * centre) + new Vector3(0f, i, 0f)) - transform.position).normalized; // Direction vector from sensor to point within bounds
+                     // Direction vector from sensor to point within bounds
+                    dir = ((transform.position + (Quaternion.Euler(0, j, 0) * centre) + new Vector3(0f, i, 0f)) - transform.position).normalized;
 
                     // Fire a ray from the sensor to the current point in the bounds
                     if (Physics.Raycast(transform.position, dir, out hit, sensorDepth, sensorManager.toDetect.value))

@@ -136,7 +136,7 @@ namespace BMW.Verification.CloudRayTracing
             args[1] = (uint)instanceCount;
             argsBuffer.SetData(args);
 
-            GC.Collect();
+            //GC.Collect();
         }
 
         public void StartRendering()

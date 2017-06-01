@@ -230,7 +230,7 @@ namespace BMW.Verification.CloudRayTracing
             if (server.NumberOfPeers > 0)
             {
                 byte[] result = VectorsToBytes(hitPostions);
-                StartCoroutine(server.Connection.SendBytesToClientsRoutine(transmissionID, result, DataController.Instance.centralCar.transform.position));
+                Timing.RunCoroutine(server.Connection.SendBytesToClientsRoutine(transmissionID, result, DataController.Instance.centralCar.transform.position));
 
                 transmissionID++;
             }

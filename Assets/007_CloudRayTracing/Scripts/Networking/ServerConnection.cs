@@ -72,46 +72,45 @@ namespace BMW.Verification.CloudRayTracing
 
         #region Network Transmitter
 
-        public IEnumerator SendBytesToClientsRoutine(int transmissionId, byte[] data, Vector3 centralCarPos)
+        public IEnumerator<float> SendBytesToClientsRoutine(int transmissionId, byte[] data, Vector3 centralCarPos)
         {
-            Debug.Assert(!serverTransmissionIds.Contains(transmissionId));
-            Debug.Log("SendBytesToClients processId=" + transmissionId + " | datasize=" + data.Length);
-
-            // Tell client that he is going to receive some data and tell him how much it will be.
             SendToPeer(SenderPeer).ClientPrepareToRecieveTransmission(transmissionId, data.Length, centralCarPos);
-            yield return null;
+            yield return 0f;
 
-            // Begin transmission of data. send chunks of 'bufferSize' until completely transmitted.
             serverTransmissionIds.Add(transmissionId);
             DataController.TransmissionData dataToTransmit = new DataController.TransmissionData(data);
             int bufferSize = DataController.Instance.defaultBufferSize;
 
             while (dataToTransmit.curDataIndex < dataToTransmit.data.Length - 1)
             {
-                // Determine the remaining amount of bytes, still need to be sent.
                 int remaining = dataToTransmit.data.Length - dataToTransmit.curDataIndex;
-                if (remaining < bufferSize)
-                    bufferSize = remaining;
 
-                // Prepare the chunk of data which will be sent in this iteration
+                if (remaining < bufferSize)
+                {
+                    bufferSize = remaining;
+                }
+                    
                 byte[] buffer = new byte[bufferSize];
                 System.Array.Copy(dataToTransmit.data, dataToTransmit.curDataIndex, buffer, 0, bufferSize);
 
-                // Send the chunk
                 SendToPeer(SenderPeer).ClientRecieveTransmission(transmissionId, buffer);
                 dataToTransmit.curDataIndex += bufferSize;
 
-                yield return null;
+                yield return 0f;
 
                 if (null != OnDataFragmentSent)
+                {
                     OnDataFragmentSent.Invoke(transmissionId, buffer);
+                }    
             }
 
             // Transmission complete.
             serverTransmissionIds.Remove(transmissionId);
 
             if (null != OnDataComepletelySent)
+            {
                 OnDataComepletelySent.Invoke(transmissionId, dataToTransmit.data);
+            }  
         }
 
         #endregion

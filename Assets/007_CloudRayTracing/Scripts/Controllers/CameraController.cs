@@ -94,6 +94,8 @@ namespace BMW.Verification.CloudRayTracing
         [Space(10)]
         [Header("Camera Movement")]
 
+        public bool remoteDesktopConfig = false;
+
         public float distance = 5.0f;
         public float xSpeed = 120.0f;
         public float ySpeed = 120.0f;
@@ -110,15 +112,25 @@ namespace BMW.Verification.CloudRayTracing
         private bool movedToFirstPerson = false;
         private bool movingToFirstPerson = false;
 
+        private Vector2 previousPos;
+
         // Use this for initialization
-        void Start()
+        private void Start()
         {
             Vector3 angles = cameraDefault.transform.eulerAngles;
             rotationYAxis = angles.y;
             rotationXAxis = angles.x;
         }
 
-        void Update()
+        private void Update()
+        {
+            if (remoteDesktopConfig && Input.GetMouseButtonDown(0))
+            {
+                previousPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+            }
+        }
+
+        private void LateUpdate()
         {
             if ((DataController.Instance.applicationState == DataController.ApplicationState.Client ||
                 DataController.Instance.applicationState == DataController.ApplicationState.Host) &&
@@ -132,14 +144,29 @@ namespace BMW.Verification.CloudRayTracing
                         movingToFirstPerson = false;
                     }
 
-                    if (Input.GetMouseButton(0))
+                    if (remoteDesktopConfig)
                     {
-                        velocityX += xSpeed * Input.GetAxis("Mouse X") * distance * 0.02f;
-                        velocityY += ySpeed * Input.GetAxis("Mouse Y") * 0.02f;
+                        if (Input.GetMouseButton(0))
+                        {
+                            Vector3 axis = new Vector3(-(previousPos.x - Input.mousePosition.x) * 0.1f, -(previousPos.y - Input.mousePosition.y) * 0.1f, 0f);
+                            previousPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+
+                            velocityX += xSpeed * axis.x * distance * 0.02f;
+                            velocityY += ySpeed * axis.y * 0.02f;
+                        }
+                    }
+                    else
+                    {
+                        if (Input.GetMouseButton(0))
+                        {
+                            velocityX += xSpeed * Input.GetAxis("Mouse X") * distance * 0.02f;
+                            velocityY += ySpeed * Input.GetAxis("Mouse Y") * 0.02f;
+                        }
                     }
 
                     rotationYAxis += velocityX;
                     rotationXAxis -= velocityY;
+
                     rotationXAxis = ClampAngle(rotationXAxis, yMinLimit, yMaxLimit);
 
                     Quaternion rotation = Quaternion.Euler(rotationXAxis, rotationYAxis, 0);

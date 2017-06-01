@@ -96,7 +96,7 @@ namespace BMW.Verification.CloudRayTracing
                 return;
 
             // Current data completely received
-            Debug.Log("Completely Received Data at transmissionId=" + transmissionId);
+            //Debug.Log("Completely Received Data at transmissionId=" + transmissionId);
             clientTransmissionData.Remove(transmissionId);
 
             if (null != OnDataCompletelyReceived)
